@@ -1,0 +1,39 @@
+{
+  "configurations" : [
+    {
+      "id" : "4EFAE6E2-41DA-4A40-836D-A6FF133C5D7E",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "GB",
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:CityGuide.xcodeproj",
+      "identifier" : "BD9F27852F7D507100D160F6",
+      "name" : "CityGuide"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:CityGuide.xcodeproj",
+        "identifier" : "7B52F4E5308699ED00C88D37",
+        "name" : "CityGuideUnitTests"
+      }
+    },
+    {
+      "parallelizable" : false,
+      "target" : {
+        "containerPath" : "container:CityGuide.xcodeproj",
+        "identifier" : "7B52F5933086DBF500C88D37",
+        "name" : "CityGuideUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
