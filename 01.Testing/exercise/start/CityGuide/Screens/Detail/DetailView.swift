@@ -35,11 +35,27 @@ struct DetailView: View {
             Section(header: Text("Temperature")) {
                 Text(viewModel.state.temperature)
             }
+
+            Section(header: Text("Visitor tip")) {
+                if !viewModel.state.tip.isEmpty {
+                    Text(viewModel.state.tip)
+                }
+
+                Button("Get tip", systemImage: "sparkles") {
+                    viewModel.generateTip()
+                }
+                .disabled(viewModel.state.isGeneratingTip)
+            }
         }
         // when view appears, fetch weather for temperature
         .onAppear(
             perform: {
                 viewModel.fetchWeatherData()
+            })
+        // stop generating the tip when user leaves the screen
+        .onDisappear(
+            perform: {
+                viewModel.cancelTip()
             })
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
