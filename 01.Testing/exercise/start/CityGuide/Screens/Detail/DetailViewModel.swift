@@ -84,6 +84,8 @@ final class DetailViewModel {
                 }
             } catch {
                 print("❌ \(error)")
+                // show the error on the screen, not only in the console
+                state.tip = "Could not generate tip: \(error.localizedDescription)"
             }
         }
     }
