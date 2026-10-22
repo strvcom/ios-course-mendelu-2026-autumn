@@ -13,21 +13,23 @@ class DetailViewModelTests: XCTestCase {
         let weatherData = WeatherData(daily: .init(time: [], maxTemperatures: [22.0]))
         let sut = await createSUT(returnValue: .success(weatherData))
         
-        // Setup expectation
-        let expectation = XCTestExpectation(description: "Get right value of temperature")
+        let initialTemperature = await sut.state.temperature
+        XCTAssertEqual(initialTemperature, "100")
         
         await sut.fetchWeatherData()
         
-        Task { @MainActor in
-            let _ = await waitUntil {
-                sut.state.temperature == "22°C"
-            }
-            
-            expectation.fulfill()
-        }
+        let finalTemperature = await sut.state.temperature
+        XCTAssertEqual(finalTemperature, "22°C")
+    }
+    
+    func testFirstTemperatureIsUsed() async {
+        let weatherData = WeatherData(daily: .init(time: [], maxTemperatures: [18.0, 25.0]))
+        let sut = await createSUT(returnValue: .success(weatherData))
+
+        await sut.fetchWeatherData()
         
-        // Wait for expectation fulfillment with timeout
-        await fulfillment(of: [expectation], timeout: 100.0)
+        let fetchedTemperature = await sut.state.temperature
+        XCTAssertEqual(fetchedTemperature, "18°C")
     }
     
     func testWeatherFethingThrowsError() async {
@@ -35,10 +37,10 @@ class DetailViewModelTests: XCTestCase {
         
         await sut.fetchWeatherData()
         
-        // No new data -> no new temperature
         let temperature = await sut.state.temperature
         XCTAssertEqual(temperature, "100")
     }
+
 }
 
 private extension DetailViewModelTests {
@@ -51,15 +53,3 @@ private extension DetailViewModelTests {
         )
     }
 }
-
-func waitUntil(timeout: TimeInterval = 10, condition: () -> Bool) async -> Bool {
-    let deadline = Date().addingTimeInterval(timeout)
-    while Date() < deadline {
-        if condition() {
-            return true
-        }
-        try? await Task.sleep(for: .milliseconds(10))
-    }
-    return condition()
-}
-

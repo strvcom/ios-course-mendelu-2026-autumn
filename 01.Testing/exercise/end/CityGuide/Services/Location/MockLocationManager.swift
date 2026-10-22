@@ -8,7 +8,7 @@ import CoreLocation
 
 class MockLocationManager: LocationManaging {
     func getCurrentLocation() -> CLLocationCoordinate2D? {
-        return CLLocationCoordinate2D(latitude: 59.2, longitude: 16.7)
+        return CLLocationCoordinate2D(latitude: 49.2, longitude: 16.7)
     }
     
     func getCurrentLocationName() -> String? {

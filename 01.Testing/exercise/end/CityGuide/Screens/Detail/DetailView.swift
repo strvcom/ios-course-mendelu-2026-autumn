@@ -39,9 +39,7 @@ struct DetailView: View {
         // when view appears, fetch weather for temperature
         .onAppear(
             perform: {
-                Task { @MainActor in
-                    try? await viewModel.fetchWeatherData()
-                }
+                viewModel.fetchWeatherData()
             })
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {

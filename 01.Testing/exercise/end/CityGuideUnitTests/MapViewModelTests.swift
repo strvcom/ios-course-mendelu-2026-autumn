@@ -17,7 +17,13 @@ final class MapViewModelTests: XCTestCase {
         
         let persistentContainer = NSPersistentContainer(name: "CityGuide")
         
-        // Throw-away destination, so we have temporary in-memory database
+        // Throw-away database for tests:
+        // By default the container stores data in a SQLite file in the app's sandbox,
+        // so tests would read and change the same data as the app itself.
+        // Pointing the store URL to /dev/null keeps the SQLite store type,
+        // but nothing is ever written to disk - the data lives only in memory.
+        // Every test creates its own container, so it starts with an empty database
+        // and nothing leaks into the next test or into the real app data.
         let description = NSPersistentStoreDescription()
         description.url = URL(fileURLWithPath: "/dev/null")
         persistentContainer.persistentStoreDescriptions = [description]
@@ -47,7 +53,19 @@ final class MapViewModelTests: XCTestCase {
         XCTAssertFalse(sut.state.mapItems.isEmpty)
         XCTAssertTrue(sut.state.mapItems.count == 1)
     }
-    
+
+    func testSavingSameItemTwiceUpdatesIt() {
+        var item = MapItem.getSample()
+        dataManager.savePlace(item)
+        item.title = "Renamed"
+        dataManager.savePlace(item)
+
+        let sut = createSUT()
+        sut.fetchMapItems()
+
+        XCTAssertEqual(sut.state.mapItems.count, 1)
+        XCTAssertEqual(sut.state.mapItems.first?.title, "Renamed")
+    }
 }
 
 private extension MapViewModelTests {

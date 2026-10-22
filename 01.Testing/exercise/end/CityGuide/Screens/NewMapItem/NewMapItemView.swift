@@ -63,7 +63,6 @@ struct NewMapItemView: View {
                     }
             }
         }
-        .accessibilityIdentifier("newPlaceForm")
     }
 }
 

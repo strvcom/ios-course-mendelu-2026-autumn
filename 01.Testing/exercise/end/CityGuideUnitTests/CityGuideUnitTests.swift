@@ -11,12 +11,10 @@ final class CityGuideUnitTests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        print("🍏 - SETUP")
     }
 
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
-        print("🍏 - TEARDOWN")
     }
     
 
@@ -28,6 +26,5 @@ final class CityGuideUnitTests: XCTestCase {
         // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
         // XCTest Documentation
         // https://developer.apple.com/documentation/xctest
-        print("🍏 - 1")
     }
 }
