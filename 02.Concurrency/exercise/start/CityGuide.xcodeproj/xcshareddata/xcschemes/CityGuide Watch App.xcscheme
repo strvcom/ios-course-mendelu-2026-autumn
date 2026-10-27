@@ -51,6 +51,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "7B52F4E5308699ED00C88D37"
                BuildableName = "CityGuideUnitTests.xctest"
+               BlueprintName = "CityGuideUnitTests"
                ReferencedContainer = "container:CityGuide.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -61,6 +62,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "7B52F5933086DBF500C88D37"
                BuildableName = "CityGuideUITests.xctest"
+               BlueprintName = "CityGuideUITests"
                ReferencedContainer = "container:CityGuide.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -83,6 +85,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BD7A00082FC4000000E7FA2C"
             BuildableName = "CityGuide Watch App.app"
+            BlueprintName = "CityGuide Watch App"
             ReferencedContainer = "container:CityGuide.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -99,6 +102,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BD7A00082FC4000000E7FA2C"
             BuildableName = "CityGuide Watch App.app"
+            BlueprintName = "CityGuide Watch App"
             ReferencedContainer = "container:CityGuide.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
