@@ -32,7 +32,6 @@ final class LanguageModelSessionMock {
 
         return AsyncThrowingStream { continuation in
             let task = Task {
-//            Task {
                 var snapshot = ""
                 for word in words {
                     if Task.isCancelled {

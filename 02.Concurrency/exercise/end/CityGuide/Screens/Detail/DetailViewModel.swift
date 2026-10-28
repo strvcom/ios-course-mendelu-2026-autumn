@@ -67,10 +67,14 @@ final class DetailViewModel {
             defer { state.isGeneratingTip = false }
 
             // instructions say how the model should behave
-            
             let session = LanguageModelSessionMock(
                 instructions: "You are a friendly city guide in Brno. Answer in 2–3 short sentences."
             )
+
+            // This is the real implementation of Apple foundation model
+//            let session = LanguageModelSession(
+//                instructions: "You are a friendly city guide in Brno. Answer in 2–3 short sentences."
+//            )
 
             // prompt is built from data we already have on the screen
             let prompt = """
