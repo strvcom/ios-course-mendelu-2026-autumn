@@ -1,0 +1,1184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Swift Concurrency Lecture</title>
+<style>
+:root {
+  --bg: #f6f5f1; --fg: #14161b; --muted: #5a6170; --card: #ffffff; --card2: #efede7; --line: #d6d2c8;
+  --accent: #f05138; --accent-soft: #fde5df;
+  --main: #15994a; --main-soft: #dcf3e4;
+  --bgc: #2563eb; --bgc-soft: #dde7fd;
+  --actor: #8b4fe0; --actor-soft: #ece2fb;
+  --err: #d92d2d; --err-soft: #fbe0e0;
+  --warn: #e07012; --warn-soft: #fde9d6;
+  --idle: #9aa1ad; --idle-soft: #e7e7ea;
+  --tA: #f59e0b; --tB: #0ea5a4; --tC: #e2489b;
+  --code-bg: #1c2130; --code-fg: #e9edf4;
+  --shadow: 0 2px 10px rgba(20,22,27,.08);
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  --bg: #0f1217; --fg: #eef1f6; --muted: #a0a8b6; --card: #181c25; --card2: #1f2430; --line: #2d3442;
+  --accent-soft: #3a1f1a; --main: #34c46c; --main-soft: #15301f; --bgc: #5b8cff; --bgc-soft: #1a2747;
+  --actor: #a87cf0; --actor-soft: #2a1f42; --err: #f05454; --err-soft: #3d1a1a; --warn: #f59a42; --warn-soft: #3b2614;
+  --idle: #6b7280; --idle-soft: #262b35; --code-bg: #141824; --shadow: 0 2px 10px rgba(0,0,0,.4);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
+body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, Helvetica, Arial, sans-serif; color: var(--fg); }
+code, pre, .mono { font-family: "SF Mono", ui-monospace, Menlo, Monaco, "Cascadia Mono", Consolas, monospace; }
+button { font: inherit; color: inherit; }
+a { color: var(--bgc); }
+
+/* ------------------------------------------------ stage */
+#stage { position: absolute; left: 50%; top: 50%; width: 1600px; height: 900px; transform-origin: center; background: var(--bg); overflow: hidden; }
+.frame { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 44px 72px 0; }
+.frame > header { display: flex; align-items: flex-end; gap: 24px; min-height: 96px; }
+.frame > header .titles { flex: 1; min-width: 0; }
+.kicker { font-size: 20px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+.frame h1 { font-size: 52px; line-height: 1.1; margin: 6px 0 0; font-weight: 750; letter-spacing: -.01em; }
+.frame h1 code { font-size: .9em; background: var(--card2); padding: 0 .2em; border-radius: 8px; }
+.badge { display: inline-block; font-size: 18px; font-weight: 600; padding: 4px 12px; border-radius: 999px; background: var(--card2); color: var(--muted); vertical-align: middle; margin-left: 14px; letter-spacing: 0; text-transform: none; }
+.ia-tab { font-size: 19px; font-weight: 650; border: 2px solid var(--accent); color: var(--accent); background: transparent; border-radius: 999px; padding: 8px 18px; cursor: pointer; white-space: nowrap; }
+.ia-tab.on { background: var(--accent); color: #fff; }
+.content { flex: 1; min-height: 0; overflow: hidden; font-size: calc(30px * var(--k, 1)); line-height: 1.38; padding-top: .55em; }
+.content > :first-child { margin-top: 0; }
+.content p { margin: .45em 0; }
+.content ul, .content ol { margin: .35em 0; padding-left: 1.25em; }
+.content li { margin: .22em 0; }
+.content li::marker { color: var(--accent); font-weight: 700; }
+.content strong { font-weight: 720; }
+.content code, .notes code, .demo code, .ia code { font-size: .86em; background: var(--card2); padding: .05em .28em; border-radius: .25em; }
+.content table { border-collapse: collapse; font-size: .82em; margin: .4em 0; background: var(--card); box-shadow: var(--shadow); border-radius: 12px; overflow: hidden; }
+.content th, .content td { text-align: left; padding: .42em .8em; border-bottom: 1px solid var(--line); vertical-align: top; }
+.content th { background: var(--card2); font-weight: 700; }
+.content tr:last-child td { border-bottom: 0; }
+.content blockquote { margin: .5em 0; padding: .3em .9em; border-left: 6px solid var(--accent); background: var(--card); }
+pre.code { margin: .45em 0; padding: .7em .9em; border-radius: 14px; background: var(--code-bg); color: var(--code-fg); font-size: .8em; line-height: 1.42; overflow: hidden; white-space: pre; box-shadow: var(--shadow); }
+pre.code code { background: none !important; padding: 0 !important; font-size: 1em !important; color: inherit; }
+pre.code .ln { display: inline-block; min-width: 100%; border-radius: 4px; }
+.tk-kw { color: #ff7ab2; font-weight: 600; } .tk-ty { color: #6bdcff; } .tk-str { color: #ff8170; } .tk-com { color: #9fb0c4; }
+.tk-num { color: #d9c97c; } .tk-attr { color: #ffa14f; } .tk-fn { color: #78e0c6; } .tk-mac { color: #ffa14f; }
+.content.cols { display: grid; grid-template-columns: fit-content(64%) minmax(0, 1fr); column-gap: 1.1em; align-items: start; }
+.content.cols > .col { min-width: 0; }
+.content.cols > .col > :first-child { margin-top: 0; }
+
+.frame > footer { height: 64px; display: flex; align-items: center; gap: 20px; color: var(--muted); font-size: 17px; }
+.frame > footer .track { flex: 1; }
+.frame > footer .fid { font-weight: 650; min-width: 120px; text-align: right; font-variant-numeric: tabular-nums; }
+.ia { flex: 1; min-height: 0; display: flex; flex-direction: column; padding-top: 16px; font-size: 24px; }
+.ia[hidden], .content[hidden] { display: none; }
+.navbtn { position: absolute; bottom: 14px; width: 44px; height: 36px; border: 0; background: transparent; color: var(--muted); font-size: 24px; cursor: pointer; opacity: .35; }
+.navbtn:hover { opacity: 1; }
+
+/* ------------------------------------------------ agenda track (A1) */
+.track { display: flex; gap: 4px; height: 30px; position: relative; }
+.tseg { position: relative; height: 100%; border-radius: 6px; background: var(--card2); cursor: pointer; overflow: visible; }
+.tseg .tfill { position: absolute; inset: 0; border-radius: 6px; background: var(--accent); opacity: .22; transform-origin: left; }
+.tseg.done .tfill { opacity: .35; }
+.tseg.future .tfill { opacity: 0; }
+.tseg.cur { outline: 2px solid var(--accent); }
+.tseg .tlabel { position: absolute; inset: 0; display: flex; align-items: center; padding: 0 8px; font-size: 13px; font-weight: 650; white-space: nowrap; overflow: hidden; color: var(--muted); }
+.tseg.cur .tlabel { color: var(--fg); }
+.tneedle { position: absolute; top: -5px; bottom: -5px; width: 4px; margin-left: -2px; background: var(--accent); border-radius: 2px; pointer-events: none; }
+.track.big { height: 96px; gap: 8px; }
+.track.big .tseg { border-radius: 12px; }
+.track.big .tseg .tfill { border-radius: 12px; opacity: .14; }
+.track.big .tlabel { align-items: flex-start; flex-direction: column; justify-content: center; font-size: 17px; white-space: normal; line-height: 1.15; padding: 0 12px; color: var(--fg); }
+.track.big .tlabel small { color: var(--muted); font-weight: 500; font-size: 14px; }
+
+/* ------------------------------------------------ special slides */
+.frame.title-slide { justify-content: center; padding: 0 120px; }
+.title-slide .bgsvg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.title-slide .tcontent { position: relative; }
+.title-slide .tcontent .k { font-size: 26px; font-weight: 650; color: var(--accent); letter-spacing: .08em; text-transform: uppercase; }
+.title-slide .tcontent h1 { font-size: 112px; margin: 16px 0 10px; letter-spacing: -.02em; }
+.title-slide .tcontent .sub { font-size: 40px; color: var(--muted); max-width: 1100px; }
+.title-slide .tcontent .who { font-size: 28px; margin-top: 48px; font-weight: 600; }
+.cards6 { display: grid; grid-template-columns: repeat(3, 1fr); gap: .6em; }
+.cards6 .c { background: var(--card); border-radius: 16px; padding: .7em .85em; box-shadow: var(--shadow); border-top: 6px solid var(--err); font-size: .82em; }
+.cards6 .c b { display: block; font-size: 1.15em; margin-bottom: .25em; }
+.cards6 .c:nth-child(2) { border-top-color: var(--warn); }
+.cards6 .c:nth-child(n+3) { border-top-color: var(--idle); }
+
+/* ------------------------------------------------ demo card (A22) */
+.frame.demo { background: linear-gradient(135deg, var(--bg) 60%, var(--accent-soft)); }
+.demo-pill { display: inline-flex; align-items: center; gap: 10px; background: var(--accent); color: #fff; font-weight: 800; font-size: 26px; padding: 8px 20px; border-radius: 999px; letter-spacing: .02em; }
+.ps-banner { display: inline-block; margin-left: 14px; font-size: 20px; font-weight: 700; padding: 6px 14px; border-radius: 999px; background: var(--card); border: 2px dashed var(--accent); color: var(--accent); vertical-align: middle; }
+.demo-body { flex: 1; min-height: 0; padding-top: 22px; }
+.demo-left { min-height: 0; overflow: hidden; font-size: calc(26px * var(--k, 1)); }
+.demo-file { background: var(--card); border-radius: 16px; padding: .6em .9em; box-shadow: var(--shadow); line-height: 1.45; }
+.demo-file .lbl { font-size: .7em; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 700; display: block; margin-bottom: .15em; }
+.demo-file code.path { cursor: copy; background: var(--card2); }
+.demo-file code.path.copied { background: var(--main-soft); }
+.demo-hint { font-size: .66em; color: var(--muted); margin-top: .4em; }
+.kbd { display: inline-block; border: 1.5px solid var(--line); border-bottom-width: 3px; border-radius: 6px; padding: 0 .35em; font-weight: 650; background: var(--card); color: var(--fg); }
+.concepts { margin-top: .7em; width: 100%; border-collapse: collapse; background: var(--card); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); font-size: .8em; }
+.concepts th { text-align: left; font-size: .72em; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); background: var(--card2); padding: .5em .8em; }
+.concepts td { padding: .45em .8em; border-top: 1px solid var(--line); vertical-align: top; }
+.concepts td:first-child { width: 42%; }
+.slink { display: inline-block; font-weight: 750; font-size: .85em; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: .05em .55em; margin: .05em .15em .05em 0; cursor: pointer; border: 0; }
+.slink:hover { background: var(--accent); color: #fff; }
+
+/* ------------------------------------------------ interactive building blocks */
+.bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 14px; }
+.btn { border: 2px solid var(--line); background: var(--card); border-radius: 12px; padding: 8px 18px; font-size: 21px; font-weight: 650; cursor: pointer; box-shadow: var(--shadow); }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn:disabled { opacity: .35; cursor: default; }
+.seg { display: inline-flex; border: 2px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--card); }
+.seg button { border: 0; background: transparent; padding: 8px 16px; font-size: 20px; font-weight: 650; cursor: pointer; color: var(--muted); }
+.seg button.on { background: var(--fg); color: var(--bg); }
+.seglbl { font-size: 17px; color: var(--muted); font-weight: 650; text-transform: uppercase; letter-spacing: .05em; }
+.stat { font-size: 22px; color: var(--muted); font-weight: 600; }
+.stat b { font-size: 34px; color: var(--fg); font-variant-numeric: tabular-nums; }
+.caption { font-size: 22px; color: var(--muted); margin-top: 10px; min-height: 1.4em; }
+.panel { background: var(--card); border-radius: 16px; box-shadow: var(--shadow); padding: 14px 18px; }
+.chip { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-radius: 10px; padding: 4px 10px; font-weight: 700; font-size: 19px; color: #fff; background: var(--bgc); white-space: nowrap; }
+.chip.main { background: var(--main); } .chip.actor { background: var(--actor); } .chip.err { background: var(--err); } .chip.idle { background: var(--idle); }
+.chip.ghost { background: transparent; color: var(--muted); border: 2px dashed var(--line); }
+.lanes { display: flex; flex-direction: column; gap: 8px; }
+.lane { display: flex; align-items: center; gap: 12px; }
+.lane .lname { width: 170px; font-size: 19px; font-weight: 650; color: var(--muted); text-align: right; flex: none; }
+.lane .ltrack { flex: 1; height: 44px; border-radius: 10px; background: var(--card2); position: relative; display: flex; align-items: center; padding: 0 6px; gap: 6px; overflow: hidden; transition: background .2s; }
+.lane.main .ltrack { box-shadow: inset 5px 0 0 var(--main); }
+.lane.bg .ltrack { box-shadow: inset 5px 0 0 var(--bgc); }
+.lane.actorl .ltrack { box-shadow: inset 5px 0 0 var(--actor); }
+.lane.blocked .ltrack { background: var(--idle-soft); }
+.lane.red .ltrack { background: var(--err-soft); box-shadow: inset 0 0 0 3px var(--err); }
+.lane.new .lname { color: var(--err); }
+.pop { animation: pop .35s ease-out; }
+@keyframes pop { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.shake { animation: shake .45s; }
+@keyframes shake { 20%,60% { transform: translateX(-8px); } 40%,80% { transform: translateX(8px); } }
+.pulse { animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .35; } }
+.grow { flex: 1; min-height: 0; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.ok { color: var(--main); font-weight: 700; } .bad { color: var(--err); font-weight: 700; }
+.msg { font-family: "SF Mono", ui-monospace, Menlo, monospace; font-size: 19px; background: var(--err-soft); color: var(--err); border-left: 5px solid var(--err); padding: 8px 12px; border-radius: 8px; }
+.msg.okm { background: var(--main-soft); color: var(--main); border-left-color: var(--main); font-family: inherit; }
+
+/* timeline (S4, S16) */
+.tl { position: relative; }
+.tl .ltrack { height: 54px; padding: 0; }
+.tl-block { position: absolute; top: 5px; bottom: 5px; border-radius: 6px; color: #fff; font-weight: 800; font-size: 20px; display: flex; align-items: center; justify-content: center; transform-origin: left; transition: transform .3s linear, opacity .2s; border-right: 2px solid var(--card2); }
+.tl-block.hide { transform: scaleX(0); }
+.tl-axis { display: flex; margin-left: 182px; font-size: 16px; color: var(--muted); position: relative; height: 24px; }
+.tl-axis span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+.tl-cursor { position: absolute; top: 0; bottom: 24px; width: 3px; background: var(--fg); opacity: 0; pointer-events: none; }
+.pbar { position: absolute; left: 0; top: 6px; bottom: 6px; border-radius: 6px; background: var(--bgc); width: 0; }
+.pbar.mainc { background: var(--main); }
+
+/* destinations (S27) */
+.dest { height: 92px; border-radius: 16px; margin-bottom: 14px; display: flex; align-items: center; padding: 0 22px; font-weight: 750; font-size: 24px; border: 3px solid transparent; transition: all .25s; }
+.dest.main { background: var(--main-soft); color: var(--main); } .dest.bg { background: var(--bgc-soft); color: var(--bgc); } .dest.actor { background: var(--actor-soft); color: var(--actor); }
+.dot { position: absolute; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 6px rgba(240,81,56,.25); transition: left .7s cubic-bezier(.5,0,.3,1), top .7s cubic-bezier(.5,0,.3,1), background .3s; z-index: 5; pointer-events: none; }
+
+/* task group (S17) */
+.tg { display: grid; grid-template-columns: minmax(0, 1fr) 640px; gap: 22px; flex: 1; min-height: 0; }
+.gbox { border: 3px solid var(--fg); border-radius: 16px; padding: 10px 14px; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.gbox .queue { display: flex; flex-wrap: wrap; gap: 6px; min-height: 40px; }
+.lchip { position: absolute; top: 4px; bottom: 4px; left: 4px; border-radius: 8px; background: var(--bgc-soft); overflow: hidden; display: flex; align-items: center; padding-left: 10px; font-weight: 700; font-size: 19px; }
+.lchip i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--bgc); opacity: .55; }
+.lchip span { position: relative; }
+.results { display: flex; flex-wrap: wrap; gap: 6px; font-size: 22px; }
+.brace { font-family: "SF Mono", ui-monospace, Menlo, monospace; font-size: 22px; margin-top: 8px; }
+
+/* tree (S18) */
+.tree { position: relative; flex: 1; min-height: 0; }
+.tree svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.tree line { stroke: var(--line); stroke-width: 4; }
+.tnode { position: absolute; transform: translate(-50%, -50%); background: var(--card); border: 3px solid var(--main); border-radius: 14px; padding: 8px 12px 8px 16px; font-weight: 700; font-size: 21px; display: flex; align-items: center; gap: 8px; box-shadow: var(--shadow); white-space: nowrap; transition: border-color .2s, background .2s; }
+.tnode .st { font-size: 14px; font-weight: 600; color: var(--main); }
+.tnode.cancelled { border-color: var(--err); background: var(--err-soft); }
+.tnode.cancelled .st, .tnode.error .st { color: var(--err); }
+.tnode.error { border-color: var(--err); background: var(--err); color: #fff; }
+.tnode.error .st { color: #fff; }
+.tnode.loose { border-style: dashed; }
+.tnode button { border: 0; background: var(--card2); border-radius: 8px; width: 34px; height: 32px; cursor: pointer; font-size: 17px; }
+
+/* race (S21) */
+.race { display: grid; grid-template-columns: 1fr 300px 1fr; gap: 24px; align-items: start; }
+.thr { text-align: center; }
+.thr h3 { margin: 0 0 8px; font-size: 26px; }
+.thr .reg { font-size: 20px; color: var(--muted); margin: 6px 0 10px; font-family: "SF Mono", ui-monospace, Menlo, monospace; }
+.thr .btn { display: block; width: 100%; margin-bottom: 8px; }
+.cell { text-align: center; }
+.cell .v { font-size: 84px; font-weight: 800; background: var(--card); border-radius: 18px; box-shadow: var(--shadow); padding: 4px 0; font-variant-numeric: tabular-nums; border: 4px solid var(--line); transition: border-color .2s; }
+.cell .v.flash { border-color: var(--accent); }
+.rlog { width: 100%; border-collapse: collapse; font-size: 20px; margin-top: 12px; }
+.rlog td, .rlog th { padding: 4px 10px; border-bottom: 1px solid var(--line); text-align: left; }
+
+/* reentrancy (S24, S25) */
+.reent { display: grid; grid-template-columns: 210px minmax(0, 1fr) 210px; gap: 20px; flex: 1; min-height: 0; align-items: start; }
+.caller { background: var(--card); border-radius: 16px; padding: 14px; box-shadow: var(--shadow); border-top: 6px solid var(--tA); min-height: 170px; }
+.caller.c2 { border-top-color: var(--tB); }
+.caller h3 { margin: 0 0 6px; font-size: 23px; }
+.caller .cs { font-size: 20px; }
+.actorbox { border: 5px solid var(--actor); border-radius: 20px; padding: 12px 16px; background: var(--actor-soft); }
+.actorbox .bal { font-size: 46px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.actorbox .bal.neg { color: var(--err); }
+.actorbox pre.code { font-size: 15px; margin: 8px 0 0; }
+.actorbox .ln.at1 { background: rgba(245,158,11,.35); box-shadow: inset 6px 0 0 var(--tA); }
+.actorbox .ln.at2 { background: rgba(14,165,164,.35); box-shadow: inset 6px 0 0 var(--tB); }
+.narr { font-size: 25px; font-weight: 600; margin-top: 12px; min-height: 2.6em; }
+
+/* phone (S26) */
+.phone { width: 330px; height: 560px; border: 12px solid #222; border-radius: 44px; background: var(--card); overflow: hidden; display: flex; flex-direction: column; }
+.phone .ptop { padding: 14px; font-weight: 750; font-size: 20px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 10px; }
+.phone .plist { flex: 1; overflow-y: scroll; }
+.phone .plist div { padding: 12px 16px; border-bottom: 1px solid var(--line); font-size: 18px; }
+.spin { width: 24px; height: 24px; border: 4px solid var(--line); border-top-color: var(--accent); border-radius: 50%; display: inline-block; }
+
+/* cheat sheet (S38) */
+.cgrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: .45em; margin-top: .5em; }
+.cgrid .cc { background: var(--card); border-radius: 12px; padding: .45em .6em; box-shadow: var(--shadow); font-size: .62em; line-height: 1.3; }
+.cgrid .cc .kw { font-weight: 700; margin-bottom: .2em; }
+.csearch { font-size: .7em; padding: .3em .6em; border-radius: 10px; border: 2px solid var(--line); background: var(--card); color: var(--fg); width: 420px; }
+
+/* hover highlighter (S23) */
+.hl pre.code .ln { cursor: default; transition: background .15s; position: relative; }
+.hl pre.code .ln.inside:hover { background: rgba(21,153,74,.4); }
+.hl pre.code .ln.outside:hover { background: rgba(224,112,18,.45); }
+.hl pre.code .ln.noniso:hover { background: rgba(154,161,173,.4); }
+.hl-tip { margin-top: .4em; font-size: .7em; min-height: 2.2em; }
+
+/* overlays */
+.overlay { position: fixed; inset: 0; background: rgba(10,12,16,.92); z-index: 50; overflow: auto; padding: 30px; color: #eef1f6; font-family: inherit; }
+.overlay[hidden] { display: none; }
+.ov-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.ov-item { background: #1b2030; border: 2px solid transparent; border-radius: 12px; padding: 10px 12px; cursor: pointer; text-align: left; color: #eef1f6; font-size: 15px; }
+.ov-item b { display: block; color: #f05138; font-size: 13px; margin-bottom: 2px; }
+.ov-item.demo { background: #2a1a17; }
+.ov-item.cur { border-color: #f05138; }
+.help table { font-size: 18px; border-collapse: collapse; }
+.help td { padding: 6px 14px; border-bottom: 1px solid #333; }
+#black { position: fixed; inset: 0; background: #000; z-index: 40; }
+#black[hidden] { display: none; }
+#goto { position: fixed; right: 20px; bottom: 20px; background: #f05138; color: #fff; font-size: 26px; font-weight: 800; padding: 8px 16px; border-radius: 12px; z-index: 60; }
+#goto[hidden] { display: none; }
+
+/* ------------------------------------------------ presenter */
+body.presenter { background: #0d1015; color: #eef1f6; overflow: auto; }
+.pv { display: grid; grid-template-columns: 1.35fr 1fr; grid-template-rows: auto minmax(0, 1fr); gap: 14px; padding: 14px; height: 100vh; }
+.pv-prev { position: relative; background: #000; border-radius: 10px; overflow: hidden; }
+.pv-prev .inner { position: absolute; left: 0; top: 0; width: 1600px; height: 900px; transform-origin: 0 0; background: var(--bg); color: var(--fg); }
+.pv-label { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: #8a93a3; margin-bottom: 6px; font-weight: 700; }
+.pv-side { display: flex; flex-direction: column; gap: 12px; min-height: 0; }
+.pv-clock { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pv-box { background: #1a1f2a; border-radius: 10px; padding: 10px 14px; }
+.pv-box .big { font-size: 40px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.pv-box .small { font-size: 14px; color: #8a93a3; }
+.pv-box .bad { color: #ff6b6b; } .pv-box .ok { color: #4ade80; }
+.pv-notes { grid-column: 1 / -1; background: #151a23; border-radius: 10px; padding: 16px 22px; overflow: auto; font-size: 23px; line-height: 1.45; }
+.pv-notes h2 { font-size: 26px; margin: 0 0 8px; color: #f05138; }
+.pv-notes h4 { font-size: 15px; text-transform: uppercase; letter-spacing: .08em; color: #8a93a3; margin: 18px 0 6px; }
+.pv-notes code { background: #252c3a; padding: 0 .25em; border-radius: 4px; font-size: .88em; }
+.pv-notes pre.code { font-size: 19px; }
+.pv-notes blockquote { margin: 6px 0; padding: 4px 12px; border-left: 4px solid #f05138; background: #1d2330; }
+.pv-notes .ianote { font-size: 18px; color: #b3bccb; border-top: 1px solid #2a3140; padding-top: 6px; }
+.pv-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.pv-btns button { background: #252c3a; border: 0; color: #eef1f6; border-radius: 8px; padding: 8px 14px; font-size: 16px; cursor: pointer; }
+.pv-btns button.primary { background: #f05138; }
+.pv-title { font-size: 20px; font-weight: 700; }
+.pv-title small { color: #8a93a3; font-weight: 500; }
+@media print { body { background: #fff; } }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<button class="navbtn" id="navprev" style="left:10px" title="Previous (←)">‹</button>
+<button class="navbtn" id="navnext" style="right:10px" title="Next (→)">›</button>
+<div id="black" hidden></div>
+<div id="goto" hidden></div>
+<div class="overlay" id="overview" hidden></div>
+<div class="overlay help" id="help" hidden></div>
+<script id="deck-data" type="application/json">{"title": "Swift Concurrency: lecture script", "subtitle": "MENDELU · 60 minutes · 40 slides · 18 short demo breaks", "parts": [{"n": 0, "name": "Opening", "start": "0:00", "end": "0:02", "minutes": 2}, {"n": 1, "name": "The problem", "start": "0:02", "end": "0:05", "minutes": 3}, {"n": 2, "name": "Before Swift concurrency", "start": "0:05", "end": "0:07", "minutes": 2}, {"n": 3, "name": "async/await", "start": "0:07", "end": "0:17", "minutes": 10}, {"n": 4, "name": "Structured concurrency", "start": "0:17", "end": "0:27", "minutes": 10}, {"n": 5, "name": "Data races & actors", "start": "0:27", "end": "0:39", "minutes": 12}, {"n": 6, "name": "Sendable & Swift 6", "start": "0:39", "end": "0:46", "minutes": 7}, {"n": 7, "name": "Approachable Concurrency (Swift 6.2+)", "start": "0:46", "end": "0:53", "minutes": 7}, {"n": 8, "name": "Wrap-up", "start": "0:53", "end": "0:55", "minutes": 2}], "frames": [{"kind": "slide", "id": "S1", "num": 1, "title": "Title", "titleText": "Title", "minutes": 0.5, "timing": "0.5 min", "annotation": "", "optional": false, "onHint": "", "html": "<ul><li><strong>Swift Concurrency<\/strong><\/li><li><em>async/await, actors, and a compiler that catches your data races<\/em><\/li><li>Matej Molnár · STRV · 2026<\/li><\/ul>", "say": "<p>Introduce yourself. \"Over the next hour you'll see why concurrent code is hard, how Swift fixed it, and every concept running live in Xcode.\"<\/p>", "extra": "", "interactiveNote": "<p>Title animation: tangled thread lines that straighten into neat parallel lanes.<\/p>", "part": 0}, {"kind": "slide", "id": "S2", "num": 2, "title": "Why should you care?", "titleText": "Why should you care?", "minutes": 1.0, "timing": "1 min", "annotation": "", "optional": false, "onHint": "", "html": "<ul><li>Every app <em>waits<\/em>: network, disk, database, image decoding, ML.<\/li><li>Slow work on the main thread means a frozen UI.<\/li><\/ul>", "say": "<p>\"Your app has one main thread. It draws the UI and handles every tap. If you download a file or decode an image there, nothing else can happen; the app freezes. So we have to do work <em>concurrently<\/em>. And as soon as we do, a whole new category of bugs appears. That's today's topic.\"<\/p>", "extra": "", "interactiveNote": "", "part": 0}, {"kind": "slide", "id": "S3", "num": 3, "title": "Agenda", "titleText": "Agenda", "minutes": 0.5, "timing": "0.5 min", "annotation": "", "optional": false, "onHint": "", "html": "<ol><li>The problem<\/li><li>Before Swift concurrency (GCD)<\/li><li>async/await<\/li><li>Structured concurrency<\/li><li>Data races &amp; actors<\/li><li>Sendable &amp; Swift 6<\/li><li>Approachable Concurrency (Swift 6.2+)<\/li><li>Wrap-up<\/li><\/ol><p>… with a live demo after almost every slide.<\/p>", "say": "<p>\"One idea to keep in mind all lecture: Swift concurrency is <em>not<\/em> just nicer syntax instead of closures. The real goal is that the <strong>compiler proves your code has no data races<\/strong>, before it ever runs.\"<\/p>", "extra": "", "interactiveNote": "<p>Agenda as a horizontal progress track that stays visible as a thin bar on later slides, so everyone knows where we are. Demo breaks appear as small 💻 markers on the track.<\/p>", "part": 0}, {"kind": "slide", "id": "S4", "num": 4, "title": "Concurrency vs. parallelism", "titleText": "Concurrency vs. parallelism", "minutes": 1.0, "timing": "1 min", "annotation": "", "optional": false, "onHint": "", "html": "<table><thead><tr><th>Concurrency (<em>souběžnost<\/em>)<\/th><th>Parallelism (<em>paralelismus<\/em>)<\/th><\/tr><\/thead><tbody><tr><td><em>Dealing<\/em> with many tasks at once<\/td><td><em>Doing<\/em> many tasks at the same instant<\/td><\/tr><tr><td>Tasks overlap in time and can interleave on <strong>one<\/strong> core<\/td><td>Tasks run simultaneously on <strong>multiple<\/strong> cores<\/td><\/tr><tr><td>About <strong>structure<\/strong> and responsiveness<\/td><td>About <strong>speed<\/strong><\/td><\/tr><\/tbody><\/table><p>All parallel code is concurrent, but not all concurrent code is parallel.<\/p>", "say": "<p>\"Think of a coffee shop. <strong>One<\/strong> barista taking orders, steaming milk while the espresso runs, switching between three orders: that's concurrency. <strong>Three<\/strong> baristas each making one coffee: that's parallelism. An iPhone has 6 CPU cores and a Mac has 8 to 32, so we get both. In Swift we describe concurrency, and the system decides how much actually runs in parallel.\"<\/p>", "extra": "", "interactiveNote": "<p><strong>timeline toggle.<\/strong> Three tasks A, B, C as coloured blocks on a time axis. Toggle <strong>1 core<\/strong>: the blocks interleave as slices on one lane. Toggle <strong>2 cores<\/strong>: they spread across two lanes and the total time shrinks. A \"Play\" button animates the time cursor.<\/p>", "part": 1}, {"kind": "slide", "id": "S5", "num": 5, "title": "Threads &amp; the main thread", "titleText": "Threads & the main thread", "minutes": 0.5, "timing": "0.5 min", "annotation": "", "optional": false, "onHint": "", "html": "<ul><li>A <strong>thread<\/strong> is an independent flow of execution. The OS schedules threads onto CPU cores. There can be many threads running at the same time.<\/li><li>The <strong>main thread<\/strong> runs the UI and handles user events. There is only one main thread.<\/li><li>Rule 1: <strong>Never block the main thread.<\/strong><\/li><li>Rule 2: <strong>Only touch the UI from the main thread.<\/strong><\/li><\/ul>", "say": "<p>\"Everything we discuss today is about following these two rules without shooting ourselves in the foot. Moving work off the main thread is easy. Doing it <em>safely<\/em> is the hard part.\"<\/p>", "extra": "", "interactiveNote": "<p>Lane diagram with one green \"main\" lane and several blue \"background\" lanes. Clicking \"download image\" sends a block to a background lane; when it finishes, an arrow brings the result back to the main lane (\"update UI\").<\/p>", "part": 1}, {"kind": "slide", "id": "S6", "num": 6, "title": "What can go wrong", "titleText": "What can go wrong", "minutes": 1.5, "timing": "1.5 min", "annotation": "", "optional": false, "onHint": "5 cards", "html": "<table><thead><tr><th>Problem<\/th><th>What happens<\/th><\/tr><\/thead><tbody><tr><td><strong>Data race<\/strong><\/td><td>Two threads access the same memory at the same time, at least one writes, no synchronisation. The result is undefined: corrupted data or crashes.<\/td><\/tr><tr><td><strong>Race condition<\/strong><\/td><td>The result depends on the <em>timing/order<\/em> of events. It's a logic bug and can happen even without a data race.<\/td><\/tr><tr><td><strong>Deadlock<\/strong><\/td><td>Two threads wait for each other forever<\/td><\/tr><tr><td><strong>Thread explosion<\/strong><\/td><td>Too many threads (blocked threads make the system spawn more), so memory and context-switch overhead grow.<\/td><\/tr><tr><td><strong>Priority inversion<\/strong><\/td><td>Low-priority work holds a resource that high-priority work needs.<\/td><\/tr><\/tbody><\/table>", "say": "<p>\"The nasty part: these bugs depend on timing. Your tests pass 99 times and the app crashes on a user's phone on the 100th. They are very hard to reproduce. Remember the difference between a <strong>data race<\/strong> and a <strong>race condition<\/strong>. Swift 6 can eliminate the first one at compile time. The second one is still your job. Once we have the tools, we'll cause a real data race live, right before the actors part, and fix it on the spot.\"<\/p>", "extra": "", "interactiveNote": "", "part": 1}, {"kind": "slide", "id": "S7", "num": 7, "title": "GCD &amp; OperationQueue, in one slide", "titleText": "GCD & OperationQueue, in one slide", "minutes": 1.0, "timing": "1 min", "annotation": "", "optional": false, "onHint": "", "html": "<pre class=\"code swift\"><code>DispatchQueue.global(qos: .userInitiated).async {\n    let image = decode(data)            // background thread\n    DispatchQueue.main.async {\n        imageView.image = image         // back on main for the UI\n    }\n}<\/code><\/pre><ul><li><strong>GCD<\/strong> (Grand Central Dispatch, 2009) uses <strong>queues<\/strong>: <code>main<\/code>, <code>global(qos:)<\/code>, custom serial/concurrent; plus <code>DispatchGroup<\/code>, <code>DispatchSemaphore<\/code>, barriers.<\/li><li><strong>QoS<\/strong> (priority): <code>userInteractive<\/code> › <code>userInitiated<\/code> › <code>utility<\/code> › <code>background<\/code><\/li><li><strong>OperationQueue<\/strong> is object-oriented on top of GCD: dependencies between operations, cancellation, max concurrent operations.<\/li><\/ul>", "say": "<p>\"Before 2021 this was <em>the<\/em> way to do concurrency on Apple platforms, and you'll still see it in older codebases and some APIs. You don't need to master it today; just recognise it when you see it. We won't demo it. Everything it does, Swift concurrency does with better safety guarantees.\"<\/p>", "extra": "", "interactiveNote": "", "part": 2}, {"kind": "slide", "id": "S8", "num": 8, "title": "Why we needed something better", "titleText": "Why we needed something better", "minutes": 1.0, "timing": "1 min", "annotation": "", "optional": false, "onHint": "toggle between the two versions", "html": "<pre class=\"code swift\"><code>func loadProfile(completion: @escaping (Result&lt;Profile, Error&gt;) -&gt; Void) {\n    fetchUser { result in\n        switch result {\n        case .failure(let error): completion(.failure(error))\n        case .success(let user):\n            fetchAvatar(for: user) { result in\n                switch result {\n                case .failure(let error): completion(.failure(error))\n                case .success(let avatar):\n                    completion(.success(Profile(user: user, avatar: avatar)))\n                }\n            }\n        }\n    }\n}<\/code><\/pre><pre class=\"code swift\"><code>func loadProfile() async throws -&gt; Profile {\n    let user = try await fetchUser()\n    let avatar = try await fetchAvatar(for: user)\n    return Profile(user: user, avatar: avatar)\n}<\/code><\/pre><p>Problems with callbacks:<\/p><ul><li>\"Pyramid of doom\"; errors handled by hand at every level.<\/li><li>Nothing stops you from forgetting to call <code>completion<\/code>, or calling it twice.<\/li><li>Which thread does the completion run on? You have to read the docs.<\/li><li>Cancellation is hand-made.<\/li><li><strong>The compiler can't check thread safety at all.<\/strong><\/li><li>Blocked threads lead to thread explosion.<\/li><\/ul>", "say": "<p>\"Same logic, two versions. Which one would you rather review at 2 a.m.? But readability is the <em>small<\/em> win. The big win is the bullet in bold.\"<\/p>", "extra": "", "interactiveNote": "<p><strong>code morph.<\/strong> A toggle animates the callback version into the async version: matching lines slide into place and the boilerplate fades out. A counter shows \"lines: 15 → 4\".<\/p>", "part": 2}, {"kind": "slide", "id": "S9", "num": 9, "title": "async &amp; await", "titleText": "async & await", "minutes": 1.0, "timing": "1 min", "annotation": "", "optional": false, "onHint": "", "html": "<pre class=\"code swift\"><code>func fetchUser(id: Int) async throws -&gt; User   // can suspend, can throw\n\nlet user = try await fetchUser(id: 1)          // ⏸ possible suspension point<\/code><\/pre><ul><li><strong><code>async<\/code><\/strong>: this function can <strong>suspend<\/strong> (pause) and resume later.<\/li><li><strong><code>await<\/code><\/strong>: marks the places where suspension may happen.<\/li><li>An async function can only be called from an async context.<\/li><li>Works with functions, initialisers, computed properties (<code>get async<\/code>), closures and <code>for await<\/code> loops.<\/li><\/ul>", "say": "<p>\"Read <code>await<\/code> as: <em>this may take a while, and other work can happen meanwhile<\/em>. The code still reads top to bottom, and errors use the normal <code>try<\/code>/<code>catch<\/code>. This arrived in Swift 5.5 in 2021, and it's the foundation for everything else today.\"<\/p>", "extra": "", "interactiveNote": "", "part": 3}, {"kind": "slide", "id": "S10", "num": 10, "title": "Suspending is not blocking", "titleText": "Suspending is not blocking", "minutes": 1.5, "timing": "1.5 min", "annotation": "", "optional": false, "onHint": "", "html": "<pre class=\"code swift\"><code>func refresh() async {\n    // running on thread 3\n    let users = await api.fetchUsers()   // ⏸ thread 3 is free to do other work\n    // may continue on thread 5\n}<\/code><\/pre><ul><li>At <code>await<\/code>, the function <strong>gives up its thread<\/strong>. The thread runs other tasks meanwhile.<\/li><li>Swift runs tasks on a <strong>cooperative thread pool<\/strong> with about <strong>one thread per CPU core<\/strong>, so there is no thread explosion.<\/li><li>The contract: <strong>never block a thread in async code.<\/strong> No <code>sleep()<\/code>, no <code>semaphore.wait()<\/code>.<\/li><li><code>Thread.current<\/code> is unavailable in async code. <em>Think in tasks and actors, not threads.<\/em><\/li><\/ul>", "say": "<p>\"This is the key mechanic. GCD's answer to waiting was: block this thread, start another one. With 100 downloads, you get 100 threads. Swift's answer: the waiting function steps aside, its state is saved, and the thread picks up other work. When the result arrives, the function continues on <em>some<\/em> thread from the pool. That's why the thread number can change after <code>await<\/code>, and why Apple took <code>Thread.current<\/code> away from async code. Threads are an implementation detail now.\"<\/p>", "extra": "", "interactiveNote": "<p><strong>thread-pool visualiser<\/strong> (one of the most valuable visuals). Lanes for 4 cores, with tasks as coloured blocks.<\/p><ul><li>Mode <strong>\"Blocking (GCD)\"<\/strong>: when a task waits, its lane turns grey (blocked) and a new lane is spawned; a \"threads: 4 → 23\" counter climbs.<\/li><li>Mode <strong>\"Suspending (Swift)\"<\/strong>: a waiting task lifts off its lane into a \"suspended\" tray, another task takes the lane, and later it drops back onto <em>any<\/em> free lane.<\/li><\/ul>", "part": 3}, {"kind": "slide", "id": "S11", "num": 11, "title": "How the demos work", "titleText": "How the demos work", "minutes": 0.5, "timing": "0.5 min", "annotation": "", "optional": false, "onHint": "", "html": "<pre class=\"code swift\"><code>import Playgrounds\n\n#Playground(\"1a · Calling an async function\") {\n    // runs when you open this file with the canvas visible\n    // runs on the MAIN ACTOR, like UI code\n}<\/code><\/pre><ul><li>Every demo is <strong>its own file<\/strong> with one <code>#Playground { }<\/code> block, in a folder per topic. Open the file and the block runs in <strong>Xcode's canvas<\/strong> (Editor ▸ Canvas), like a SwiftUI preview. <code>print<\/code> output shows up there.<\/li><li>Code inside a <code>#Playground<\/code> runs on the <strong>main actor<\/strong>, i.e. on the main thread, like UI code.<\/li><li>The demo package is compiled in the <strong>Swift 6 language mode<\/strong>, so data races are compile errors.<\/li><li>Lines marked <code>❌ Uncomment<\/code> contain a compile error on purpose.<\/li><\/ul>", "say": "<p>\"From now on, almost every slide is followed by a short demo. All demos live in one small Swift package that you'll get afterwards. Each demo is one small Swift file with a <code>#Playground<\/code> block, which is new in Xcode 26: like a classic playground, but inside a normal Swift file. The folders follow today's topics. Remember one detail: code in a playground runs on the <em>main actor<\/em>, the same place your UI code runs.\"<\/p>", "extra": "", "interactiveNote": "<p>Mock of the Xcode window: the navigator with topic folders (<code>01_AsyncAwait<\/code>, <code>02_StructuredConcurrency<\/code>, …), the code in the middle and the canvas on the right. Click a demo file to show its code and output.<\/p>", "part": 3}, {"kind": "slide", "id": "S12", "num": 12, "title": "Demo toolkit: fake slow work &amp; helpers", "titleText": "Demo toolkit: fake slow work & helpers", "minutes": 1.0, "timing": "1 min", "annotation": "", "optional": false, "onHint": "", "html": "<pre class=\"code swift\"><code>try await Task.sleep(for: .seconds(1))   // ⏸ pauses THIS task for 1 s; the thread is free\nThread.sleep(forTimeInterval: 1)         // ⛔ blocks the thread; not allowed in async code<\/code><\/pre><pre class=\"code swift\"><code>printThread(\"load\")                 // prints 🟢 load → main thread\n                                    //     or 🔵 load → background thread #3\ntry await measure(\"download\") {     // runs the block and prints\n    try await downloadImage(1)      // ⏱️ download: 1.00 s\n}<\/code><\/pre><ul><li><strong><code>Task.sleep(for:)<\/code><\/strong> is our stand-in for a network request: it takes time, but uses no CPU and blocks no thread. It throws if the task is cancelled (Part 4).<\/li><li><strong><code>Thread.sleep<\/code><\/strong> is the blocking version. Swift 6 rejects it in async code: <em>\"class method 'sleep' is unavailable from asynchronous contexts\"<\/em>.<\/li><li><strong><code>printThread<\/code><\/strong> and <strong><code>measure<\/code><\/strong> are our two helpers, about 30 lines in <code>Sources/Helpers/Helpers.swift<\/code>. Nothing magic.<\/li><li><strong><code>downloadImage(_:)<\/code><\/strong> is our fake download, used in Demo 2 (<code>Sources/Demos/02_StructuredConcurrency/DownloadImage.swift<\/code>). It does <code>Task.sleep<\/code> for 1 s, then <code>printThread<\/code>, then returns <code>\"🖼️1\"<\/code>.<\/li><\/ul>", "say": "<p>\"Our demos don't talk to a real server. <code>Task.sleep<\/code> pretends to: it waits, but it's a <em>suspension<\/em>, exactly what we saw on S10, so the thread is free. Its old cousin <code>Thread.sleep<\/code> blocks the thread, and Swift doesn't even let you call it from async code. And two small helpers: <code>printThread<\/code> answers <em>where is this code running?<\/em>, which is the question of the slide after the demo, and <code>measure<\/code> tells us how long something took.\"<\/p>", "extra": "", "interactiveNote": "<p>A mini version of the S10 thread-pool visualiser with two buttons. <code>Task.sleep<\/code> lifts the task off the lane (other chips use the lane meanwhile). <code>Thread.sleep<\/code> turns the lane red for the whole second.<\/p>", "part": 3}, {"kind": "demo", "id": "D1a", "demoId": "1a", "title": "Calling an async function", "titleText": "Calling an async function", "minutes": 1.0, "files": "<code>Sources/Demos/01_AsyncAwait/1a_CallingAnAsyncFunction.swift<\/code>", "concepts": [{"code": "<code>#Playground(\"…\") { }<\/code>", "say": "One file, one demo; runs on the main actor", "explained": "S11", "refs": ["S11"]}, {"code": "<code>func fetchUser(id:) async throws<\/code>, <code>try await<\/code>", "say": "Can suspend; we wait without blocking", "explained": "S9", "refs": ["S9"]}, {"code": "<code>Task.sleep(for:)<\/code>", "say": "Fake network delay of 1 s; suspends, doesn't block", "explained": "S12", "refs": ["S12"]}, {"code": "<code>measure(\"…\") { }<\/code>", "say": "Prints how long the block took", "explained": "S12", "refs": ["S12"]}], "say": "<ol><li>Show <code>fetchUser(id:)<\/code>. It is just <code>Task.sleep<\/code> for 1 s plus a return value.<\/li><li><p>Run:<\/p><pre class=\"code plain\"><code>Hello, Student #1\nStudent #2 Student #3\n⏱️ two more users: 2.02 s<\/code><\/pre><\/li><li>🎤 \"Two awaits in a row run <strong>one after another<\/strong>: 1 s + 1 s = 2 s. <code>await<\/code> waits; it doesn't parallelise. Remember that for Part 4.\"<\/li><\/ol>", "part": 3}, {"kind": "slide", "id": "S13", "num": 13, "title": "<code>async<\/code> ≠ background", "titleText": "async ≠ background", "minutes": 1.5, "timing": "1.5 min", "annotation": "", "optional": false, "onHint": "", "html": "<table><thead><tr><th>You write<\/th><th>It runs on<\/th><\/tr><\/thead><tbody><tr><td><code>@MainActor func load() async<\/code><\/td><td>the <strong>main actor<\/strong> (main thread)<\/td><\/tr><tr><td>a method of an <code>actor<\/code><\/td><td><strong>that actor<\/strong><\/td><\/tr><tr><td>plain <code>func load() async<\/code><\/td><td><strong>the caller's actor<\/strong> (Swift 6.2+ with Approachable Concurrency, the default in new Xcode projects)<\/td><\/tr><tr><td><code>@concurrent func load() async<\/code><\/td><td>the <strong>background thread pool<\/strong><\/td><\/tr><\/tbody><\/table>", "say": "<p>\"The most common misconception: <em>async means it runs in the background<\/em>. No. <code>async<\/code> means <em>can suspend<\/em>. A plain async function runs wherever it was called from, so if you call it from the main actor, it runs on the main thread. If you want CPU-heavy work off the main thread, say so explicitly with <code>@concurrent<\/code>.<\/p><p>One honest note: this changed in Swift 6.2. Before, plain async functions always hopped to the background. Many blog posts from 2021–2024 describe the old behaviour. New Xcode projects turn the new behaviour on by default, and we'll come back to this in Part 7.\"<\/p>", "extra": "", "interactiveNote": "<p><strong>\"Where does it run?\" (simple version).<\/strong> Four function signatures. Click one and an animated dot travels to the 🟢 main lane or to a 🔵 background lane. (The full version with build-setting toggles is on S35.)<\/p>", "part": 3}, {"kind": "demo", "id": "D1b", "demoId": "1b", "title": "async ≠ background thread", "titleText": "async ≠ background thread", "minutes": 1.0, "files": "<code>Sources/Demos/01_AsyncAwait/1b_AsyncIsNotBackground.swift<\/code>", "concepts": [{"code": "<code>printThread(\"…\")<\/code>", "say": "Prints 🟢 main or 🔵 background", "explained": "S12", "refs": ["S12"]}, {"code": "Playground runs on the main actor", "say": "Our \"caller\" is the main actor", "explained": "S11", "refs": ["S11"]}, {"code": "plain <code>async func<\/code> vs <code>@concurrent func<\/code>", "say": "Caller's actor vs background pool", "explained": "S13", "refs": ["S13"]}], "say": "<ol><li>🎤 Before running, ask: \"Playground code runs on the main actor. Which of these lines print <em>main thread<\/em>?\"<\/li><li><p>Run:<\/p><pre class=\"code plain\"><code>🟢 playground → main thread\n🟢 loadProfile – before await → main thread\n🟢 loadProfile – after await → main thread\n🔵 resizePhotos – before await → background thread #2\n🔵 resizePhotos – after await → background thread #2<\/code><\/pre><p>(Thread numbers vary. After <code>await<\/code>, a <code>@concurrent<\/code> function can continue on a different thread.)<\/p><\/li><li>🎤 \"The plain async function stayed on main: it ran on the caller's actor. Only <code>@concurrent<\/code> moved to the background.\"<\/li><li><p><em>Optional:<\/em> uncomment both <code>try await loadProfile()<\/code> lines: the one inside <code>resizePhotos()<\/code> and the one at the end of the playground. Run again. The output gains four lines:<\/p><pre class=\"code plain\"><code>🔵 loadProfile – before await → background thread #2\n🔵 loadProfile – after await → background thread #2\n🟢 loadProfile – before await → main thread\n🟢 loadProfile – after await → main thread<\/code><\/pre><p>🎤 \"Same function, called from two places. From inside the <code>@concurrent<\/code> function it runs in the background; from the playground it's back on main. A plain async function always runs where its caller runs.\" Comment both lines out again.<\/p><\/li><\/ol>", "part": 3}, {"kind": "slide", "id": "S14", "num": 14, "title": "Entering the async world &amp; bridging old APIs", "titleText": "Entering the async world & bridging old APIs", "minutes": 1.0, "timing": "1 min", "annotation": "", "optional": false, "onHint": "", "html": "<pre class=\"code swift\"><code>// From synchronous code, e.g. a button action:\nButton(\"Load\") {\n    Task { await viewModel.load() }\n}\n\n// SwiftUI: starts when the view appears, CANCELLED when it disappears\n.task { await viewModel.load() }<\/code><\/pre><pre class=\"code swift\"><code>// Wrapping an old completion-handler API:\nfunc fetchUser(id: Int) async throws -&gt; User {\n    try await withCheckedThrowingContinuation { continuation in\n        fetchUser(id: id) { result in\n            continuation.resume(with: result)   // resume EXACTLY once\n        }\n    }\n}<\/code><\/pre>", "say": "<p>\"Two ways in: <code>Task { }<\/code> from synchronous code, or SwiftUI's <code>.task<\/code> modifier, which also cancels for you. Most Apple APIs already have async versions: <code>URLSession.shared.data(from:)<\/code>, Photos, StoreKit 2, HealthKit. For old callback code, use a continuation. Resume it <em>exactly once<\/em>: twice crashes, and never leaves the caller waiting forever.<\/p><p>The opposite direction has no safe answer. There's no safe way to call async code from sync code <em>and wait<\/em> for the result. If you need the result, make the caller async too.\"<\/p>", "extra": "", "interactiveNote": "", "part": 3}, {"kind": "slide", "id": "S15", "num": 15, "title": "AsyncSequence", "titleText": "AsyncSequence", "minutes": 1.0, "timing": "1 min", "annotation": "", "optional": false, "onHint": "", "html": "<pre class=\"code swift\"><code>// Consuming: values arrive over time\nfor await number in countdown(from: 3) {\n    print(number)\n}\n\n// Producing your own with AsyncStream\nfunc countdown(from start: Int) -&gt; AsyncStream&lt;Int&gt; {\n    AsyncStream { continuation in\n        Task {\n            for number in stride(from: start, through: 0, by: -1) {\n                continuation.yield(number)   // send a value to the for-await loop\n                try? await Task.sleep(for: .seconds(1))\n            }\n            continuation.finish()            // ends the loop\n        }\n    }\n}<\/code><\/pre><ul><li>Like <code>Sequence<\/code>, but values arrive <strong>over time<\/strong>.<\/li><li>Apple APIs: <code>NotificationCenter.default.notifications(named:)<\/code>, <code>URLSession.shared.bytes(from:)<\/code>.<\/li><\/ul>", "say": "<p>\"One more shape of async: a stream of values over time, consumed with <code>for await<\/code>. Think notifications, download progress, Bluetooth readings. <code>AsyncStream<\/code> lets you build your own: <code>yield<\/code> sends a value, and <code>finish<\/code> ends the loop. The <code>Task { }<\/code> inside is the one from the previous slide: it starts the producer.\"<\/p>", "extra": "", "interactiveNote": "<p>Values drop into a <code>for await<\/code> loop box one by one, with gaps between them.<\/p>", "part": 3}, {"kind": "demo", "id": "D1c", "demoId": "1c", "title": "AsyncSequence", "titleText": "AsyncSequence", "minutes": 0.5, "files": "<code>Sources/Demos/01_AsyncAwait/1c_AsyncSequence.swift<\/code>", "concepts": [{"code": "<code>AsyncStream<\/code>, <code>yield<\/code>, <code>finish<\/code>, <code>for await<\/code>", "say": "Values over time", "explained": "S15", "refs": ["S15"]}, {"code": "<code>Task { }<\/code> inside the stream", "say": "Starts the producer", "explained": "S14", "refs": ["S14"]}], "say": "<p>Run it (one line per second):<\/p><pre class=\"code plain\"><code>3…\n2…\n1…\n🚀 Liftoff!<\/code><\/pre>", "part": 3}, {"kind": "slide", "id": "S16", "num": 16, "title": "Doing things in parallel: <code>async let<\/code>", "titleText": "Doing things in parallel: async let", "minutes": 1.0, "timing": "1 min", "annotation": "", "optional": false, "onHint": "", "html": "<pre class=\"code swift\"><code>// Sequential: ~3 s\nlet first  = try await downloadImage(1)\nlet second = try await downloadImage(2)\nlet third  = try await downloadImage(3)<\/code><\/pre><pre class=\"code swift\"><code>// Parallel: ~1 s\nasync let first  = downloadImage(1)    // starts immediately\nasync let second = downloadImage(2)\nasync let third  = downloadImage(3)\nlet images = try await [first, second, third]   // wait for all<\/code><\/pre>", "say": "<p>\"This fixes what we saw in Demo 1a. <code>async let<\/code> starts a <strong>child task<\/strong> right away and gives you a placeholder. You <code>await<\/code> when you actually need the value. If you leave the scope without awaiting, Swift cancels and awaits the child for you, so nothing leaks. Use it when you know up front how many things run in parallel.\"<\/p>", "extra": "", "interactiveNote": "<p><strong>parallel timeline.<\/strong> Three bars on a time axis with a \"Run\" button and <strong>Sequential / async let<\/strong> toggle. Sequential: the bars run one after another, total 3.0 s. async let: the bars run stacked in parallel, total 1.0 s. The total-time counter animates.<\/p>", "part": 4}, {"kind": "demo", "id": "D2a-2b", "demoId": "2a + 2b", "title": "Sequential vs <code>async let<\/code>", "titleText": "Sequential vs async let", "minutes": 1.5, "files": "<code>Sources/Demos/02_StructuredConcurrency/2a_Sequential.swift<\/code>, then <code>2b_AsyncLet.swift<\/code>. <code>downloadImage(_:)<\/code> is in <code>DownloadImage.swift<\/code> in the same folder.", "concepts": [{"code": "<code>downloadImage(_:)<\/code>", "say": "<code>Task.sleep<\/code> for 1 s, prints its thread, returns <code>\"🖼️1\"<\/code>", "explained": "S12", "refs": ["S12"]}, {"code": "<code>measure(\"…\") { }<\/code>", "say": "Prints how long it took", "explained": "S12", "refs": ["S12"]}, {"code": "<code>async let<\/code>", "say": "Start a child task now, <code>await<\/code> later", "explained": "S16", "refs": ["S16"]}], "say": "<p>Run the two files one after another:<\/p><pre class=\"code plain\"><code>🟢 image 1 → main thread\n🟢 image 2 → main thread\n🟢 image 3 → main thread\n⏱️ 3 downloads, one after another: 3.16 s\n\n🔵 image 1 → background thread #2\n🔵 image 3 → background thread #3\n🔵 image 2 → background thread #4\n⏱️ 3 downloads with async let: 1.03 s<\/code><\/pre><p>🎤 \"3 seconds → 1 second. Look at the threads too.<\/p><ul><li>The sequential downloads ran on <strong>main<\/strong>: <code>downloadImage<\/code> is a plain async function, so it runs where its caller runs (Demo 1b).<\/li><li><code>async let<\/code> children are <strong>child tasks<\/strong>. They don't inherit the main actor, so they run in parallel on background threads.\"<\/li><\/ul>", "part": 4}, {"kind": "slide", "id": "S17", "num": 17, "title": "Task groups: a dynamic number of child tasks", "titleText": "Task groups: a dynamic number of child tasks", "minutes": 1.5, "timing": "1.5 min", "annotation": "", "optional": false, "onHint": "", "html": "<pre class=\"code swift\"><code>let images = try await withThrowingTaskGroup { group in\n    for id in 1...10 {\n        group.addTask { try await downloadImage(id) }   // start one child task\n    }\n\n    var images: [String] = []\n    for try await image in group {   // collect results in COMPLETION order\n        images.append(image)\n    }\n    return images\n}                                    // ← continues only when every child has finished<\/code><\/pre><pre class=\"code swift\"><code>// Children that return nothing:\nawait withTaskGroup(of: Void.self) { group in\n    for _ in 1...100_000 {\n        group.addTask { counter.increment() }\n    }\n}<\/code><\/pre><ul><li><code>withTaskGroup<\/code> / <code>withThrowingTaskGroup<\/code> opens a group. <code>addTask { }<\/code> starts a <strong>child task<\/strong> in it.<\/li><li>Children run <strong>concurrently<\/strong>; on a multi-core CPU that means truly in parallel.<\/li><li>The group returns only when <strong>all<\/strong> its children have finished.<\/li><li><code>for try await … in group<\/code> collects results as each child finishes, in <strong>completion order<\/strong>. Return <code>(id, value)<\/code> pairs if order matters.<\/li><li>If a child throws and the error leaves the group, the <strong>remaining children are cancelled<\/strong>.<\/li><li><code>of: Void.self<\/code> when the children return nothing; <code>withDiscardingTaskGroup<\/code> when you don't need results at all.<\/li><li>Use a group when the number of tasks is known only at runtime.<\/li><\/ul>", "say": "<p>\"Same idea as <code>async let<\/code>, for 'N things'. Think of a group as a box: you throw work into it with <code>addTask<\/code>, Swift runs everything in the box in parallel on all cores, and when the box is empty, your code continues on the next line. Note the completion order; it surprises people in code review. And remember the second, smaller form: 100,000 children that each add 1 to a counter. We'll use exactly that loop later to break something.\"<\/p>", "extra": "", "interactiveNote": "<p><strong>task-group animation.<\/strong><\/p><ul><li>A \"group\" box. Clicking <code>addTask<\/code> (or \"add 10\") drops child chips onto 4 core lanes, where they fill up in parallel.<\/li><li>As each chip finishes, its label flies into the result array, so the array visibly fills out of order.<\/li><li>The closing <code>}<\/code> pulses with \"waiting…\" until the last chip is done.<\/li><li>A slider sets the number of children; a toggle switches between 1, 4 and 8 cores.<\/li><\/ul>", "part": 4}, {"kind": "demo", "id": "D2c", "demoId": "2c", "title": "TaskGroup", "titleText": "TaskGroup", "minutes": 1.0, "files": "<code>Sources/Demos/02_StructuredConcurrency/2c_TaskGroup.swift<\/code>", "concepts": [{"code": "<code>withThrowingTaskGroup<\/code> + <code>group.addTask { }<\/code>", "say": "10 children, started in a loop", "explained": "S17", "refs": ["S17"]}, {"code": "<code>for try await image in group<\/code>", "say": "Results in completion order", "explained": "S17", "refs": ["S17"]}], "say": "<p>Run:<\/p><pre class=\"code plain\"><code>🔵 image 1 → background thread #5\n🔵 image 3 → background thread #3\n   … (one line per image, on different threads)\n[\"🖼️1\", \"🖼️3\", \"🖼️2\", \"🖼️6\", \"🖼️8\", \"🖼️4\", \"🖼️5\", \"🖼️10\", \"🖼️9\", \"🖼️7\"]\n⏱️ 10 downloads in a TaskGroup: 1.02 s<\/code><\/pre><p>🎤 \"10 downloads still take about 1 second. The array is in completion order, different on each run. Run it again to see.\"<\/p>", "part": 4}, {"kind": "slide", "id": "S18", "num": 18, "title": "Structured concurrency = a tree of tasks", "titleText": "Structured concurrency = a tree of tasks", "minutes": 1.0, "timing": "1 min", "annotation": "", "optional": false, "onHint": "", "html": "<pre class=\"code plain\"><code>              loadScreen()\n            ╱      │       ╲\n     profile   async let    TaskGroup\n                           ╱    │    ╲\n                        img1  img2  img3<\/code><\/pre><ol><li>A child task <strong>can't outlive<\/strong> its parent scope, so there are no leaks.<\/li><li><strong>Cancelling<\/strong> a parent cancels all its children.<\/li><li><strong>Errors<\/strong> propagate up to the parent.<\/li><li>Children inherit <strong>priority<\/strong> and task-local values.<\/li><\/ol>", "say": "<p>\"'Structured' as in structured programming. We stopped using <code>goto<\/code> because <code>if<\/code> and loops have a clear start and end. Same here: every child task has a parent and a clear lifetime. That's what makes cancellation and error handling <em>automatic<\/em>. <code>async let<\/code> and task groups create child tasks. <code>Task { }<\/code> does <strong>not<\/strong>, as we'll see in a minute.\"<\/p>", "extra": "", "interactiveNote": "<p><strong>task tree.<\/strong> A clickable tree of nodes.<\/p><ul><li>Click ✖ on a node: its whole subtree turns red (\"cancelled\").<\/li><li>Click ⚡ on a leaf (\"throws\"): the error bubbles up and its siblings get cancelled.<\/li><li>A separate, unconnected node labelled <code>Task { }<\/code> sits next to the tree and stays green when you cancel the root.<\/li><\/ul>", "part": 4}, {"kind": "slide", "id": "S19", "num": 19, "title": "Cancellation is cooperative", "titleText": "Cancellation is cooperative", "minutes": 1.0, "timing": "1 min", "annotation": "", "optional": false, "onHint": "", "html": "<pre class=\"code swift\"><code>func processPhotos() async throws {\n    for photo in photos {\n        try Task.checkCancellation()        // throws CancellationError\n        process(photo)\n        try await Task.sleep(for: .seconds(1))     // also checks cancellation\n    }\n}\n\nlet task = Task {\n    do { try await processPhotos() }\n    catch { print(\"🛑 Stopped: \\(error)\") }\n}\ntask.cancel()          // only sets a flag!\nawait task.value       // wait until the task has actually stopped<\/code><\/pre><ul><li><code>cancel()<\/code> <strong>does not stop<\/strong> a task. It only sets a flag.<\/li><li>Your code checks it with <code>Task.isCancelled<\/code> or <code>try Task.checkCancellation()<\/code>.<\/li><li><code>Task.isCancelled<\/code> is a <code>Bool<\/code>. <code>try Task.checkCancellation()<\/code> <strong>throws <code>CancellationError<\/code><\/strong> if the flag is set.<\/li><li>Apple APIs (<code>Task.sleep<\/code>, <code>URLSession<\/code>) check it for you and throw.<\/li><li><code>await task.value<\/code> waits for a task to finish. More about task handles on the next slide.<\/li><li><code>withTaskCancellationHandler<\/code> reacts immediately (e.g. to close a socket).<\/li><\/ul>", "say": "<p>\"Why not kill the task immediately? Because it could be halfway through writing a file or updating state. Cooperative cancellation means the task stops at a point where it's safe to stop. If you write a long loop, check cancellation inside it.\"<\/p>", "extra": "", "interactiveNote": "<p>A progress bar processes items 1…10, with a big \"Cancel\" button. With \"checks cancellation\" <strong>on<\/strong>, it stops at the next item boundary. With it <strong>off<\/strong>, it ignores the click and runs to the end.<\/p>", "part": 4}, {"kind": "demo", "id": "D2d", "demoId": "2d", "title": "Cancellation is cooperative", "titleText": "Cancellation is cooperative", "minutes": 0.5, "files": "<code>Sources/Demos/02_StructuredConcurrency/2d_Cancellation.swift<\/code>", "concepts": [{"code": "<code>try Task.checkCancellation()<\/code>, <code>CancellationError<\/code>", "say": "Cooperative cancellation", "explained": "S19", "refs": ["S19"]}, {"code": "<code>Task { }<\/code>, <code>task.cancel()<\/code>, <code>await task.value<\/code>", "say": "Start it, cancel it after 1 s, wait for it to stop", "explained": "S14, S19", "refs": ["S14", "S19"]}], "say": "<p>Run:<\/p><pre class=\"code plain\"><code>Processing photo 1\n🛑 Stopped: CancellationError()<\/code><\/pre><p>🎤 \"We cancel after 1 second, while the task sleeps after photo 1. <code>Task.sleep<\/code> notices the flag and throws <code>CancellationError<\/code>, so photo 2 never starts.\"<\/p>", "part": 4}, {"kind": "slide", "id": "S20", "num": 20, "title": "Unstructured tasks: <code>Task {}<\/code> and <code>Task.detached {}<\/code>", "titleText": "Unstructured tasks: Task {} and Task.detached {}", "minutes": 1.5, "timing": "1.5 min", "annotation": "", "optional": false, "onHint": "", "html": "<pre class=\"code swift\"><code>let task = Task { try await downloadImage(1) }   // starts right away, has NO parent\n\nlet image = try await task.value                 // wait for its result (or its error)…\ntask.cancel()                                    // …or stop it. Nobody else will.<\/code><\/pre><table><thead><tr><th><\/th><th><code>async let<\/code> / group child<\/th><th><code>Task { }<\/code><\/th><th><code>Task.detached { }<\/code><\/th><\/tr><\/thead><tbody><tr><td>Has a parent<\/td><td>✅<\/td><td>❌<\/td><td>❌<\/td><\/tr><tr><td>Cancelled with the parent<\/td><td>✅<\/td><td>❌ <strong>no!<\/strong><\/td><td>❌<\/td><\/tr><tr><td>Inherits the actor (e.g. MainActor)<\/td><td>❌ (runs concurrently)<\/td><td>✅<\/td><td>❌<\/td><\/tr><tr><td>Inherits priority &amp; task-locals<\/td><td>✅<\/td><td>✅<\/td><td>❌<\/td><\/tr><tr><td>Typical use<\/td><td>parallel work inside an async function<\/td><td>starting async work from sync code<\/td><td>almost never<\/td><\/tr><\/tbody><\/table>", "say": "<p>\"<code>Task { }<\/code> gives you back a <em>handle<\/em>. <code>task.value<\/code> waits for the result, and <code>task.cancel()<\/code> cancels it. Many places can await the same handle.<\/p><p><code>Task { }<\/code> is fire-and-forget: it inherits the actor and priority of where it was created, but it's <strong>not a child<\/strong>, so nobody cancels it for you. Keep the handle and call <code>cancel()<\/code> yourself, or in SwiftUI use <code>.task { }<\/code>.<\/p><p><code>Task.detached<\/code> inherits nothing. People reach for it to run something in the background, but a <code>@concurrent<\/code> function is usually the cleaner answer.<\/p><p>Careful: some articles, including an older version of this talk, claim that a <code>Task { }<\/code> inside a cancelled task is cancelled too. It isn't. Let me prove it.\"<\/p>", "extra": "", "interactiveNote": "<p>Reuse the task tree from S18: drag a <code>Task { }<\/code> node into the tree, and it snaps <em>beside<\/em> the tree, not into it.<\/p>", "part": 4}, {"kind": "demo", "id": "D2e", "demoId": "2e", "title": "<code>Task {}<\/code> is NOT a child task", "titleText": "Task {} is NOT a child task", "minutes": 1.0, "files": "<code>Sources/Demos/02_StructuredConcurrency/2e_TaskIsNotAChild.swift<\/code>", "concepts": [{"code": "<code>async let<\/code> vs <code>Task { }<\/code> inside a parent task", "say": "Child task vs unstructured task", "explained": "S16, S20", "refs": ["S16", "S20"]}, {"code": "<code>async let child: Void = work(…)<\/code>", "say": "<code>async let<\/code> for a function that returns nothing needs the <code>: Void<\/code> type", "explained": "here", "refs": []}, {"code": "<code>parent.cancel()<\/code>, <code>await parent.value<\/code>", "say": "Cancel the parent right away, then wait", "explained": "S19, S20", "refs": ["S19", "S20"]}], "say": "<ol><li>🎤 Before running, ask: \"We cancel the parent right away. Which of the two prints ✅?\"<\/li><li><p>Run:<\/p><pre class=\"code plain\"><code>🛑 async let (child task) was cancelled\n✅ Task {} (unstructured) finished<\/code><\/pre><p>(The ✅ line appears after 2 seconds.)<\/p><\/li><li>🎤 \"The <code>async let<\/code> child was cancelled with its parent. The <code>Task { }<\/code> didn't even notice.\"<\/li><\/ol>", "part": 4}, {"kind": "slide", "id": "S21", "num": 21, "title": "Anatomy of a data race", "titleText": "Anatomy of a data race", "minutes": 1.5, "timing": "1.5 min", "annotation": "", "optional": false, "onHint": "", "html": "<pre class=\"code swift\"><code>counter.value += 1\n// is really three steps:\n// 1. read   value  (41)\n// 2. add    1      (42)\n// 3. write  value  (42)<\/code><\/pre><table><thead><tr><th>Thread A<\/th><th>Thread B<\/th><th><code>value<\/code><\/th><\/tr><\/thead><tbody><tr><td>read 41<\/td><td><\/td><td>41<\/td><\/tr><tr><td><\/td><td>read 41<\/td><td>41<\/td><\/tr><tr><td>write 42<\/td><td><\/td><td>42<\/td><\/tr><tr><td><\/td><td>write 42<\/td><td><strong>42<\/strong> ← one increment lost<\/td><\/tr><\/tbody><\/table><p>One new word for the demo:<\/p><ul><li><strong><code>Sendable<\/code><\/strong>: \"safe to share between tasks running at the same time\". Swift 6 lets a value into concurrent child tasks only if it's <code>Sendable<\/code>.<\/li><li><strong><code>@unchecked Sendable<\/code><\/strong>: \"don't check this, trust me\". Full story in Part 6.<\/li><\/ul>", "say": "<p>\"<code>+= 1<\/code> looks like one operation, but the CPU does three. If two threads interleave like this, one increment disappears. No crash, no error. The number is just wrong.<\/p><p>We'll run the loop from S17: 100,000 child tasks, each adding 1 to the same counter. A plain class with a <code>var<\/code> isn't safe to share, and Swift 6 knows it: it won't even compile that loop. So to <em>see<\/em> the bug, we have to lie to the compiler with <code>@unchecked Sendable<\/code>.\"<\/p>", "extra": "", "interactiveNote": "<p><strong>data-race stepper.<\/strong> Two thread columns, each with <em>read → add → write<\/em> buttons, and a shared memory cell. Students click steps in any order. A \"Random interleaving\" button runs it 1,000 times and shows how often the final value is wrong.<\/p>", "part": 5}, {"kind": "demo", "id": "D3", "demoId": "3", "title": "Data race", "titleText": "Data race", "minutes": 1.5, "files": "<code>Sources/Demos/03_DataRace/3_DataRace.swift<\/code>", "concepts": [{"code": "<code>withTaskGroup(of: Void.self)<\/code> + <code>group.addTask { }<\/code>", "say": "100,000 child tasks at the same time; continue when all are done", "explained": "S17", "refs": ["S17"]}, {"code": "<code>@unchecked Sendable<\/code>", "say": "\"Trust me, it's thread-safe.\" The compiler stops checking.", "explained": "S21", "refs": ["S21"]}, {"code": "Playground runs on the main actor", "say": "Appears in the error message", "explained": "S11", "refs": ["S11"]}], "say": "<ol><li>Show <code>UnsafeCounter: @unchecked Sendable<\/code>, a plain class with <code>var value<\/code>.<\/li><li><p>Delete <code>: @unchecked Sendable<\/code>. The build fails:<\/p><blockquote><p><code>Passing closure as a 'sending' parameter risks causing data races between main actor-isolated code and concurrent execution of the closure<\/code><\/p><\/blockquote><p>🎤 Translate the message: \"<em>main actor-isolated code<\/em> is our playground. <em>Concurrent execution of the closure<\/em> is the child tasks. The closure captures a counter that isn't safe to share, so the compiler says no. We haven't run anything, and the compiler already found the data race.\" Undo (⌘Z) to put <code>@unchecked Sendable<\/code> back.<\/p><\/li><li><p>Run it, then run it again.<\/p><pre class=\"code plain\"><code>Expected 100000, got 97345<\/code><\/pre><p>(The number differs on every run. My runs gave about 97,000–98,600.)<\/p><\/li><li>🎤 \"No crash, no warning. Just silently wrong data. That's what makes data races so dangerous. So how do we fix it properly, in a way the compiler can check?\"<\/li><\/ol>", "part": 5}, {"kind": "slide", "id": "S22", "num": 22, "title": "Actors", "titleText": "Actors", "minutes": 1.5, "timing": "1.5 min", "annotation": "", "optional": false, "onHint": "", "html": "<pre class=\"code swift\"><code>actor Counter {\n    var value = 0\n    func increment() { value += 1 }\n}\n\nlet counter = Counter()\nawait counter.increment()\nprint(await counter.value)<\/code><\/pre><ul><li>A <strong>reference type<\/strong>, like a class, but it <strong>protects its mutable state<\/strong>.<\/li><li>Only <strong>one task at a time<\/strong> runs inside an actor. The others wait their turn (suspended, not blocked).<\/li><li>Calls from outside need <code>await<\/code>: you may have to wait your turn.<\/li><li>The <strong>compiler enforces<\/strong> the access rules, so data races on its state are impossible.<\/li><li>An actor is <strong>not a thread.<\/strong> It may run on different threads over time. <code>MainActor<\/code> is the exception: it always runs on the main thread.<\/li><\/ul>", "say": "<p>\"Here's the fix for the counter we just broke. Before Swift concurrency, you'd fix it by hand: wrap every access in a lock or a private serial queue, and hope nobody forgets one. An actor is that idea built into the language. Two differences: callers that have to wait <em>suspend<\/em> instead of blocking a thread, and <strong>the compiler checks it<\/strong>, so you can't forget anything. One word changes: <code>class<\/code> becomes <code>actor<\/code>.\"<\/p>", "extra": "", "interactiveNote": "<p><strong>actor mailbox.<\/strong> An actor drawn as a room with one door and a queue of message envelopes (<code>increment()<\/code>). Several tasks drop envelopes at the same time, and the actor processes one at a time. Side by side: a plain class \"room\" with no door, where envelopes collide and the counter ends wrong. A \"Send 100\" button runs both.<\/p>", "part": 5}, {"kind": "demo", "id": "D4a", "demoId": "4a", "title": "An actor fixes the data race", "titleText": "An actor fixes the data race", "minutes": 0.5, "files": "<code>Sources/Demos/04_Actors/4a_ActorFixesTheDataRace.swift<\/code>", "concepts": [{"code": "<code>actor Counter<\/code>", "say": "Only one task at a time inside", "explained": "S22", "refs": ["S22"]}, {"code": "<code>await counter.increment()<\/code>", "say": "Calls from outside the actor are awaited", "explained": "S22", "refs": ["S22"]}, {"code": "Task group loop", "say": "The same 100,000 children as Demo 3", "explained": "S17", "refs": ["S17"]}], "say": "<ol><li>Put it next to Demo 3: the same loop, now with <code>actor Counter<\/code> and <code>await counter.increment()<\/code>. No <code>@unchecked<\/code> anywhere.<\/li><li>Run: <code>Expected 100000, got 100000<\/code><\/li><li>🎤 \"Correct result, and this time the compiler guarantees it.\"<\/li><\/ol>", "part": 5}, {"kind": "slide", "id": "S23", "num": 23, "title": "Actor isolation rules", "titleText": "Actor isolation rules", "minutes": 1.0, "timing": "1 min", "annotation": "", "optional": false, "onHint": "", "html": "<pre class=\"code swift\"><code>actor BankAccount {\n    let iban: String            // immutable → readable without await (same module)\n    var balance: Decimal = 0    // mutable  → isolated\n\n    func deposit(_ amount: Decimal) {\n        balance += amount       // inside: plain synchronous code\n    }\n\n    nonisolated var description: String { \"Account \\(iban)\" }  // opt out: no await,\n}                                                              // but can't touch balance\n\nawait account.deposit(100)      // outside: await (we may have to wait our turn)\naccount.balance = 0             // ❌ can't mutate actor state from outside, not even with await<\/code><\/pre><ul><li><strong>Inside<\/strong> the actor: synchronous access, no <code>await<\/code>.<\/li><li><strong>Outside<\/strong>: every call needs <code>await<\/code>. Expose <em>methods<\/em>, not settable properties.<\/li><li><strong><code>nonisolated<\/code><\/strong> marks members that don't touch mutable state. It is also how an actor satisfies synchronous protocol requirements such as <code>CustomStringConvertible<\/code> or <code>Hashable<\/code>.<\/li><li>Actors are automatically <code>Sendable<\/code>. They don't support subclassing.<\/li><\/ul>", "say": "<p>\"The <code>await<\/code> outside is honest: the actor might be busy, so you may have to wait your turn. And notice you can't assign to <code>balance<\/code> from outside at all. You go through <code>deposit<\/code>, so the actor stays in control of its invariants. Let's try every rule on a real account.\"<\/p>", "extra": "", "interactiveNote": "<p>Hover over each line to colour it 🟢 <em>inside the actor<\/em> or 🟠 <em>outside<\/em>. The ❌ line shakes and shows the compiler error as a tooltip.<\/p>", "part": 5}, {"kind": "demo", "id": "D4b", "demoId": "4b", "title": "Actor isolation rules", "titleText": "Actor isolation rules", "minutes": 1.0, "files": "<code>Sources/Demos/04_Actors/4b_ActorIsolationRules.swift<\/code>", "concepts": [{"code": "<code>actor BankAccount<\/code> with <code>let iban<\/code> and <code>var balance<\/code>", "say": "Immutable state is readable from outside; mutable state is isolated", "explained": "S23", "refs": ["S23"]}, {"code": "<code>nonisolated var description<\/code>", "say": "No <code>await<\/code> needed, but it can't touch <code>balance<\/code>", "explained": "S23", "refs": ["S23"]}, {"code": "<code>await account.deposit(100)<\/code>, <code>await account.balance<\/code>", "say": "Calls and reads from outside the actor are awaited", "explained": "S22, S23", "refs": ["S22", "S23"]}], "say": "<ol><li>Show <code>BankAccount<\/code>: the actor from the slide, plus an <code>init<\/code>.<\/li><li><p>Run:<\/p><pre class=\"code plain\"><code>CZ12 3456 7890\nAccount CZ12 3456 7890\nBalance: 100<\/code><\/pre><p>🎤 \"<code>iban<\/code> and <code>description<\/code> need no <code>await<\/code>: one is immutable, the other is <code>nonisolated<\/code>. Everything that touches <code>balance<\/code> goes through <code>await<\/code>.\"<\/p><\/li><li><p>Uncomment the <code>❌<\/code> lines one at a time:<\/p><ul><li><p><code>account.deposit(100)<\/code> without <code>await<\/code>:<\/p><blockquote><p><code>Actor-isolated instance method 'deposit' cannot be called from outside of the actor<\/code><\/p><\/blockquote><\/li><li><p><code>await account.balance = 0<\/code>, not even with <code>await<\/code>:<\/p><blockquote><p><code>Actor-isolated property 'balance' can not be mutated from the main actor<\/code><\/p><\/blockquote><\/li><li><p><code>nonisolated func printBalance()<\/code> inside the actor:<\/p><blockquote><p><code>Actor-isolated property 'balance' can not be referenced from a nonisolated context<\/code><\/p><\/blockquote><\/li><\/ul><\/li><li>🎤 \"Every rule from the slide, enforced at compile time.\" Comment the lines out again.<\/li><\/ol>", "part": 5}, {"kind": "slide", "id": "S24", "num": 24, "title": "Actor reentrancy", "titleText": "Actor reentrancy", "minutes": 1.5, "timing": "1.5 min", "annotation": "", "optional": false, "onHint": "", "html": "<pre class=\"code swift\"><code>extension BankAccount {                                     // the actor from S23\n    func withdraw(_ amount: Decimal) async -&gt; Bool {\n        guard balance &gt;= amount else { return false }       // ✅ enough money… right now\n        guard await authorize(amount) else { return false } // ⏸ other callers can enter HERE\n        balance -= amount                                   // 💥 the check may no longer be true\n        return true\n    }\n}\n\n// balance 100, two withdrawals of 80 at the same time\nasync let first = account.withdraw(80)\nasync let second = account.withdraw(80)<\/code><\/pre><ul><li><code>authorize(_:)<\/code> pretends to ask the bank: <code>Task.sleep<\/code> for 1 s, then <code>true<\/code>.<\/li><li>At every <code>await<\/code>, the actor <strong>is free to run other calls<\/strong>. After the <code>await<\/code>, state may have changed: <strong>re-check your assumptions.<\/strong><\/li><li>This is not a data race (no simultaneous memory access). It's a <strong>race condition<\/strong>, a logic bug, and <strong>Swift 6 can't catch it<\/strong>.<\/li><li>Reentrancy can also just waste work: three callers asking an image cache for the same image would start three downloads.<\/li><\/ul>", "say": "<p>\"Remember the second card on S6, race condition? Here it is. The account has 100. Two withdrawals of 80 arrive at the same time. The first one checks the balance: 100, fine. Then it asks the bank and suspends, and at that <code>await<\/code> the actor is free again. The second withdrawal checks the balance: still 100, because nothing has been taken out yet! Both get approved, both pay out, and the balance ends at −60. The actor did its job perfectly, so there's no data race. The bug is in our logic.<\/p><p>Why are actors built like this? If an actor stayed locked during <code>await<\/code>, two actors waiting for each other would deadlock, and a slow network call would freeze everyone else. Reentrancy is the price of never deadlocking.\"<\/p>", "extra": "", "interactiveNote": "<p><strong>reentrancy stepper.<\/strong> Two caller lanes (\"withdraw 80\") and the actor in the middle showing <code>balance: 100<\/code>. \"Step\" moves execution forward: caller 1 checks the balance ✅ → hits <code>await<\/code> and leaves the actor → caller 2 enters and checks ✅ → caller 1 pays out (20) → caller 2 pays out (−60, shown in red).<\/p>", "part": 5}, {"kind": "demo", "id": "D4c", "demoId": "4c", "title": "Actor reentrancy", "titleText": "Actor reentrancy", "minutes": 0.5, "files": "<code>Sources/Demos/04_Actors/4c_ActorReentrancy.swift<\/code>. <code>authorize(_:)<\/code> is in <code>Authorize.swift<\/code> in the same folder.", "concepts": [{"code": "<code>extension BankAccount { func withdraw … }<\/code>", "say": "Adds a method to the actor from Demo 4b; it has an <code>await<\/code> inside", "explained": "S23, S24", "refs": ["S23", "S24"]}, {"code": "<code>authorize(_:)<\/code>", "say": "Fake bank approval: <code>Task.sleep<\/code> for 1 s, then <code>true<\/code>", "explained": "S24", "refs": ["S24"]}, {"code": "<code>async let first/second = account.withdraw(80)<\/code>", "say": "Two withdrawals at the same time", "explained": "S16", "refs": ["S16"]}, {"code": "<code>await [first, second]<\/code>", "say": "Wait for both", "explained": "S16", "refs": ["S16"]}], "say": "<p>Run:<\/p><pre class=\"code plain\"><code>✅ 80 available – asking the bank…\n✅ 80 available – asking the bank…\n💸 paid out 80 – balance 20\n💸 paid out 80 – balance -60\nApproved: [true, true], balance: -60<\/code><\/pre><p>🎤 \"Look at the first two lines: both withdrawals passed the check before either paid out. The bank just paid out 160 from an account holding 100.\"<\/p>", "part": 5}, {"kind": "slide", "id": "S25", "num": 25, "title": "Fixing reentrancy", "titleText": "Fixing reentrancy", "minutes": 1.0, "timing": "1 min", "annotation": "", "optional": false, "onHint": "", "html": "<pre class=\"code swift\"><code>extension BankAccount {\n    func withdrawSafely(_ amount: Decimal) async -&gt; Bool {\n        guard balance &gt;= amount else { return false }\n        balance -= amount                     // reserve the money BEFORE the await\n        guard await authorize(amount) else {\n            balance += amount                 // the bank said no → give it back\n            return false\n        }\n        return true\n    }\n}<\/code><\/pre><ul><li>The rule: <strong>update the actor's state before you suspend.<\/strong> Code between two <code>await<\/code>s runs without interruption.<\/li><li>If the operation fails after the <code>await<\/code>, undo the change.<\/li><li>Alternative: check <code>balance<\/code> again after the <code>await<\/code>. That works too, but by then the bank has already approved a payment we won't make.<\/li><\/ul>", "say": "<p>\"The fix: take the money out <em>before<\/em> asking the bank. When the second withdrawal arrives, the balance is already 20, so it's declined straight away. If the bank says no, we put the money back.\"<\/p>", "extra": "", "interactiveNote": "<p>The S24 stepper with a <strong>\"Fixed (reserve first)\"<\/strong> toggle. Step again: caller 1 reserves the money (balance 20) before its <code>await<\/code>, caller 2 enters and is declined ⛔️, and the balance never drops below 20.<\/p>", "part": 5}, {"kind": "demo", "id": "D4d", "demoId": "4d", "title": "Reentrancy fixed", "titleText": "Reentrancy fixed", "minutes": 0.5, "files": "<code>Sources/Demos/04_Actors/4d_ReentrancyFixed.swift<\/code>", "concepts": [{"code": "<code>withdrawSafely(_:)<\/code>: reserve, <code>await<\/code>, roll back on failure", "say": "Change the state before suspending", "explained": "S25", "refs": ["S25"]}, {"code": "The same two <code>async let<\/code> withdrawals", "say": "Same scenario as Demo 4c", "explained": "S16", "refs": ["S16"]}], "say": "<p>Run:<\/p><pre class=\"code plain\"><code>🔒 reserved 80 – asking the bank…\n⛔️ 80 declined – balance is only 20\n💸 paid out 80 – balance 20\nApproved: [true, false], balance: 20<\/code><\/pre><p>🎤 \"Same two withdrawals. The second one sees that the money is already reserved and is declined. The balance can't go negative any more.\"<\/p>", "part": 5}, {"kind": "slide", "id": "S26", "num": 26, "title": "MainActor &amp; global actors", "titleText": "MainActor & global actors", "minutes": 1.0, "timing": "1 min", "annotation": "", "optional": false, "onHint": "", "html": "<pre class=\"code swift\"><code>@MainActor @Observable\nfinal class GalleryViewModel {\n    var images: [String] = []\n\n    func load() async {\n        let image = try? await api.downloadImage()  // ⏸ main thread is free while waiting\n        images.append(image ?? \"placeholder\")       // back on the main actor: safe UI state\n    }\n}<\/code><\/pre><ul><li><strong><code>MainActor<\/code><\/strong> is a <em>global actor<\/em> that always runs on the main thread.<\/li><li>SwiftUI views, <code>UIViewController<\/code> and <code>UIView<\/code> are all <code>@MainActor<\/code>.<\/li><li>Mark view models <code>@MainActor<\/code> so their state is only touched where the UI reads it.<\/li><li><code>await MainActor.run { … }<\/code> exists, but marking functions <code>@MainActor<\/code> is usually cleaner.<\/li><li>Custom global actors exist (<code>@globalActor actor DatabaseActor { static let shared = … }<\/code>) but are rare.<\/li><\/ul>", "say": "<p>\"For app developers this is the actor you'll use most. The <code>await<\/code> inside <code>load()<\/code> does <em>not<\/em> freeze the UI: while we wait, the main thread is free to draw and scroll. When the download finishes, we continue on the main actor, so updating <code>images<\/code> is safe.\"<\/p>", "extra": "", "interactiveNote": "<p>A phone mockup with a spinner and a scrollable list. Press \"load\": the list stays scrollable during the 2-second wait, then the image pops in. A toggle <strong>\"block main thread instead\"<\/strong> makes the list freeze during the wait.<\/p>", "part": 5}, {"kind": "demo", "id": "D4e", "demoId": "4e", "title": "<code>@MainActor<\/code> view model", "titleText": "@MainActor view model", "minutes": 0.5, "files": "<code>Sources/Demos/04_Actors/4e_MainActorViewModel.swift<\/code>", "concepts": [{"code": "<code>@MainActor final class GalleryViewModel<\/code>", "say": "Everything in it runs on the main actor", "explained": "S26", "refs": ["S26"]}, {"code": "<code>downloadGalleryImage(_:)<\/code>", "say": "The same fake download as <code>downloadImage<\/code>, defined in this file", "explained": "S12", "refs": ["S12"]}, {"code": "<code>printThread(\"…\")<\/code>", "say": "Where are we?", "explained": "S12", "refs": ["S12"]}, {"code": "<code>try?<\/code>", "say": "Turns a thrown error into <code>nil<\/code>", "explained": "", "refs": []}], "say": "<p>Run:<\/p><pre class=\"code plain\"><code>🟢 load() – start → main thread\n🟢 image 7 → main thread\n🟢 load() – after await → main thread\n[\"🖼️7\"]<\/code><\/pre><p>🎤 \"Waited a full second without blocking main, and continued on main, ready to update the UI.\"<\/p>", "part": 5}, {"kind": "slide", "id": "S27", "num": 27, "title": "Actor hopping", "titleText": "Actor hopping", "minutes": 1.0, "timing": "", "annotation": "optional: +1 min", "optional": true, "onHint": "", "html": "<pre class=\"code swift\"><code>@MainActor\nfinal class UsersViewModel {\n    var users: [User] = []\n\n    func loadOneByOne() async {\n        // 🐢 100 hops: main → database → main → database → …\n        for id in 1...50 {\n            let user = await database.loadUser(id: id)\n            users.append(user)\n        }\n    }\n\n    func loadInOneBatch() async {\n        // 🐇 2 hops\n        users = await database.loadUsers(ids: 1...50)\n    }\n}<\/code><\/pre>", "say": "<p>\"Each call into another actor is a potential <em>hop<\/em>, and between the main actor and anything else it's a real thread switch. Usually it doesn't matter. In hot loops, batch the work. Instruments' Swift Concurrency template shows hops if you're curious.\"<\/p>", "extra": "", "interactiveNote": "<p>A dot ping-pongs between a 🟢 MainActor box and a 🟣 Database box, with a hop counter: 100 vs 2.<\/p>", "part": 5}, {"kind": "slide", "id": "S28", "num": 28, "title": "Isolation domains", "titleText": "Isolation domains", "minutes": 1.0, "timing": "1 min", "annotation": "", "optional": false, "onHint": "", "html": "<pre class=\"code plain\"><code> ┌──────────────┐     ┌──────────────┐     ┌──────────────┐\n │ 🟢 MainActor │ ←→  │ 🟣 actor A   │ ←→  │ 🔵 concurrent │\n │  UI, VMs     │     │  its state   │     │  code / tasks │\n └──────────────┘     └──────────────┘     └──────────────┘\n          values crossing a boundary must be safe to share<\/code><\/pre><ul><li>Every piece of code runs in an <strong>isolation domain<\/strong>: the main actor, a specific actor instance, or nonisolated/concurrent code.<\/li><li>Inside a domain, only one thing at a time touches its state.<\/li><li>Arguments, return values and captured variables <strong>cross boundaries<\/strong>. Those values must be safe to share.<\/li><\/ul>", "say": "<p>\"Here's the mental model the Swift 6 compiler uses. Think of islands. Each island is safe on its own. The danger is at the bridges: if I hand you a mutable object and we both keep using it from different islands, that's a data race. Demo 3's error was exactly this: the counter tried to cross from the main actor into concurrent child tasks.\"<\/p>", "extra": "", "interactiveNote": "<p><strong>isolation-domain map.<\/strong> Three islands with bridges. Draggable tokens: <code>struct Article<\/code>, <code>final class Draft<\/code>, <code>actor Newsroom<\/code>, <code>@MainActor class ViewModel<\/code>, a closure. Drop a token on a bridge and it shows ✅ \"copied / safe\" or ❌ with the real compiler message.<\/p>", "part": 6}, {"kind": "slide", "id": "S29", "num": 29, "title": "Sendable", "titleText": "Sendable", "minutes": 1.5, "timing": "1.5 min", "annotation": "", "optional": false, "onHint": "", "html": "<pre class=\"code swift\"><code>struct Article: Sendable { var title: String }      // ✅ value type, Sendable members\nenum Status: Sendable { case draft, published }     // ✅\nactor Newsroom { }                                  // ✅ actors always are\n@MainActor final class ViewModel { }                // ✅ protected by the main actor\nfinal class Config: Sendable { let url: URL }       // ✅ final + only immutable lets\nfinal class Draft { var title = \"\" }                // ❌ shared mutable reference<\/code><\/pre><ul><li><code>Sendable<\/code> is a protocol with no requirements, a <strong>compile-time marker<\/strong>: \"safe to share across domains\".<\/li><li>Structs and enums with Sendable members are Sendable. For non-public types Swift infers it.<\/li><li><code>@Sendable<\/code> closures may only capture Sendable values.<\/li><\/ul>", "say": "<p>\"You met <code>Sendable<\/code> in Demo 3; here's the full picture. Value types are the easy answer. When you pass a struct, the other side gets its own <em>copy<\/em>, so nothing is shared. Classes are the problem: a reference means shared state. So a class is only Sendable if it's immutable, protected by an actor, or synchronises itself.\"<\/p>", "extra": "", "interactiveNote": "", "part": 6}, {"kind": "demo", "id": "D5a", "demoId": "5a", "title": "What may cross an isolation boundary?", "titleText": "What may cross an isolation boundary?", "minutes": 1.0, "files": "<code>Sources/Demos/05_Sendable/5a_CrossingIsolationBoundaries.swift<\/code>", "concepts": [{"code": "<code>struct Article: Sendable<\/code> sent to <code>actor Newsroom<\/code>", "say": "The actor gets its own copy", "explained": "S28, S29", "refs": ["S28", "S29"]}, {"code": "<code>final class AppConfig: Sendable<\/code> with only <code>let<\/code>s", "say": "An immutable class can be Sendable", "explained": "S29", "refs": ["S29"]}, {"code": "<code>final class MutableConfig: Sendable<\/code> with a <code>var<\/code>", "say": "A mutable class can't", "explained": "S29", "refs": ["S29"]}], "say": "<ol><li>Show <code>Article<\/code> (struct) being published to <code>actor Newsroom<\/code>, then changed locally. Everything compiles. Run: <code>Published<\/code>.<\/li><li><p>Uncomment <code>MutableConfig<\/code>:<\/p><blockquote><p><code>Stored property 'baseURL' of 'Sendable'-conforming class 'MutableConfig' is mutable<\/code><\/p><\/blockquote><p>Comment it out again. Leave the file open for the next slide.<\/p><\/li><\/ol>", "part": 6}, {"kind": "slide", "id": "S30", "num": 30, "title": "<code>sending<\/code>: handing over a non-Sendable value", "titleText": "sending: handing over a non-Sendable value", "minutes": 0.5, "timing": "0.5 min", "annotation": "", "optional": false, "onHint": "", "html": "<pre class=\"code swift\"><code>let article = Article()                 // non-Sendable class\nawait newsroom.publish(article)       // ✅ allowed: draft is handed over…\narticle.title = \"Edited\"              // ❌ …so we can't touch it anymore\n// error: Sending 'draft' risks causing data races<\/code><\/pre>", "say": "<p>\"Swift 6 is smarter than 'classes are never allowed'. If you create an object, hand it over and never touch it again, nothing is shared, so it's safe. The compiler tracks this (<em>region-based isolation<\/em>). Only using it <em>after<\/em> sending is an error.\"<\/p>", "extra": "", "interactiveNote": "", "part": 6}, {"kind": "demo", "id": "D5a-continued", "demoId": "5a, continued", "title": "Handing over a non-Sendable value", "titleText": "Handing over a non-Sendable value", "minutes": 0.5, "files": "<code>Sources/Demos/05_Sendable/5a_CrossingIsolationBoundaries.swift<\/code> (still open)", "concepts": [{"code": "<code>final class ArticleDraft<\/code> (not Sendable)", "say": "A shared mutable reference", "explained": "S29", "refs": ["S29"]}, {"code": "<code>await newsroom.publish(draft)<\/code>, then <code>draft.title = …<\/code>", "say": "Handing over, then touching it again", "explained": "S30", "refs": ["S30"]}], "say": "<ol><li>Point out that <code>await newsroom.publish(draft)<\/code> compiles even though <code>ArticleDraft<\/code> isn't Sendable.<\/li><li><p>Uncomment <code>draft.title = \"Edited\"<\/code>:<\/p><blockquote><p><code>Sending 'draft' risks causing data races<\/code><\/p><\/blockquote><\/li><li>🎤 \"Handing it over is fine. Touching it after the hand-over is not.\" Comment it out again.<\/li><\/ol>", "part": 6}, {"kind": "slide", "id": "S31", "num": 31, "title": "Escape hatches &amp; <code>Mutex<\/code>", "titleText": "Escape hatches & Mutex", "minutes": 1.0, "timing": "1 min", "annotation": "", "optional": false, "onHint": "", "html": "<table><thead><tr><th>Tool<\/th><th>Meaning<\/th><\/tr><\/thead><tbody><tr><td><code>@unchecked Sendable<\/code><\/td><td>\"Trust me, I synchronise it myself.\" The compiler stops checking.<\/td><\/tr><tr><td><code>Mutex<\/code> (Synchronization, iOS 18+)<\/td><td>A lock the compiler understands. A class holding a <code>Mutex<\/code> can be plain <code>Sendable<\/code>.<\/td><\/tr><tr><td><code>nonisolated(unsafe) var<\/code><\/td><td>Opts a global/static variable out of checking.<\/td><\/tr><tr><td><code>@preconcurrency import<\/code><\/td><td>Silences diagnostics from libraries not yet updated for Swift 6.<\/td><\/tr><\/tbody><\/table><pre class=\"code swift\"><code>import Synchronization\n\nfinal class MutexCounter: Sendable {          // no @unchecked needed\n    private let value = Mutex(0)              // the Int lives INSIDE the mutex\n\n    func increment() {\n        value.withLock { $0 += 1 }            // only one thread inside at a time\n    }\n}<\/code><\/pre>", "say": "<p>\"Sometimes you know better than the compiler, for example when wrapping an old C library. These are the escape hatches. Every use deserves a comment explaining <em>why<\/em> it's safe, because Demo 3 showed what happens when the promise is a lie.<\/p><p>If you need a small synchronous lock, use <code>Mutex<\/code>. The value lives <em>inside<\/em> the mutex, and the only way to reach it is <code>withLock<\/code>, which lets one thread in at a time. You get the lock <em>and<\/em> keep the compiler checking. Unlike an actor, there's no <code>await<\/code>.\"<\/p>", "extra": "", "interactiveNote": "", "part": 6}, {"kind": "demo", "id": "D5b", "demoId": "5b", "title": "A Sendable class with a Mutex", "titleText": "A Sendable class with a Mutex", "minutes": 0.5, "files": "<code>Sources/Demos/05_Sendable/5b_MutexCounter.swift<\/code>", "concepts": [{"code": "<code>Mutex(0)<\/code>, <code>withLock { $0 += 1 }<\/code>", "say": "Synchronous lock the compiler understands", "explained": "S31", "refs": ["S31"]}, {"code": "Task group loop", "say": "The same 100,000 children as Demo 3", "explained": "S17", "refs": ["S17"]}], "say": "<ol><li>The same 100,000-task loop again, now with <code>MutexCounter: Sendable<\/code>. No <code>@unchecked<\/code>.<\/li><li>Run: <code>Expected 100000, got 100000<\/code><\/li><li>🎤 \"The same loop, three times today. <code>UnsafeCounter<\/code> compiled only with <code>@unchecked<\/code> and was wrong. The actor and the <code>Mutex<\/code> are correct <em>and<\/em> checked by the compiler.\"<\/li><\/ol>", "part": 6}, {"kind": "slide", "id": "S32", "num": 32, "title": "Swift 6 language mode", "titleText": "Swift 6 language mode", "minutes": 1.0, "timing": "1 min", "annotation": "", "optional": false, "onHint": "", "html": "<ul><li><strong>Swift 6 compiler ≠ Swift 6 language mode.<\/strong> The mode is set per target (<code>SWIFT_VERSION<\/code>, or <code>swift-tools-version: 6.x<\/code> in SwiftPM).<\/li><li><strong>Swift 6 mode<\/strong>: complete data-race checking, and violations are <strong>errors<\/strong>.<\/li><li><strong>Swift 5 mode<\/strong>: <em>Strict Concurrency Checking<\/em> = Minimal (default) / Targeted / Complete, reported as <strong>warnings<\/strong>.<\/li><li>⚠️ New app projects in <strong>Xcode 26 and 27 still start in Swift 5 mode.<\/strong> For a new project, switch to Swift 6.<\/li><li>Migrating a big existing project is its own topic: see the swift.org migration guide.<\/li><\/ul>", "say": "<p>\"This trips people up. Installing Xcode with the Swift 6 compiler doesn't turn the checks on. You have to choose the language mode. Everything you saw today was in Swift 6 mode.\"<\/p>", "extra": "", "interactiveNote": "", "part": 6}, {"kind": "slide", "id": "S33", "num": 33, "title": "Why Swift 6.2 changed the defaults", "titleText": "Why Swift 6.2 changed the defaults", "minutes": 1.0, "timing": "1 min", "annotation": "", "optional": false, "onHint": "", "html": "<ul><li>Swift 6 (2024) was <strong>correct but loud<\/strong>. Simple apps got errors about concurrency they weren't even using.<\/li><li>Most app code wants to run on the main thread anyway.<\/li><li><p>Swift 6.2 (2025) introduced <strong>progressive disclosure<\/strong>:<\/p><ol><li>Write ordinary code. It all runs on the <strong>main actor<\/strong>, with no data-race errors.<\/li><li>Add <code>async<\/code>/<code>await<\/code>. Still on the main actor; waiting just doesn't block.<\/li><li>Need performance? <strong>Opt in<\/strong> to parallelism explicitly with <code>@concurrent<\/code>.<\/li><\/ol><\/li><\/ul>", "say": "<p>\"When Swift 6 came out, a beginner writing a to-do app could hit errors about Sendable and actor isolation in code that never ran anything in parallel. The Swift team's answer in 6.2: be single-threaded by default and make concurrency something you opt in to, exactly where you need it.\"<\/p>", "extra": "", "interactiveNote": "", "part": 7}, {"kind": "slide", "id": "S34", "num": 34, "title": "What a new Xcode project turns on", "titleText": "What a new Xcode project turns on", "minutes": 1.5, "timing": "1.5 min", "annotation": "", "optional": false, "onHint": "", "html": "<table><thead><tr><th>Build setting<\/th><th>New projects<\/th><th>Effect<\/th><\/tr><\/thead><tbody><tr><td><strong>Default Actor Isolation<\/strong> (SE-0466)<\/td><td><code>MainActor<\/code><\/td><td>Unannotated code in the module is <code>@MainActor<\/code>.<\/td><\/tr><tr><td><strong>Approachable Concurrency<\/strong><\/td><td><code>Yes<\/code><\/td><td>Plain async functions run on the caller's actor (SE-0461); isolated conformances are inferred (SE-0470); plus a few smaller Swift 6 features<\/td><\/tr><tr><td><strong>Swift Language Version<\/strong><\/td><td><code>5<\/code> ⚠️<\/td><td>Switch to 6 for full checking.<\/td><\/tr><\/tbody><\/table><p>Two keywords to know:<\/p><ul><li><strong><code>nonisolated<\/code><\/strong> opts out of the main actor (pure logic, models, parsers).<\/li><li><strong><code>@concurrent<\/code><\/strong> runs on the background thread pool (CPU-heavy work).<\/li><\/ul><pre class=\"code swift\"><code>// The same settings in a Swift package\nswiftSettings: [\n    .defaultIsolation(MainActor.self),\n    .enableUpcomingFeature(\"NonisolatedNonsendingByDefault\"),\n    .enableUpcomingFeature(\"InferIsolatedConformances\"),\n]<\/code><\/pre>", "say": "<p>\"If you create an app in Xcode today, these are on. That's why your code 'magically' runs on the main thread, and why <code>@concurrent<\/code> exists. MainActor-by-default is great for app targets. For reusable packages, like a networking layer, many teams keep the old <code>nonisolated<\/code> default.\"<\/p>", "extra": "", "interactiveNote": "", "part": 7}, {"kind": "demo", "id": "D6a", "demoId": "6a", "title": "Who is blocking the main thread?", "titleText": "Who is blocking the main thread?", "minutes": 2.5, "files": "<code>Sources/ApproachableDemos/06_ApproachableConcurrency/6a_WhoIsBlockingTheMainThread.swift<\/code>. This target uses the settings of a new Xcode project.", "concepts": [{"code": "<code>enum HeavyWork<\/code> with no annotation", "say": "In this target, unannotated code is <code>@MainActor<\/code> by default", "explained": "S34", "refs": ["S34"]}, {"code": "<code>nonisolated static func startOnMain()<\/code>", "say": "Not tied to any actor; a synchronous function runs where it's called, here on the main actor", "explained": "S34", "refs": ["S34"]}, {"code": "<code>@concurrent static func startOnBackground()<\/code>", "say": "The same work, but on the background pool", "explained": "S13, S34", "refs": ["S13", "S34"]}, {"code": "<code>startHeartbeat()<\/code>", "say": "Our \"UI\": prints 💓 only while main is free (code below)", "explained": "here", "refs": []}, {"code": "<code>measure(\"…\") { }<\/code>", "say": "How long it took", "explained": "S12", "refs": ["S12"]}], "say": "<p>Show the heartbeat helper first. Every concept in it is already known:<\/p><pre class=\"code swift\"><code>@MainActor\nfunc startHeartbeat() -&gt; Task&lt;Void, Never&gt; {\n    Task {                                    // inherits the main actor (S20)\n        while !Task.isCancelled {             // cooperative cancellation (S19)\n            print(\"   💓\")\n            try? await Task.sleep(for: .milliseconds(250))\n        }\n    }\n}<\/code><\/pre><p>🎤 \"This task lives on the main actor. It can only print a heart when the main actor is free, so treat it as our UI. If the hearts stop, the app is frozen.\"<\/p><ol><li>Show <code>HeavyWork<\/code>: the same CPU-heavy loop (~1 s) twice. <code>startOnMain()<\/code> is a plain <code>nonisolated<\/code> function, so it runs on the main actor when the playground calls it. <code>startOnBackground()<\/code> is <code>@concurrent<\/code>.<\/li><li><p>Run:<\/p><pre class=\"code plain\"><code>   💓\n   💓\n   💓\n   💓\nstart main actor work\n⏱️ main actor: 0.99 s                          ← no 💓 for a whole second = frozen UI\nstart concurrent work\n   💓\n   💓\n   💓\n   💓                                          ← hearts keep beating while we work\n⏱️ @concurrent: 0.98 s<\/code><\/pre><\/li><li>🎤 \"Same work, same duration. The difference is <em>where<\/em> it ran. On main, the UI is frozen for a second. With <code>@concurrent<\/code>, the UI stays alive.\"<\/li><\/ol>", "part": 7}, {"kind": "slide", "id": "S35", "num": 35, "title": "Where does it run?", "titleText": "Where does it run?", "minutes": 1.0, "timing": "1 min", "annotation": "", "optional": false, "onHint": "module with MainActor default isolation", "html": "<pre class=\"code swift\"><code>func plainAsync() async { … }                  // ❓\nnonisolated func nonisolatedAsync() async { … } // ❓\n@concurrent func concurrentAsync() async { … }  // ❓\n\n// all called from the main actor<\/code><\/pre>", "say": "<p>\"The middle one is the interesting one. It's <code>nonisolated<\/code>, yet it runs on main, because it runs on the <em>caller's<\/em> actor. Before Swift 6.2 it would have run in the background. If you read an older article and the behaviour doesn't match, this is usually why.\"<\/p>", "extra": "", "interactiveNote": "<p><strong>\"Where does it run?\" (full version).<\/strong> Two toggles at the top: <em>Default isolation<\/em> <code>MainActor | nonisolated<\/code> and <em>Approachable Concurrency<\/em> <code>on | off<\/code>. Below them, five function signatures (<code>plain<\/code>, <code>nonisolated<\/code>, <code>@concurrent<\/code>, <code>@MainActor<\/code>, actor method), each with a \"guess\" button, then a reveal that shows 🟢 / 🔵 / 🟣. Changing the toggles updates the answers. That shows the pre-6.2 behaviour, and it resolves correction #2 from the old deck.<\/p>", "part": 7}, {"kind": "demo", "id": "D6b", "demoId": "6b", "title": "Quiz: where does it run?", "titleText": "Quiz: where does it run?", "minutes": 0.5, "files": "<code>Sources/ApproachableDemos/06_ApproachableConcurrency/6b_WhereDoesItRun.swift<\/code>", "concepts": [{"code": "plain / <code>nonisolated<\/code> / <code>@concurrent<\/code> async functions", "say": "The three functions from the slide", "explained": "S35", "refs": ["S35"]}, {"code": "<code>Task { }<\/code> vs <code>Task.detached { }<\/code>", "say": "<code>Task<\/code> inherits the caller's actor; <code>Task.detached<\/code> inherits nothing", "explained": "S20", "refs": ["S20"]}, {"code": "<code>await task.value<\/code>", "say": "Wait for both tasks, otherwise the playground ends before they print", "explained": "S19, S20", "refs": ["S19", "S20"]}], "say": "<p>Run:<\/p><pre class=\"code plain\"><code>🟢 plainAsync() → main thread\n🟢 nonisolatedAsync() → main thread\n🔵 concurrentAsync() → background thread #2\n🟢 Task → main thread\n🔵 Task.detached → background thread #2<\/code><\/pre><p>🎤 \"<code>Task { }<\/code> stays on main because it inherits the playground's actor. <code>Task.detached<\/code> doesn't inherit anything, so it lands on the background pool.\"<\/p>", "part": 7}, {"kind": "slide", "id": "S36", "num": 36, "title": "Rules of thumb", "titleText": "Rules of thumb", "minutes": 1.5, "timing": "1.5 min", "annotation": "", "optional": false, "onHint": "", "html": "<ol><li><strong>Start on the main actor.<\/strong> Add concurrency where you <em>measured<\/em> a need.<\/li><li><strong><code>async<\/code> ≠ background.<\/strong> Use <code>@concurrent<\/code> for heavy CPU work.<\/li><li>Prefer <strong>structured<\/strong> concurrency (<code>async let<\/code>, task groups) over <code>Task { }<\/code>. Avoid <code>Task.detached<\/code>.<\/li><li>Move data around as <strong>value types<\/strong> (structs).<\/li><li>Shared mutable state goes in an <strong>actor<\/strong>. Remember <strong>reentrancy<\/strong>.<\/li><li><strong>Never block<\/strong> in async code. No semaphores waiting for async work.<\/li><li><strong>Support cancellation<\/strong> in long-running work.<\/li><li>Every <code>@unchecked Sendable<\/code> needs a comment explaining why it's safe.<\/li><li>New project? Switch to the <strong>Swift 6 language mode<\/strong>.<\/li><\/ol>", "say": "<p>Go through them quickly. Each one maps to a demo they've just seen.<\/p>", "extra": "", "interactiveNote": "", "part": 8}, {"kind": "slide", "id": "S37", "num": 37, "title": "Tools", "titleText": "Tools", "minutes": 0.5, "timing": "0.5 min", "annotation": "", "optional": false, "onHint": "", "html": "<ul><li><strong>Thread Sanitizer<\/strong> (Scheme ▸ Run ▸ Diagnostics) finds data races at runtime, including in legacy and Swift 5 code.<\/li><li><strong>Instruments ▸ Swift Concurrency<\/strong> template shows what tasks and actors are doing over time.<\/li><li><strong>Debugger:<\/strong> task names (<code>Task(name:)<\/code>) and better stepping through async code (Swift 6.2).<\/li><li><strong>Swift Testing:<\/strong> <code>@Test func load() async throws<\/code>. Async tests are first-class.<\/li><\/ul>", "say": "", "extra": "", "interactiveNote": "", "part": 8}, {"kind": "slide", "id": "S38", "num": 38, "title": "Cheat sheet", "titleText": "Cheat sheet", "minutes": 0.16666666666666666, "timing": "", "annotation": "flash it for 10 s; it's a reference for later", "optional": false, "onHint": "", "html": "<table><thead><tr><th>Keyword / API<\/th><th>One-line meaning<\/th><\/tr><\/thead><tbody><tr><td><code>async<\/code><\/td><td>The function can suspend.<\/td><\/tr><tr><td><code>await<\/code><\/td><td>Possible suspension point; the thread isn't blocked.<\/td><\/tr><tr><td><code>Task.sleep(for:)<\/code><\/td><td>Suspend the task for a while; doesn't block.<\/td><\/tr><tr><td><code>async let<\/code><\/td><td>Start a child task now, await the result later.<\/td><\/tr><tr><td><code>withTaskGroup<\/code> / <code>withThrowingTaskGroup<\/code><\/td><td>A dynamic number of child tasks.<\/td><\/tr><tr><td><code>Task { }<\/code><\/td><td>Unstructured task; inherits the actor; <strong>not<\/strong> cancelled with the caller.<\/td><\/tr><tr><td><code>task.value<\/code> / <code>task.cancel()<\/code><\/td><td>Await the result of a task handle / cancel it.<\/td><\/tr><tr><td><code>Task.detached { }<\/code><\/td><td>Inherits nothing; rarely needed.<\/td><\/tr><tr><td><code>Task.checkCancellation()<\/code> / <code>Task.isCancelled<\/code><\/td><td>Cooperative cancellation.<\/td><\/tr><tr><td><code>withCheckedThrowingContinuation<\/code><\/td><td>Wrap a callback API; resume exactly once.<\/td><\/tr><tr><td><code>AsyncStream<\/code>, <code>for await<\/code><\/td><td>Values over time.<\/td><\/tr><tr><td><code>actor<\/code><\/td><td>Reference type that protects its mutable state.<\/td><\/tr><tr><td><code>@MainActor<\/code><\/td><td>Runs on the main thread (UI).<\/td><\/tr><tr><td><code>nonisolated<\/code><\/td><td>Not tied to any actor.<\/td><\/tr><tr><td><code>@concurrent<\/code><\/td><td>Always runs on the background thread pool.<\/td><\/tr><tr><td><code>Sendable<\/code><\/td><td>Safe to share across isolation domains.<\/td><\/tr><tr><td><code>@Sendable<\/code> closure<\/td><td>Captures only Sendable values.<\/td><\/tr><tr><td><code>sending<\/code><\/td><td>A value is handed over and not used by the sender again.<\/td><\/tr><tr><td><code>@unchecked Sendable<\/code><\/td><td>\"Trust me\". The compiler stops checking.<\/td><\/tr><tr><td><code>Mutex<\/code><\/td><td>Synchronous lock the compiler understands (iOS 18+).<\/td><\/tr><\/tbody><\/table>", "say": "", "extra": "", "interactiveNote": "<p>A searchable, filterable card grid. Also offer it as a printable one-page PDF/handout.<\/p>", "part": 8}, {"kind": "slide", "id": "S39", "num": 39, "title": "Resources", "titleText": "Resources", "minutes": 0, "timing": "(shown during Q&A)", "annotation": "", "optional": false, "onHint": "", "html": "<ul><li><em>The Swift Programming Language<\/em>, Concurrency: <a href=\"https://docs.swift.org/swift-book/documentation/the-swift-programming-language/concurrency/\" target=\"_blank\" rel=\"noopener\">https://docs.swift.org/swift-book/documentation/the-swift-programming-language/concurrency/<\/a><\/li><li>Swift.org, Data-race safety &amp; Swift 6 migration guide: <a href=\"https://www.swift.org/documentation/concurrency/\" target=\"_blank\" rel=\"noopener\">https://www.swift.org/documentation/concurrency/<\/a><\/li><li>WWDC25 <em>Embracing Swift concurrency<\/em>: <a href=\"https://developer.apple.com/videos/play/wwdc2025/268/\" target=\"_blank\" rel=\"noopener\">https://developer.apple.com/videos/play/wwdc2025/268/<\/a><\/li><li>WWDC25 <em>Code-along: Elevate an app with Swift concurrency<\/em>: <a href=\"https://developer.apple.com/videos/play/wwdc2025/270/\" target=\"_blank\" rel=\"noopener\">https://developer.apple.com/videos/play/wwdc2025/270/<\/a><\/li><li>WWDC26 <em>What's new in Swift<\/em>: <a href=\"https://developer.apple.com/videos/play/wwdc2026/262/\" target=\"_blank\" rel=\"noopener\">https://developer.apple.com/videos/play/wwdc2026/262/<\/a><\/li><li>Classic WWDC21 sessions: <em>Meet async/await<\/em>, <em>Explore structured concurrency<\/em>, <em>Protect mutable state with Swift actors<\/em>, <em>Swift concurrency: Behind the scenes<\/em><\/li><li>Swift 6.2 release notes: <a href=\"https://www.swift.org/blog/swift-6.2-released/\" target=\"_blank\" rel=\"noopener\">https://www.swift.org/blog/swift-6.2-released/<\/a><\/li><li>Swift 6.4 release notes: <a href=\"https://www.swift.org/blog/swift-6.4-released/\" target=\"_blank\" rel=\"noopener\">https://www.swift.org/blog/swift-6.4-released/<\/a><\/li><li>Blogs: SwiftLee (avanderlee.com), Donny Wals (donnywals.com), Matt Massicotte (massicotte.org)<\/li><li>Demo code: <code>SwiftConcurrencyDemos/<\/code> (share with the students)<\/li><\/ul>", "say": "", "extra": "", "interactiveNote": "<p>A QR code linking to the demo repository or the slides.<\/p>", "part": 8}, {"kind": "slide", "id": "S40", "num": 40, "title": "Questions? / Thank you", "titleText": "Questions? / Thank you", "minutes": 5, "timing": "0:55–1:00", "annotation": "", "optional": false, "onHint": "", "html": "<p>\"Questions?\", name, contact, QR code.<\/p>", "say": "", "extra": "<p><em>(Optional, outside the 60 minutes: the \"Being a developer / unsolicited recommendations\" slide from the PDF deck.)<\/em><\/p>", "interactiveNote": "", "part": 8}], "compilerMessages": [{"situation": "Non-Sendable class captured in a child task (Demo 3)", "message": "Passing closure as a 'sending' parameter risks causing data races between main actor-isolated code and concurrent execution of the closure"}, {"situation": "Calling an actor method synchronously from outside", "message": "Actor-isolated instance method 'deposit' cannot be called from outside of the actor"}, {"situation": "Mutating actor state from outside (even with `await`)", "message": "Actor-isolated property 'balance' can not be mutated from the main actor"}, {"situation": "`nonisolated` member touching actor state", "message": "Actor-isolated property 'balance' can not be referenced from a nonisolated context"}, {"situation": "Using a value after sending it", "message": "Sending 'draft' risks causing data races"}, {"situation": "Mutable property in a Sendable class", "message": "Stored property 'baseURL' of 'Sendable'-conforming class 'MutableConfig' is mutable"}, {"situation": "`Thread.sleep` in async code", "message": "Class method 'sleep' is unavailable from asynchronous contexts; Use Task.sleep(until:clock:) instead."}]}</script>
+<script>
+"use strict";
+const DATA = JSON.parse(document.getElementById('deck-data').textContent);
+const FR = DATA.frames;
+const IDX = Object.fromEntries(FR.map((f, i) => [f.id, i]));
+const PART = Object.fromEntries(DATA.parts.map(p => [p.n, p]));
+const IS_PRESENTER = new URLSearchParams(location.search).has('presenter');
+const WIN_ID = Math.random().toString(36).slice(2);
+let SCALE = 1, cur = -1, sub = 0, life = null, frameEl = null;
+
+/* planned start (minutes) of every frame; the optional slide is not in the plan */
+const PLAN = [];
+FR.reduce((acc, f, i) => { PLAN[i] = acc; return acc + (f.optional ? 0 : f.minutes); }, 0);
+
+/* ---------------------------------------------------------------- helpers */
+function h(tag, props, ...kids) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(props || {})) {
+    if (v == null) continue;
+    if (k === 'class') el.className = v;
+    else if (k === 'html') el.innerHTML = v;
+    else if (k === 'text') el.textContent = v;
+    else if (k === 'style') el.style.cssText = v;
+    else if (k.startsWith('on')) el[k] = v;
+    else el.setAttribute(k, v);
+  }
+  for (const c of kids.flat()) if (c != null && c !== false) el.append(c.nodeType ? c : document.createTextNode(c));
+  return el;
+}
+const btn = (label, onclick, cls = '') => h('button', { class: 'btn ' + cls, html: label, onclick });
+function seg(options, value, onchange, label) {
+  const wrap = h('span', { style: 'display:inline-flex;align-items:center;gap:10px' });
+  if (label) wrap.append(h('span', { class: 'seglbl', text: label }));
+  const s = h('span', { class: 'seg' });
+  const bs = options.map(([v, l]) => h('button', { html: l, onclick: () => { set(v); onchange(v); } }));
+  function set(v) { bs.forEach((b, i) => b.classList.toggle('on', options[i][0] === v)); }
+  s.append(...bs); wrap.append(s); set(value); wrap.set = set;
+  return wrap;
+}
+function makeLife() {
+  const ts = [], is = [], rs = [], ac = new AbortController(); let dead = false;
+  return {
+    timeout(f, ms) { const id = setTimeout(() => { if (!dead) f(); }, ms); ts.push(id); return id; },
+    interval(f, ms) { const id = setInterval(() => { if (!dead) f(); }, ms); is.push(id); return id; },
+    raf(f) { const id = requestAnimationFrame(t => { if (!dead) f(t); }); rs.push(id); return id; },
+    on(el, ev, fn, opt) { el.addEventListener(ev, fn, Object.assign({ signal: ac.signal }, opt || {})); },
+    wait(ms) { return new Promise(r => this.timeout(r, ms)); },
+    get dead() { return dead; },
+    destroy() { dead = true; ts.forEach(clearTimeout); is.forEach(clearInterval); rs.forEach(cancelAnimationFrame); ac.abort(); }
+  };
+}
+function relPos(el, box) {
+  const a = el.getBoundingClientRect(), b = box.getBoundingClientRect();
+  return { x: (a.left - b.left) / SCALE, y: (a.top - b.top) / SCALE, w: a.width / SCALE, h: a.height / SCALE };
+}
+const esc = s => s.replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+const msg = part => (DATA.compilerMessages.find(m => m.message.includes(part)) || {}).message || part;
+const fmt = ms => { const neg = ms < 0; ms = Math.abs(ms); const s = Math.floor(ms / 1000); return (neg ? '−' : '') + Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+/* ---------------------------------------------------------------- swift highlighting */
+const KW = new Set(('actor associatedtype async await break case catch class continue default defer deinit do else enum extension fallthrough false fileprivate final for func get guard if import in init inout internal is let mutating nil nonisolated open operator private protocol public repeat rethrows return self Self set some static struct subscript super switch throw throws true try typealias var weak where while any sending consuming borrowing isolated unowned lazy didSet willSet').split(' '));
+function highlightSwift(src) {
+  const re = /(\/\/[^\n]*)|("(?:[^"\\\n]|\\.)*")|(@\w+)|(#\w+)|(\b\d[\d_]*(?:\.\d+)?\b)|([A-Za-z_]\w*)|([\s\S])/g;
+  let out = '', m;
+  while ((m = re.exec(src))) {
+    const [t, com, str, attr, mac, num, id] = m;
+    if (com) out += `<span class="tk-com">${esc(com)}</span>`;
+    else if (str) out += `<span class="tk-str">${esc(str)}</span>`;
+    else if (attr) out += `<span class="tk-attr">${esc(attr)}</span>`;
+    else if (mac) out += `<span class="tk-mac">${esc(mac)}</span>`;
+    else if (num) out += `<span class="tk-num">${num}</span>`;
+    else if (id) {
+      if (KW.has(id)) out += `<span class="tk-kw">${id}</span>`;
+      else if (/^[A-Z]/.test(id)) out += `<span class="tk-ty">${id}</span>`;
+      else if (src[re.lastIndex] === '(' ) out += `<span class="tk-fn">${id}</span>`;
+      else out += id;
+    } else out += esc(t);
+  }
+  return out;
+}
+function highlightAll(root) {
+  root.querySelectorAll('pre.code > code').forEach(c => {
+    if (c.dataset.done) return;
+    const src = c.textContent, swift = c.parentElement.classList.contains('swift');
+    const html = swift ? highlightSwift(src) : esc(src);
+    c.innerHTML = html.split('\n').map(l => `<span class="ln">${l || ' '}</span>`).join('\n');
+    c.dataset.done = 1;
+  });
+}
+
+/* ---------------------------------------------------------------- fit content to the stage */
+function overflowing(el) {
+  if (el.scrollHeight > el.clientHeight + 1 || el.scrollWidth > el.clientWidth + 1) return true;
+  return [...el.querySelectorAll('pre')].some(p => p.scrollWidth > p.clientWidth + 1);
+}
+function shrink(el, min = 0.5) {
+  let k = 1; el.style.setProperty('--k', 1);
+  while (overflowing(el) && k > min) { k -= 0.03; el.style.setProperty('--k', k.toFixed(2)); }
+  return k;
+}
+function fitContent(el) {
+  if (!el || el.dataset.nofit) return;
+  const kids = [...el.children];
+  const k1 = shrink(el);
+  const hasPre = kids.some(c => c.matches('pre')), hasList = kids.some(c => c.matches('ul,ol'));
+  if (k1 > 0.86 || !hasPre || !hasList || kids.some(c => c.matches('table')) || el.dataset.nocols) return;
+  // try a two-column layout: code left, text right
+  const left = h('div', { class: 'col' }), right = h('div', { class: 'col' });
+  kids.forEach(c => (c.matches('pre') ? left : right).append(c));
+  el.classList.add('cols'); el.append(left, right);
+  const k2 = shrink(el);
+  if (k2 < k1 + 0.04) { // not better: undo
+    el.classList.remove('cols'); el.innerHTML = ''; kids.forEach(c => el.append(c)); shrink(el);
+  }
+}
+
+/* ---------------------------------------------------------------- agenda track (A1) */
+function track(i, big) {
+  const parts = DATA.parts.filter(p => p.n >= 1);
+  const f = FR[i] || {}, curPart = f.part;
+  const el = h('div', { class: 'track' + (big ? ' big' : '') });
+  for (const p of parts) {
+    const frames = FR.map((x, k) => [x, k]).filter(([x]) => x.part === p.n);
+    const state = curPart > p.n ? 'done' : curPart === p.n ? 'cur' : 'future';
+    const segEl = h('div', { class: 'tseg ' + state, style: `flex:${big ? 1 : p.minutes}`, title: `${p.n} · ${p.name} (${p.start}–${p.end})`,
+      onclick: e => { e.stopPropagation(); go(frames[0][1], 0); } });
+    let fill = 0;
+    if (state === 'done') fill = 1;
+    if (state === 'cur') { const pos = frames.findIndex(([, k]) => k === i); fill = (pos + 1) / frames.length; }
+    segEl.append(h('div', { class: 'tfill', style: `transform:scaleX(${fill})` }));
+    const short = p.name.replace(/\s*\(.*\)/, '');
+    segEl.append(h('div', { class: 'tlabel', html: big ? `${p.n} · ${esc(short)}<small>${p.start}–${p.end}</small>` : `${p.n} ${esc(short)}` }));
+    frames.forEach(([x, k], pos) => {
+      const left = ((pos + 0.5) / frames.length * 100).toFixed(2) + '%';
+      if (k === i && !big) segEl.append(h('span', { class: 'tneedle', style: `left:${left}` }));
+    });
+    el.append(segEl);
+  }
+  return el;
+}
+
+/* ---------------------------------------------------------------- frame builders */
+function partName(f) { const p = PART[f.part]; return p ? (p.n ? `Part ${p.n} · ${p.name}` : p.name) : ''; }
+
+function buildSlide(f, i, L, preview) {
+  const el = h('section', { class: 'frame slide', 'data-id': f.id });
+  if (f.id === 'S1') return buildTitle(f, el, L, preview);
+  const titles = h('div', { class: 'titles' },
+    h('div', { class: 'kicker', html: esc(partName(f)) + (f.optional ? '<span class="badge">optional</span>' : '') }),
+    h('h1', { html: f.title }));
+  const header = h('header', null, titles);
+  const content = h('div', { class: 'content', html: f.html });
+  el.append(header, content);
+  if (IA[f.id]) {
+    const tab = h('button', { class: 'ia-tab', html: '✨ Interactive', title: 'Toggle interactive (I)', onclick: () => go(i, sub ? 0 : 1) });
+    header.append(tab);
+    el.append(h('div', { class: 'ia', hidden: '' }));
+  }
+  el.append(footer(f, i));
+  if (ENH[f.id]) ENH[f.id](content, L, f, preview);
+  return el;
+}
+
+function footer(f, i) {
+  const foot = h('footer');
+  const showTrack = i > IDX.S3;
+  foot.append(showTrack ? track(i) : h('div', { class: 'track' }));
+  foot.append(h('div', { class: 'fid', text: (f.kind === 'demo' ? 'Demo ' + f.demoId : f.id) + `  ·  ${i + 1}/${FR.length}` }));
+  return foot;
+}
+
+function buildDemo(f, i, L, preview) {
+  const el = h('section', { class: 'frame demo', 'data-id': f.id });
+  const ps = f.demoId === '3' ? 'Problem → Solution: Demo 3 → S22 → Demo 4a' : f.demoId === '4a' ? 'Problem → Solution: the fix for Demo 3' : '';
+  el.append(h('header', null, h('div', { class: 'titles' },
+    h('div', { html: `<span class="demo-pill">💻 DEMO ${esc(f.demoId)}</span>` + (ps ? `<span class="ps-banner">${ps}</span>` : '') }),
+    h('h1', { html: f.title }))));
+  const left = h('div', { class: 'demo-left' });
+  const file = h('div', { class: 'demo-file', html: `<span class="lbl">Open in Xcode</span>${f.files}` });
+  file.querySelectorAll('code').forEach(c => {
+    if (!/\.swift$/.test(c.textContent)) return;
+    c.classList.add('path'); c.title = 'Click to copy';
+    c.onclick = () => { navigator.clipboard && navigator.clipboard.writeText(c.textContent).catch(() => {}); c.classList.add('copied'); setTimeout(() => c.classList.remove('copied'), 900); };
+  });
+  file.append(h('div', { class: 'demo-hint', html: 'Switch: <span class="kbd">⌘</span> <span class="kbd">⇥</span> to Xcode · canvas <span class="kbd">⌥⌘↩</span> · come back and press <span class="kbd">→</span>' }));
+  left.append(file);
+  if (f.concepts.length) {
+    const tb = h('table', { class: 'concepts' });
+    tb.append(h('tr', null, h('th', { text: '🧰 In the code' }), h('th', { text: 'Say before running' }), h('th', { text: 'Explained on' })));
+    for (const c of f.concepts) {
+      const ex = h('td');
+      if (c.refs.length) c.refs.forEach(r => ex.append(h('button', { class: 'slink', text: r, title: 'Jump to ' + r, onclick: () => go(IDX[r], 0) })));
+      else ex.innerHTML = c.explained || '–';
+      tb.append(h('tr', null, h('td', { html: c.code }), h('td', { html: c.say }), ex));
+    }
+    left.append(tb);
+  }
+  el.append(h('div', { class: 'demo-body' }, left));
+  el.append(footer(f, i));
+  return el;
+}
+
+/* ---------------------------------------------------------------- inline enhancers (content stays on the slide) */
+const ENH = {};
+
+function buildTitle(f, el, L, preview) {
+  el.classList.add('title-slide');
+  const tmp = h('div', { html: f.html });
+  const items = [...tmp.querySelectorAll('li')].map(li => li.innerHTML);
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('class', 'bgsvg'); svg.setAttribute('viewBox', '0 0 1600 900'); svg.setAttribute('preserveAspectRatio', 'none');
+  const colors = ['var(--main)', 'var(--bgc)', 'var(--actor)', 'var(--bgc)', 'var(--main)', 'var(--actor)'];
+  const N = 40, lines = colors.map((c, k) => {
+    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p.setAttribute('fill', 'none'); p.setAttribute('stroke', c); p.setAttribute('stroke-width', '7'); p.setAttribute('stroke-linecap', 'round'); p.setAttribute('opacity', '.35');
+    svg.append(p);
+    const target = 640 + k * 38;
+    const tangled = Array.from({ length: N }, (_, j) => 450 + Math.sin(j * 0.7 + k * 1.9) * 260 * Math.cos(j * 0.23 + k) + (Math.random() - .5) * 60);
+    return { p, target, tangled };
+  });
+  const draw = e => lines.forEach(({ p, target, tangled }) => {
+    const pts = tangled.map((y, j) => [j * 1600 / (N - 1), y + (target - y) * e]);
+    p.setAttribute('d', pts.map(([x, y], j) => (j ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1)).join(' '));
+  });
+  el.append(svg);
+  el.append(h('div', { class: 'tcontent' },
+    h('div', { class: 'k', text: DATA.subtitle.split('·')[0].trim() }),
+    h('h1', { html: items[0] || f.title }),
+    h('div', { class: 'sub', html: items[1] || '' }),
+    h('div', { class: 'who', html: items[2] || '' })));
+  if (preview) { draw(1); return el; }
+  draw(0);
+  const t0 = performance.now(), D = 2600;
+  const step = now => { const x = Math.min(1, (now - t0 - 500) / D); const e = x <= 0 ? 0 : 1 - Math.pow(1 - x, 3); draw(e); if (x < 1) L.raf(step); };
+  L.raf(step);
+  return el;
+}
+
+ENH.S3 = (c, L, f) => {
+  c.dataset.nofit = 1;
+  c.style.cssText = 'display:flex;flex-direction:column;gap:20px';
+  const list = c.querySelector('ol'); if (list) list.style.cssText = 'columns:2;column-gap:2.5em;font-size:1.05em';
+  const tr = track(-1, true); tr.style.marginTop = '10px';
+  c.insertBefore(tr, c.lastElementChild);
+};
+
+ENH.S6 = c => {
+  const t = c.querySelector('table'); if (!t) return;
+  const grid = h('div', { class: 'cards6' });
+  t.querySelectorAll('tbody tr').forEach(r => grid.append(h('div', { class: 'c', html: `<b>${r.cells[0].innerHTML}</b>${r.cells[1].innerHTML}` })));
+  t.replaceWith(grid);
+};
+
+ENH.S8 = (c, L) => {
+  c.dataset.nofit = 1;
+  const pres = [...c.querySelectorAll('pre')]; if (pres.length < 2) return;
+  const rest = [...c.children].filter(x => !pres.includes(x));
+  const stack = h('div', { style: 'position:relative' });
+  pres.forEach((p, k) => { p.style.transition = 'opacity .6s, transform .6s'; p.style.margin = 0; if (k) { p.style.position = 'absolute'; p.style.top = 0; p.style.left = 0; } stack.append(p); });
+  const counter = h('span', { class: 'stat' });
+  const lines = pres.map(p => p.textContent.split('\n').length);
+  function show(k) {
+    pres.forEach((p, j) => { p.style.opacity = j === k ? 1 : 0; p.style.transform = j === k ? 'none' : `translateY(${j > k ? 30 : -30}px) scale(.97)`; });
+    counter.innerHTML = k ? 'lines: 15 → <b>4</b>' : 'lines: <b>15</b>';
+  }
+  const s = seg([[0, 'Callbacks'], [1, 'async/await']], 0, show);
+  const leftCol = h('div', { style: 'flex:none;width:930px;font-size:.78em' }, h('div', { class: 'bar' }, s, counter), stack);
+  const rightCol = h('div', { style: 'flex:1;font-size:.78em' }, ...rest);
+  c.innerHTML = ''; c.style.cssText = 'display:flex;gap:30px';
+  c.append(leftCol, rightCol);
+  show(0);
+};
+
+ENH.S23 = (c, L) => {
+  c.dataset.nocols = 1;
+  const pre = c.querySelector('pre'); if (!pre) return;
+  c.classList.add('hl');
+  const tip = h('div', { class: 'hl-tip', html: '<span style="color:var(--muted)">Hover a line: 🟢 inside the actor · 🟠 outside</span>' });
+  pre.after(tip);
+  let depth = 0, inActor = false;
+  pre.querySelectorAll('.ln').forEach(ln => {
+    const code = ln.textContent.replace(/\/\/.*$/, '').replace(/"[^"]*"/g, '');
+    const starts = /\bactor\b/.test(code) && !inActor;
+    if (starts) inActor = true;
+    const inside = inActor;
+    depth += (code.match(/{/g) || []).length - (code.match(/}/g) || []).length;
+    if (inActor && depth === 0 && !starts) inActor = false;
+    if (!ln.textContent.trim()) return;
+    const kind = /❌/.test(ln.textContent) ? 'err' : /nonisolated/.test(ln.textContent) ? 'noniso' : inside ? 'inside' : 'outside';
+    ln.classList.add(kind === 'err' ? 'outside' : kind);
+    ln.onmouseenter = () => {
+      if (kind === 'err') { ln.classList.remove('shake'); void ln.offsetWidth; ln.classList.add('shake'); tip.innerHTML = `<div class="msg">❌ ${esc(msg("can not be mutated"))}</div>`; }
+      else tip.innerHTML = kind === 'inside' ? '<b class="ok">🟢 Inside the actor:</b> plain synchronous access, no <code>await</code>.'
+        : kind === 'noniso' ? '<b style="color:var(--muted)">nonisolated:</b> no <code>await</code> needed, but it can\'t touch <code>balance</code>.'
+        : '<b style="color:var(--warn)">🟠 Outside the actor:</b> every call needs <code>await</code>.';
+    };
+  });
+};
+
+ENH.S38 = (c, L) => {
+  c.dataset.nofit = 1;
+  const t = c.querySelector('table'); if (!t) return;
+  const rows = [...t.querySelectorAll('tbody tr')].map(r => [r.cells[0].innerHTML, r.cells[1].innerHTML]);
+  const grid = h('div', { class: 'cgrid' });
+  const cards = rows.map(([k, v]) => h('div', { class: 'cc' }, h('div', { class: 'kw', html: k }), h('div', { html: v })));
+  grid.append(...cards);
+  const input = h('input', { class: 'csearch', placeholder: 'Filter… (e.g. task, actor, sendable)', type: 'search' });
+  input.oninput = () => { const q = input.value.toLowerCase(); cards.forEach(cd => cd.style.display = cd.textContent.toLowerCase().includes(q) ? '' : 'none'); };
+  const print = btn('🖨 Printable handout', () => {
+    const w = window.open('', '_blank'); if (!w) return;
+    w.document.write(`<!doctype html><meta charset="utf-8"><title>Swift Concurrency cheat sheet</title><style>body{font-family:-apple-system,Helvetica,Arial,sans-serif;margin:28px}h1{font-size:22px}table{border-collapse:collapse;width:100%;font-size:13px}td,th{border:1px solid #ccc;padding:5px 8px;text-align:left}code{font-family:Menlo,monospace}</style><h1>Swift Concurrency · cheat sheet</h1>${t.outerHTML}`);
+    w.document.close(); w.focus(); w.print();
+  });
+  print.style.fontSize = '.6em';
+  t.replaceWith(h('div', { class: 'bar', style: 'margin:0' }, input, print), grid);
+};
+
+ENH.S40 = (c, L, f) => {
+  c.dataset.nofit = 1;
+  c.innerHTML = `<div style="display:flex;flex-direction:column;justify-content:center;height:100%;padding-bottom:40px"><div style="font-size:150px;font-weight:800;letter-spacing:-.02em">Questions?</div><div style="font-size:44px;color:var(--muted);margin-top:10px">Thank you!</div><div style="font-size:24px;color:var(--muted);margin-top:40px">${f.html}</div></div>`;
+};
+
+/* ---------------------------------------------------------------- interactives (substep) */
+const IA = {};
+
+/* S4 · A2 concurrency vs parallelism */
+IA.S4 = (root, L) => {
+  const U = 12, COL = { A: 'var(--tA)', B: 'var(--tB)', C: 'var(--tC)' };
+  let cores = 1, sched;
+  function schedule(n) {
+    const rem = { A: 4, B: 4, C: 4 }, order = ['A', 'B', 'C'], slots = []; let rr = 0, t = 0;
+    while (Object.values(rem).some(x => x > 0)) {
+      const picked = []; let tries = 0;
+      while (picked.length < n && tries < 3) { const k = order[rr % 3]; rr++; tries++; if (rem[k] > 0 && !picked.includes(k)) picked.push(k); }
+      picked.forEach((k, lane) => { slots.push({ k, t, lane }); rem[k]--; });
+      t++;
+    }
+    return { slots, total: t };
+  }
+  const area = h('div', { class: 'tl', style: 'margin-top:20px' });
+  const total = h('div', { class: 'stat' }), cap = h('div', { class: 'caption' });
+  function render(hide) {
+    sched = schedule(cores);
+    area.innerHTML = '';
+    const lanes = h('div', { class: 'lanes' });
+    for (let l = 0; l < cores; l++) {
+      const tr = h('div', { class: 'ltrack' });
+      sched.slots.filter(s => s.lane === l).forEach(s => {
+        s.el = h('div', { class: 'tl-block' + (hide ? ' hide' : ''), text: s.k, style: `left:${s.t / U * 100}%;width:${100 / U}%;background:${COL[s.k]}` });
+        tr.append(s.el);
+      });
+      lanes.append(h('div', { class: 'lane' }, h('div', { class: 'lname', text: `CPU core ${l + 1}` }), tr));
+    }
+    const axis = h('div', { class: 'tl-axis' });
+    for (let x = 0; x <= U; x += 2) axis.append(h('span', { style: `left:${x / U * 100}%`, text: x }));
+    const cursor = h('div', { class: 'tl-cursor' });
+    area.append(lanes, axis, cursor);
+    area.cursor = cursor;
+    total.innerHTML = `Total time: <b>${hide ? '…' : sched.total}</b> units`;
+    cap.innerHTML = cores === 1 ? '1 core: A, B and C take turns in slices. They <b>overlap in time</b> but never run at the same instant → <b>concurrency</b>.'
+      : '2 cores: two tasks run at the <b>same instant</b> → <b>parallelism</b> (and still concurrency). Total time halves.';
+  }
+  function play() {
+    render(true);
+    const lanesEl = area.querySelector('.ltrack'), r0 = relPos(lanesEl, area), unit = 380, t0 = performance.now();
+    area.cursor.style.opacity = 1;
+    const step = now => {
+      const t = (now - t0) / unit;
+      area.cursor.style.left = (r0.x + Math.min(t, sched.total) / U * r0.w) + 'px';
+      sched.slots.forEach(s => { if (t >= s.t) s.el.classList.remove('hide'); });
+      if (t < sched.total + 0.3) L.raf(step); else { total.innerHTML = `Total time: <b>${sched.total}</b> units`; area.cursor.style.opacity = 0; }
+    };
+    L.raf(step);
+  }
+  root.append(h('div', { class: 'bar' }, seg([[1, '1 core'], [2, '2 cores']], 1, v => { cores = v; render(false); }, 'Hardware'), btn('▶ Play', play, 'primary'), total), area, cap);
+  render(false);
+};
+
+/* S5 · main lane + background lanes */
+IA.S5 = (root, L) => {
+  const lanes = h('div', { class: 'lanes', style: 'position:relative;margin-top:10px' });
+  const mk = (name, cls) => { const tr = h('div', { class: 'ltrack' }); lanes.append(h('div', { class: 'lane ' + cls }, h('div', { class: 'lname', text: name }), tr)); return tr; };
+  const main = mk('🟢 main thread', 'main');
+  const bgs = [mk('🔵 background 1', 'bg'), mk('🔵 background 2', 'bg'), mk('🔵 background 3', 'bg')];
+  const ticks = h('span', { class: 'chip main', text: 'UI responsive ✓' }); main.append(ticks);
+  const cap = h('div', { class: 'caption', html: 'The main thread keeps handling taps while the download runs elsewhere.' });
+  let n = 0, k = 0;
+  async function download() {
+    const id = ++n, lane = bgs[k++ % 3];
+    const chip = h('span', { class: 'chip pop', text: `⬇︎ download image ${id}` });
+    lane.append(chip);
+    cap.innerHTML = `Rule 1: the slow work goes to a <b style="color:var(--bgc)">background</b> lane…`;
+    for (let p = 0; p <= 10; p++) { chip.style.background = `linear-gradient(90deg, var(--bgc) ${p * 10}%, var(--idle) ${p * 10}%)`; await L.wait(150); }
+    chip.remove();
+    const back = h('span', { class: 'chip main pop', text: `↩︎ update UI: 🖼️${id}` });
+    main.append(back);
+    cap.innerHTML = `Rule 2: the result comes <b style="color:var(--main)">back to the main thread</b> to update the UI.`;
+    await L.wait(1600); back.remove();
+  }
+  root.append(h('div', { class: 'bar' }, btn('⬇︎ Download image', download, 'primary')), lanes, cap);
+};
+
+/* S16 · A7 sequential vs async let */
+IA.S16 = (root, L, f) => {
+  let mode = 'seq', running = false;
+  // the two code blocks of the slide: sequential first, then async let
+  const codes = [...h('div', { html: f.html }).querySelectorAll('pre')];
+  codes.forEach(c => { c.style.fontSize = '22px'; c.style.marginTop = '18px'; });
+  highlightAll(h('div', null, ...codes));
+  const codeBox = h('div');
+  const showCode = () => codeBox.replaceChildren(codes[mode === 'seq' ? 0 : 1]);
+  const rows = [1, 2, 3].map(n => { const bar = h('div', { class: 'pbar' }); const tr = h('div', { class: 'ltrack' }, bar); return { n, bar, el: h('div', { class: 'lane' }, h('div', { class: 'lname mono', style: 'width:250px;font-size:19px', text: `downloadImage(${n})` }), tr) }; });
+  const total = h('div', { class: 'stat', html: 'Total: <b>0.00 s</b>' });
+  const axis = h('div', { class: 'tl-axis', style: 'margin-left:262px' });
+  for (let x = 0; x <= 3; x++) axis.append(h('span', { style: `left:${x / 3 * 100}%`, text: x + ' s' }));
+  const cap = h('div', { class: 'caption' });
+  function run() {
+    if (running) return; running = true;
+    const plan = rows.map((r, i) => mode === 'seq' ? { s: i, d: 1 } : { s: 0.01 * i, d: [1.0, 1.02, 0.98][i] });
+    const end = Math.max(...plan.map(p => p.s + p.d)), t0 = performance.now();
+    const step = now => {
+      const t = (now - t0) / 1000;
+      rows.forEach((r, i) => { const p = plan[i]; const x = Math.max(0, Math.min(t, p.s + p.d) - p.s); r.bar.style.left = (p.s / 3 * 100) + '%'; r.bar.style.width = (x / 3 * 100) + '%'; });
+      total.innerHTML = `Total: <b>${Math.min(t, end).toFixed(2)} s</b>`;
+      if (t < end) L.raf(step); else { running = false; cap.innerHTML = mode === 'seq' ? 'Each <code>await</code> waits for the previous download: 1 + 1 + 1 = <b>3 s</b>.' : 'Three child tasks run at the same time: <b>~1 s</b>.'; }
+    };
+    rows.forEach(r => { r.bar.style.width = 0; });
+    cap.textContent = '';
+    L.raf(step);
+  }
+  root.append(h('div', { class: 'bar' }, seg([['seq', 'Sequential'], ['par', 'async let']], mode, v => { mode = v; showCode(); rows.forEach(r => r.bar.style.width = 0); total.innerHTML = 'Total: <b>0.00 s</b>'; cap.textContent = ''; }), btn('▶ Run', run, 'primary'), total),
+    h('div', { class: 'lanes', style: 'margin-top:20px' }, rows.map(r => r.el)), axis, cap, codeBox);
+  showCode();
+};
+
+/* S17 · A8 task-group animation */
+IA.S17 = (root, L) => {
+  let cores = 4, N = 10, st = null;
+  const lanesEl = h('div', { class: 'lanes' }), queue = h('div', { class: 'queue' });
+  const results = h('div', { class: 'results' }), brace = h('div', { class: 'brace' }), timeS = h('div', { class: 'stat' });
+  const nLbl = h('b', { text: N });
+  const slider = h('input', { type: 'range', min: 1, max: 30, value: N, style: 'width:200px' });
+  slider.oninput = () => { N = +slider.value; nLbl.textContent = N; };
+  function newGroup() { st = { queue: [], lanes: Array(cores).fill(null), results: [], next: 1, t0: performance.now(), open: true }; results.innerHTML = ''; drawLanes(); }
+  function drawLanes() {
+    lanesEl.innerHTML = '';
+    st.laneEls = st.lanes.map((_, k) => { const tr = h('div', { class: 'ltrack' }); lanesEl.append(h('div', { class: 'lane bg' }, h('div', { class: 'lname', style: 'width:110px', text: `core ${k + 1}` }), tr)); return tr; });
+  }
+  function add(n) {
+    if (!st || !st.open) newGroup();
+    for (let k = 0; k < n; k++) { const id = st.next++; st.queue.push({ id, dur: 600 + Math.random() * 1100 }); }
+    drawQueue();
+  }
+  function drawQueue() { queue.innerHTML = ''; st.queue.forEach(c => queue.append(h('span', { class: 'chip ghost', text: '🖼️' + c.id }))); if (!st.queue.length) queue.append(h('span', { style: 'color:var(--muted);font-size:18px', text: 'no children waiting' })); }
+  function loop(now) {
+    if (st && st.open) {
+      let changed = false;
+      st.lanes.forEach((c, k) => {
+        if (!c && st.queue.length) { const job = st.queue.shift(); job.start = now; job.el = h('div', { class: 'lchip' }, h('i'), h('span', { text: '🖼️' + job.id })); st.laneEls[k].append(job.el); st.lanes[k] = job; changed = true; }
+        const j = st.lanes[k]; if (!j) return;
+        const p = Math.min(1, (now - j.start) / j.dur);
+        j.el.style.width = 'calc(100% - 8px)'; j.el.firstChild.style.width = (p * 100) + '%';
+        if (p >= 1) { j.el.remove(); st.lanes[k] = null; st.results.push(j.id); results.append(h('span', { class: 'chip pop', text: '🖼️' + j.id })); }
+      });
+      if (changed) drawQueue();
+      const busy = st.queue.length || st.lanes.some(Boolean);
+      const secs = ((now - st.t0) / 1000).toFixed(1);
+      if (busy) { brace.innerHTML = `<span class="pulse">}  ← waiting… ${st.results.length}/${st.next - 1} children done</span>`; timeS.innerHTML = `<b>${secs} s</b>`; }
+      else if (st.next > 1) { st.open = false; brace.innerHTML = `<span class="ok">}  ✅ all ${st.results.length} children finished → continues</span>`; timeS.innerHTML = `<b>${secs} s</b> with ${cores} core${cores > 1 ? 's' : ''}`; }
+    }
+    L.raf(loop);
+  }
+  const codeHead = h('pre', { class: 'code swift', style: 'font-size:15.5px;margin:0' }, h('code', { text: 'let images = try await withThrowingTaskGroup { group in\n    for id in 1...N { group.addTask { … } }\n    for try await image in group { images.append(image) }' }));
+  highlightAll(codeHead);
+  root.append(h('div', { class: 'bar' },
+    h('span', { class: 'seglbl', html: 'Children ' }), slider, nLbl,
+    seg([[1, '1'], [4, '4'], [8, '8']], cores, v => { cores = v; if (st) { st.open = false; } newGroup(); drawQueue(); brace.innerHTML = ''; timeS.innerHTML = ''; }, 'Cores'),
+    btn('▶ Run group', () => { if (st) st.open = false; newGroup(); add(N); }, 'primary'), btn('+ addTask', () => add(1)), timeS),
+    h('div', { class: 'tg' },
+      h('div', { class: 'gbox' }, h('div', { class: 'seglbl', text: 'group: children waiting for a core' }), queue, lanesEl),
+      h('div', { class: 'panel', style: 'display:flex;flex-direction:column;gap:10px' }, codeHead, h('div', { class: 'seglbl', text: 'images (completion order)' }), results, brace)));
+  newGroup(); drawQueue(); L.raf(loop);
+};
+
+/* S18 · A9 task tree */
+function taskTree(root, L) {
+  const area = h('div', { class: 'tree' });
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); area.append(svg);
+  const N = {
+    root: { label: 'loadScreen()', x: 56, y: 12, kids: ['profile', 'al', 'tg'] },
+    profile: { label: 'profile', x: 30, y: 45, parent: 'root', leaf: 1 },
+    al: { label: 'async let', x: 53, y: 45, parent: 'root', leaf: 1 },
+    tg: { label: 'TaskGroup', x: 79, y: 45, parent: 'root', kids: ['i1', 'i2', 'i3'] },
+    i1: { label: 'img1', x: 63, y: 80, parent: 'tg', leaf: 1 },
+    i2: { label: 'img2', x: 78.5, y: 80, parent: 'tg', leaf: 1 },
+    i3: { label: 'img3', x: 94, y: 80, parent: 'tg', leaf: 1 },
+    loose: { label: 'Task { }', x: 9, y: 45, loose: 1 },
+  };
+  const cap = h('div', { class: 'caption' });
+  for (const [k, n] of Object.entries(N)) {
+    if (n.parent) { const l = document.createElementNS('http://www.w3.org/2000/svg', 'line'); const p = N[n.parent]; l.setAttribute('x1', p.x + '%'); l.setAttribute('y1', p.y + '%'); l.setAttribute('x2', n.x + '%'); l.setAttribute('y2', n.y + '%'); svg.append(l); }
+    n.st = h('span', { class: 'st', text: 'running' });
+    n.el = h('div', { class: 'tnode' + (n.loose ? ' loose' : ''), style: `left:${n.x}%;top:${n.y}%` }, h('span', { text: n.label }), n.st);
+    n.el.append(h('button', { text: '✖', title: 'cancel', onclick: e => { e.stopPropagation(); cancel(k, true); } }));
+    if (n.leaf) n.el.append(h('button', { text: '⚡', title: 'throw', onclick: e => { e.stopPropagation(); fail(k); } }));
+    area.append(n.el);
+  }
+  N.loose.st.textContent = 'no parent';
+  function set(k, s, label) { const n = N[k]; n.state = s; n.el.classList.remove('cancelled', 'error'); if (s) n.el.classList.add(s); n.st.textContent = label; }
+  async function cancel(k, top) {
+    if (N[k].state) return;
+    set(k, 'cancelled', 'cancelled');
+    if (top && k === 'root') cap.innerHTML = 'Cancelling the parent cancels <b>every child</b>. The <code>Task { }</code> isn\'t a child, so it keeps running.';
+    else if (top && k !== 'loose') cap.innerHTML = 'Cancellation flows <b>down</b> to the whole subtree.';
+    else if (top) cap.innerHTML = 'An unstructured task is only cancelled when <b>you</b> call <code>cancel()</code> on its handle.';
+    for (const c of N[k].kids || []) { await L.wait(220); cancel(c, false); }
+  }
+  async function fail(k) {
+    if (N[k].state) return;
+    set(k, 'error', '⚡ throws');
+    cap.innerHTML = 'The error <b>propagates up</b>; on the way, the siblings are cancelled.';
+    let node = k;
+    while (N[node].parent) {
+      const p = N[node].parent; await L.wait(450);
+      for (const s of N[p].kids) if (s !== node) cancel(s, false);
+      await L.wait(300);
+      set(p, 'error', p === 'root' ? '⚡ rethrows to caller' : '⚡ error ↑');
+      node = p;
+    }
+  }
+  function reset() { for (const k of Object.keys(N)) set(k, null, k === 'loose' ? 'no parent' : 'running'); cap.textContent = 'Click ✖ to cancel a node, ⚡ to throw from a leaf.'; }
+  root.append(h('div', { class: 'bar' }, btn('↺ Reset', reset), h('span', { class: 'stat', html: '✖ cancel · ⚡ throw' })), area, cap);
+  reset();
+}
+IA.S18 = (root, L) => taskTree(root, L);
+
+/* S21 · A11 data-race stepper */
+IA.S21 = (root, L) => {
+  let mem, T, log;
+  const STEPS = ['read', 'add 1', 'write'];
+  const cellV = h('div', { class: 'v' }), logT = h('table', { class: 'rlog' }), res = h('div', { class: 'caption' }), stat = h('div', { class: 'stat' });
+  const cols = { A: h('div', { class: 'thr' }), B: h('div', { class: 'thr' }) };
+  function reset() { mem = 41; T = { A: { s: 0, reg: null }, B: { s: 0, reg: null } }; log = []; draw(); }
+  function step(x) {
+    const t = T[x]; if (t.s > 2) return;
+    if (t.s === 0) { t.reg = mem; log.push([x, `read ${t.reg}`]); }
+    else if (t.s === 1) { t.reg += 1; log.push([x, `add 1 → ${t.reg}`]); }
+    else { mem = t.reg; log.push([x, `write ${t.reg}`]); cellV.classList.add('flash'); L.timeout(() => cellV.classList.remove('flash'), 300); }
+    t.s++; draw();
+  }
+  function draw() {
+    for (const x of ['A', 'B']) {
+      const c = cols[x]; c.innerHTML = '';
+      c.append(h('h3', { text: 'Thread ' + x }), h('div', { class: 'reg', text: 'register: ' + (T[x].reg ?? '–') }));
+      STEPS.forEach((s, i) => { const b = btn(`${i + 1}. ${s}`, () => step(x), T[x].s === i ? 'primary' : ''); b.disabled = T[x].s !== i; c.append(b); });
+    }
+    cellV.textContent = mem;
+    logT.innerHTML = '<tr><th>Thread A</th><th>Thread B</th><th>value</th></tr>';
+    let m = 41; const regs = { A: 0, B: 0 };
+    log.forEach(([x, s]) => { if (s.startsWith('write')) m = +s.split(' ')[1]; logT.append(h('tr', null, h('td', { text: x === 'A' ? s : '' }), h('td', { text: x === 'B' ? s : '' }), h('td', { text: m }))); });
+    if (T.A.s > 2 && T.B.s > 2) res.innerHTML = mem === 43 ? '<span class="ok">Expected 43, got 43 ✅ (this time the order was safe)</span>' : `<span class="bad">Expected 43, got ${mem} ← one increment lost</span>`;
+    else res.innerHTML = 'Click the steps in any order. Both threads run <code>counter.value += 1</code>.';
+  }
+  async function one() {
+    reset(); const seq = shuffle(['A', 'A', 'A', 'B', 'B', 'B']);
+    for (const x of seq) { await L.wait(450); step(x); }
+  }
+  function thousand() {
+    let wrong = 0;
+    for (let r = 0; r < 1000; r++) {
+      let m = 41; const t = { A: { s: 0, r: 0 }, B: { s: 0, r: 0 } };
+      while (t.A.s < 3 || t.B.s < 3) {
+        const x = t.A.s >= 3 ? 'B' : t.B.s >= 3 ? 'A' : Math.random() < .5 ? 'A' : 'B', q = t[x];
+        if (q.s === 0) q.r = m; else if (q.s === 1) q.r++; else m = q.r; q.s++;
+      }
+      if (m !== 43) wrong++;
+    }
+    stat.innerHTML = `Random interleaving ×1000: wrong in <b class="bad">${wrong}</b> runs. (A real CPU interleaves less often: Demo 3 loses a few % of 100,000.)`;
+  }
+  root.append(h('div', { class: 'bar' }, btn('↺ Reset', reset), btn('▶ One random interleaving', one), btn('🎲 Random interleaving ×1000', thousand, 'primary')),
+    h('div', { class: 'race' }, cols.A, h('div', { class: 'cell' }, h('div', { class: 'seglbl', text: 'shared memory: value' }), cellV, logT), cols.B), res, stat);
+  reset();
+};
+
+/* S24 / S25 · A14 reentrancy stepper */
+function reentrancy(root, L, f, withToggle) {
+  let fixed = withToggle, k = 0;
+  const S24 = FR[IDX.S24], S25 = FR[IDX.S25];
+  function codeOf(fr) { const t = h('div', { html: fr.html }).querySelector('pre code').textContent.split('\n'); const end = t.findIndex((l, i) => i > 0 && l.startsWith('}')); return t.slice(0, end + 1).join('\n'); }
+  const SC = {
+    false: { code: codeOf(S24), steps: [
+      { b: 100, n: 'Balance 100. Two <code>withdraw(80)</code> calls arrive at the same time.' },
+      { b: 100, c1: 'guard balance', in: 1, s1: '✅ 100 ≥ 80', n: 'Caller 1 enters the actor and checks: 100 ≥ 80 ✅' },
+      { b: 100, c1: 'authorize', s1: '⏸ asking the bank…', n: 'Caller 1 suspends at <code>await</code>. The actor is <b>free again</b>.' },
+      { b: 100, c1: 'authorize', s1: '⏸ asking the bank…', c2: 'guard balance', in: 2, s2: '✅ 100 ≥ 80', n: 'Caller 2 enters and checks: <b>still 100</b> ≥ 80 ✅' },
+      { b: 100, c1: 'authorize', s1: '⏸ asking the bank…', c2: 'authorize', s2: '⏸ asking the bank…', n: 'Caller 2 also suspends. Both have passed the check.' },
+      { b: 20, c1: 'balance -= amount', in: 1, s1: '💸 paid out 80', c2: 'authorize', s2: '⏸ asking the bank…', n: 'Bank approves caller 1 → pays out → balance 20.' },
+      { b: -60, c2: 'balance -= amount', in: 2, s1: 'done ✅', s2: '💸 paid out 80', n: '<b class="bad">Bank approves caller 2 → balance −60.</b> No data race, a race condition: Swift 6 can\'t catch it.' },
+    ] },
+    true: { code: codeOf(S25), steps: [
+      { b: 100, n: 'Balance 100. Two <code>withdrawSafely(80)</code> calls arrive at the same time.' },
+      { b: 100, c1: 'guard balance', in: 1, s1: '✅ 100 ≥ 80', n: 'Caller 1 checks: 100 ≥ 80 ✅' },
+      { b: 20, c1: 'reserve', in: 1, s1: '🔒 reserved 80', n: 'Caller 1 <b>reserves the money before the await</b> → balance 20.' },
+      { b: 20, c1: 'authorize', s1: '⏸ asking the bank…', n: 'Caller 1 suspends. The actor is free, but the state is already updated.' },
+      { b: 20, c1: 'authorize', s1: '⏸ asking the bank…', c2: 'guard balance', in: 2, s2: '⛔️ 20 < 80 → declined', n: 'Caller 2 checks: 20 ≥ 80? <b>No → declined ⛔️</b>' },
+      { b: 20, c1: 'return true', in: 1, s1: '💸 paid out 80', s2: 'returned false', n: '<b class="ok">Bank approves caller 1. Balance 20, never below.</b>' },
+    ] },
+  };
+  const c1 = h('div', { class: 'caller' }), c2 = h('div', { class: 'caller c2' });
+  const box = h('div', { class: 'actorbox' }), narr = h('div', { class: 'narr' }), pos = h('span', { class: 'stat' });
+  function lineIdx(lines, key, which) {
+    if (key === 'reserve') return lines.findIndex(l => l.includes('balance -= amount'));
+    if (key === 'balance -= amount') { const all = lines.map((l, i) => l.includes(key) ? i : -1).filter(i => i >= 0); return all[all.length - 1]; }
+    return lines.findIndex(l => l.includes(key));
+  }
+  function draw() {
+    const sc = SC[fixed], s = sc.steps[k];
+    const pre = h('pre', { class: 'code swift' }, h('code', { text: sc.code })); highlightAll(pre);
+    const lines = sc.code.split('\n'), lnEls = pre.querySelectorAll('.ln');
+    if (s.c1) { const i = lineIdx(lines, s.c1); if (lnEls[i]) lnEls[i].classList.add('at1'); }
+    if (s.c2) { const i = lineIdx(lines, s.c2); if (lnEls[i]) lnEls[i].classList.add('at2'); }
+    box.innerHTML = '';
+    box.append(h('div', { style: 'display:flex;justify-content:space-between;align-items:center' },
+      h('div', null, h('div', { class: 'seglbl', text: '🟣 actor BankAccount' }), h('div', { class: 'bal' + (s.b < 0 ? ' neg' : ''), text: 'balance: ' + s.b })),
+      h('div', { class: 'stat', html: s.in ? `inside: <b style="color:var(--t${s.in === 1 ? 'A' : 'B'})">caller ${s.in}</b>` : 'inside: <b>nobody</b>' })), pre);
+    c1.innerHTML = `<h3>Caller 1</h3><div class="stat">withdraw 80</div><div class="cs">${s.s1 || (k ? '' : 'waiting')}</div>`;
+    c2.innerHTML = `<h3>Caller 2</h3><div class="stat">withdraw 80</div><div class="cs">${s.s2 || (k ? '' : 'waiting')}</div>`;
+    narr.innerHTML = s.n; pos.textContent = `step ${k}/${sc.steps.length - 1}`;
+  }
+  const bar = h('div', { class: 'bar' }, btn('◀ Back', () => { if (k > 0) { k--; draw(); } }), btn('Step ▶', () => { if (k < SC[fixed].steps.length - 1) { k++; draw(); } }, 'primary'), btn('↺ Reset', () => { k = 0; draw(); }), pos);
+  if (withToggle) bar.append(seg([[false, 'Original'], [true, 'Fixed (reserve first)']], fixed, v => { fixed = v; k = 0; draw(); }));
+  root.append(bar, h('div', { class: 'reent' }, c1, box, c2), narr);
+  draw();
+}
+IA.S24 = (root, L, f) => reentrancy(root, L, f, false);
+IA.S25 = (root, L, f) => reentrancy(root, L, f, true);
+
+/* S26 · phone: await vs block */
+IA.S26 = (root, L) => {
+  let block = false, angle = 0, spinning = false;
+  const list = h('div', { class: 'plist' });
+  for (let i = 1; i <= 40; i++) list.append(h('div', { text: `Photo ${i}` }));
+  L.on(list, 'wheel', () => {}, { passive: false }); // keeps scrolling on the main thread, so blocking it really freezes the list
+  const spin = h('span', { class: 'spin', style: 'visibility:hidden' });
+  const phone = h('div', { class: 'phone' }, h('div', { class: 'ptop' }, h('span', { text: 'Gallery' }), spin), list);
+  const cap = h('div', { class: 'caption', html: 'Press load, then try scrolling the list.' });
+  const spinLoop = () => { if (!spinning) return; angle += 8; spin.style.transform = `rotate(${angle}deg)`; L.raf(spinLoop); };
+  function done() { spinning = false; spin.style.visibility = 'hidden'; list.prepend(h('div', { class: 'pop', style: 'background:var(--main-soft)', text: '🖼️ new image' })); }
+  function load() {
+    spin.style.visibility = 'visible'; spinning = true; L.raf(spinLoop);
+    if (!block) { cap.innerHTML = '<code>await</code>: the main thread is free → the list scrolls, the spinner spins.'; L.timeout(() => { done(); cap.innerHTML += ' <b class="ok">Image in.</b>'; }, 2000); }
+    else {
+      cap.innerHTML = '<b class="bad">Blocking the main thread for 2 s…</b>';
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        const end = performance.now() + 2000; while (performance.now() < end) { /* block */ }
+        done(); cap.innerHTML = '<b class="bad">Frozen for 2 s:</b> no scrolling, no spinner, no taps. This is what blocking the main thread feels like.';
+      }));
+    }
+  }
+  root.append(h('div', { style: 'display:flex;gap:40px;align-items:flex-start' }, phone,
+    h('div', { style: 'flex:1' }, h('div', { class: 'bar' }, btn('⬇︎ load()', load, 'primary')), h('div', { class: 'bar' }, seg([[false, 'await (main actor)'], [true, 'block main thread instead']], block, v => { block = v; })), cap)));
+};
+
+/* S27 · actor hopping ping-pong */
+IA.S27 = (root, L) => {
+  const area = h('div', { style: 'position:relative;height:300px;margin-top:20px' });
+  const a = h('div', { class: 'dest main', style: 'position:absolute;left:0;top:80px;width:330px;justify-content:center', text: '🟢 MainActor' });
+  const b = h('div', { class: 'dest actor', style: 'position:absolute;right:0;top:80px;width:330px;justify-content:center', text: '🟣 Database' });
+  const dot = h('div', { class: 'dot', style: 'top:111px;left:300px;transition:left .02s linear' });
+  const cnt = h('div', { class: 'stat', html: 'Hops: <b>0</b>' });
+  area.append(a, b, dot);
+  let run = 0;
+  async function go(n, ms) {
+    const me = ++run; let hops = 0; const L0 = 340, R0 = area.clientWidth - 370;
+    dot.style.transition = `left ${ms / 1000}s linear`;
+    for (let i = 0; i < n; i++) { if (me !== run) return; dot.style.left = (i % 2 ? L0 : R0) + 'px'; hops++; cnt.innerHTML = `Hops: <b>${hops}</b>`; await L.wait(ms); }
+  }
+  root.append(h('div', { class: 'bar' }, btn('🐢 loadOneByOne(): 50 calls', () => go(100, 40), 'primary'), btn('🐇 loadInOneBatch(): one call', () => go(2, 500)), cnt), area);
+};
+
+/* ---------------------------------------------------------------- navigation */
+const stage = document.getElementById('stage');
+function fitStage() {
+  if (IS_PRESENTER) return;
+  SCALE = Math.min(innerWidth / 1600, innerHeight / 900);
+  stage.style.transform = `translate(-50%, -50%) scale(${SCALE})`;
+}
+
+function buildFrame(i, L, preview) {
+  const f = FR[i];
+  const el = f.kind === 'demo' ? buildDemo(f, i, L, preview) : buildSlide(f, i, L, preview);
+  highlightAll(el);
+  return el;
+}
+
+function render(i, s) {
+  const f = FR[i];
+  if (i !== cur) {
+    if (life) life.destroy();
+    life = makeLife();
+    stage.innerHTML = '';
+    frameEl = buildFrame(i, life, false);
+    stage.append(frameEl);
+    fitContent(frameEl.querySelector('.content'));
+    const dl = frameEl.querySelector('.demo-left'); if (dl) shrink(dl, 0.6);
+    cur = i;
+  }
+  const ia = frameEl.querySelector('.ia'), content = frameEl.querySelector('.content');
+  s = ia ? s : 0;
+  if (ia) {
+    if (s && !ia.dataset.built) { IA[f.id](ia, life, f); ia.dataset.built = 1; }
+    ia.hidden = !s; content.hidden = !!s;
+    frameEl.querySelector('.ia-tab').classList.toggle('on', !!s);
+  }
+  sub = s;
+}
+
+function go(i, s = 0, remote = false) {
+  if (i == null || isNaN(i)) return;
+  i = Math.max(0, Math.min(FR.length - 1, i));
+  if (IS_PRESENTER) { pCur = i; pSub = IA[FR[i].id] ? s : 0; presenterRender(); }
+  else render(i, s);
+  const id = FR[i].id + ((IS_PRESENTER ? pSub : sub) ? '/i' : '');
+  if (location.hash.slice(1) !== id) history.replaceState(null, '', (IS_PRESENTER ? '?presenter' : location.search) + '#' + id);
+  if (!remote) send({ type: 'nav', i, s: IS_PRESENTER ? pSub : sub });
+}
+function curIdx() { return IS_PRESENTER ? pCur : cur; }
+function curSub() { return IS_PRESENTER ? pSub : sub; }
+function next() { const i = curIdx(), s = curSub(); if (IA[FR[i].id] && !s) go(i, 1); else go(i + 1, 0); }
+function prev() { const i = curIdx(), s = curSub(); if (s) go(i, 0); else go(i - 1, 0); }
+
+/* ---------------------------------------------------------------- sync between audience and presenter windows */
+let peer = IS_PRESENTER ? window.opener : null;
+function send(m) {
+  m = Object.assign({ scdeck: 1, from: WIN_ID, nonce: Math.random() }, m);
+  try { if (peer && !peer.closed) peer.postMessage(m, '*'); } catch (e) {}
+  try { localStorage.setItem('scdeck-sync', JSON.stringify(m)); } catch (e) {}
+}
+function receive(m) {
+  if (!m || !m.scdeck || m.from === WIN_ID) return;
+  if (m.type === 'nav' && (m.i !== curIdx() || m.s !== curSub())) go(m.i, m.s, true);
+  if (m.type === 'hello' && !IS_PRESENTER) send({ type: 'nav', i: cur, s: sub });
+  if (m.type === 'timer' && IS_PRESENTER) drawClock();
+}
+addEventListener('message', e => receive(e.data));
+addEventListener('storage', e => { if (e.key === 'scdeck-sync' && e.newValue) { try { receive(JSON.parse(e.newValue)); } catch (x) {} } });
+function openPresenter() {
+  const url = location.href.split('#')[0].split('?')[0] + '?presenter#' + FR[cur].id;
+  const w = window.open(url, 'scdeck-presenter', 'width=1400,height=900');
+  if (w) peer = w;
+}
+
+/* ---------------------------------------------------------------- talk timer (shared) */
+function timerState() { try { return JSON.parse(localStorage.getItem('scdeck-timer')) || {}; } catch (e) { return {}; } }
+function saveTimer(t) { try { localStorage.setItem('scdeck-timer', JSON.stringify(t)); } catch (e) {} send({ type: 'timer' }); }
+function elapsed() { const t = timerState(); if (!t.start) return 0; return (t.paused || Date.now()) - t.start; }
+function startPause() { const t = timerState(), now = Date.now(); if (!t.start) t.start = now; else if (t.paused) { t.start += now - t.paused; t.paused = null; } else t.paused = now; saveTimer(t); drawClock(); }
+function resetTimer() { saveTimer({}); drawClock(); }
+
+/* ---------------------------------------------------------------- presenter view */
+let pCur = 0, pSub = 0, pArrive = Date.now(), pLife = null, pEls = {};
+function presenterSetup() {
+  document.body.className = 'presenter';
+  document.title = 'Presenter · ' + DATA.title;
+  stage.remove(); document.getElementById('navprev').remove(); document.getElementById('navnext').remove();
+  const prevBox = (lbl) => { const box = h('div', { class: 'pv-prev' }); const inner = h('div', { class: 'inner' }); box.append(inner); return { wrap: h('div', null, h('div', { class: 'pv-label', text: lbl }), box), box, inner }; };
+  pEls.curP = prevBox('Now'); pEls.nextP = prevBox('Next');
+  pEls.title = h('div', { class: 'pv-title' });
+  pEls.clock = h('div', { class: 'pv-clock' });
+  pEls.notes = h('div', { class: 'pv-notes' });
+  const btns = h('div', { class: 'pv-btns' },
+    h('button', { text: '◀ Prev', onclick: prev }), h('button', { class: 'primary', text: 'Next ▶', onclick: next }),
+    h('button', { id: 'tbtn', text: '▶ Start talk timer', onclick: startPause }), h('button', { text: '↺ Reset timer', onclick: () => { if (confirm('Reset the talk timer?')) resetTimer(); } }),
+    h('button', { text: 'Overview (O)', onclick: toggleOverview }));
+  const side = h('div', { class: 'pv-side' }, pEls.title, pEls.clock, btns, pEls.nextP.wrap);
+  document.body.prepend(h('div', { class: 'pv' }, pEls.curP.wrap, side, pEls.notes));
+  const ro = new ResizeObserver(() => [pEls.curP, pEls.nextP].forEach(p => { const s = p.box.clientWidth / 1600; p.box.style.height = (900 * s) + 'px'; p.inner.style.transform = `scale(${s})`; }));
+  ro.observe(pEls.curP.box); ro.observe(pEls.nextP.box);
+  setInterval(drawClock, 500);
+}
+function fillPreview(p, i, s) {
+  p.inner.innerHTML = '';
+  if (i >= FR.length) { p.inner.append(h('div', { style: 'padding:60px;font-size:40px;color:var(--muted)', text: 'End of deck' })); return; }
+  const L = makeLife();
+  const el = buildFrame(i, L, true);
+  p.inner.append(el);
+  fitContent(el.querySelector('.content'));
+  const dl = el.querySelector('.demo-left'); if (dl) shrink(dl, 0.6);
+  if (s && el.querySelector('.ia')) { el.querySelector('.content').hidden = true; const ia = el.querySelector('.ia'); ia.hidden = false; ia.innerHTML = `<div style="font-size:34px;color:var(--muted);padding:40px 0">✨ Interactive step is showing on the projector.</div>`; el.querySelector('.ia-tab').classList.add('on'); }
+  L.destroy();
+}
+function presenterRender() {
+  const f = FR[pCur];
+  pArrive = Date.now();
+  if (pLife) pLife.destroy(); pLife = makeLife();
+  fillPreview(pEls.curP, pCur, pSub);
+  const nIdx = IA[f.id] && !pSub ? pCur : pCur + 1;
+  fillPreview(pEls.nextP, nIdx, nIdx === pCur ? 1 : 0);
+  pEls.title.innerHTML = `${f.kind === 'demo' ? '💻 Demo ' + esc(f.demoId) : f.id} · ${f.title} <small>· ${pCur + 1}/${FR.length} · ${esc(partName(f))}${f.annotation ? ' · ' + f.annotation : ''}</small>`;
+  let notes = `<h2>${f.kind === 'demo' ? '💻 Demo ' + esc(f.demoId) + ' · ' : ''}${f.title}</h2>`;
+  if (f.kind === 'demo') notes += `<h4>Steps & expected output</h4>${f.say}`;
+  else {
+    notes += f.say ? `<h4>🎤 Say</h4>${f.say}` : '<p style="color:#8a93a3">(No talk track for this slide.)</p>';
+    if (f.extra) notes += f.extra;
+    if (f.interactiveNote && (IA[f.id] || ENH[f.id])) notes += `<h4>✨ Interactive${IA[f.id] && !pSub ? ' (→ once more to open it)' : ''}</h4><div class="ianote">${f.interactiveNote}</div>`;
+  }
+  pEls.notes.innerHTML = notes;
+  highlightAll(pEls.notes);
+  pEls.notes.scrollTop = 0;
+  drawClock();
+}
+function drawClock() {
+  if (!IS_PRESENTER || !pEls.clock) return;
+  const f = FR[pCur], el = elapsed(), t = timerState();
+  const planned = PLAN[pCur] * 60000, diff = el - planned;
+  const onSlide = Date.now() - pArrive, plannedSlide = f.minutes * 60000;
+  const tb = document.getElementById('tbtn'); if (tb) tb.textContent = !t.start ? '▶ Start talk timer' : t.paused ? '▶ Resume' : '⏸ Pause';
+  pEls.clock.innerHTML =
+    `<div class="pv-box"><div class="small">Talk time ${t.paused ? '(paused)' : ''}</div><div class="big">${fmt(el)}</div><div class="small">${t.start ? (Math.abs(diff) < 30000 ? '<span class="ok">on plan</span>' : diff > 0 ? `<span class="bad">${fmt(diff)} behind</span>` : `<span class="ok">${fmt(-diff)} ahead</span>`) + ` · plan here ${fmt(planned)}` : 'not started'}</div></div>` +
+    `<div class="pv-box"><div class="small">On this ${f.kind === 'demo' ? 'demo' : 'slide'} · planned ${f.minutes ? (Math.round(f.minutes * 60) >= 60 ? f.minutes + ' min' : Math.round(f.minutes * 60) + ' s') : '–'}</div><div class="big ${plannedSlide && onSlide > plannedSlide ? 'bad' : ''}">${fmt(onSlide)}</div><div class="small">clock ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div></div>`;
+}
+
+/* ---------------------------------------------------------------- overlays & keys */
+const overview = document.getElementById('overview'), help = document.getElementById('help'), black = document.getElementById('black'), gotoEl = document.getElementById('goto');
+function toggleOverview() {
+  if (!overview.hidden) { overview.hidden = true; return; }
+  overview.innerHTML = '<h2 style="margin-top:0">Overview <small style="color:#8a93a3;font-weight:400">· click to jump · Esc to close</small></h2>';
+  const grid = h('div', { class: 'ov-grid' });
+  FR.forEach((f, i) => grid.append(h('button', { class: 'ov-item' + (f.kind === 'demo' ? ' demo' : '') + (i === curIdx() ? ' cur' : ''), html: `<b>${f.kind === 'demo' ? '💻 Demo ' + esc(f.demoId) : f.id}${f.optional ? ' · optional' : ''}</b>${f.title}`, onclick: () => { overview.hidden = true; go(i, 0); } })));
+  overview.append(grid); overview.hidden = false;
+}
+function toggleHelp() {
+  if (!help.hidden) { help.hidden = true; return; }
+  help.innerHTML = `<h2 style="margin-top:0">Keyboard</h2><table>
+  <tr><td>→ ␣ PgDn</td><td>next (opens the ✨ interactive step first, if the slide has one)</td></tr>
+  <tr><td>← PgUp</td><td>previous</td></tr><tr><td>Home / End</td><td>first / last</td></tr>
+  <tr><td>I</td><td>toggle the interactive step</td></tr><tr><td>P</td><td>open the presenter view (notes, timers, next slide)</td></tr>
+  <tr><td>O</td><td>overview of all slides and demos</td></tr><tr><td>12 ↵</td><td>jump to S12</td></tr>
+  <tr><td>F</td><td>fullscreen</td></tr><tr><td>T</td><td>light / dark theme</td></tr><tr><td>B</td><td>black screen</td></tr>
+  <tr><td>?</td><td>this help</td></tr></table>`;
+  help.hidden = false;
+}
+let digits = '';
+addEventListener('keydown', e => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (tag === 'input' || tag === 'textarea' || tag === 'select') { if (e.key === 'Escape') e.target.blur(); return; }
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = e.key;
+  if (k === 'Escape') { overview.hidden = true; help.hidden = true; black.hidden = true; digits = ''; gotoEl.hidden = true; return; }
+  if (/^\d$/.test(k)) { digits += k; gotoEl.textContent = 'Go to S' + digits; gotoEl.hidden = false; return; }
+  if (k === 'Enter' && digits) { const i = IDX['S' + digits]; digits = ''; gotoEl.hidden = true; if (i != null) go(i, 0); e.preventDefault(); return; }
+  if ((k === ' ' || k === 'Enter') && tag === 'button') return;
+  if (['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter'].includes(k)) { e.preventDefault(); next(); }
+  else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(k)) { e.preventDefault(); prev(); }
+  else if (k === 'Home') go(0, 0);
+  else if (k === 'End') go(FR.length - 1, 0);
+  else if (k === 'i' || k === 'I') { if (IA[FR[curIdx()].id]) go(curIdx(), curSub() ? 0 : 1); }
+  else if (k === 'p' || k === 'P') { if (!IS_PRESENTER) openPresenter(); }
+  else if (k === 'o' || k === 'O') toggleOverview();
+  else if (k === '?') toggleHelp();
+  else if (k === 'f' || k === 'F') { if (!document.fullscreenElement) document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
+  else if (k === 't' || k === 'T') { const d = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'; document.documentElement.dataset.theme = d; try { localStorage.setItem('scdeck-theme', d); } catch (x) {} if (!IS_PRESENTER) { const c = cur; cur = -1; render(c, sub); } }
+  else if (k === 'b' || k === 'B' || k === '.') black.hidden = !black.hidden;
+});
+
+/* ---------------------------------------------------------------- boot */
+try { const th = localStorage.getItem('scdeck-theme'); if (th) document.documentElement.dataset.theme = th; } catch (e) {}
+function fromHash() { const [id, s] = location.hash.slice(1).split('/'); return [IDX[id] ?? 0, s === 'i' ? 1 : 0]; }
+if (IS_PRESENTER) {
+  presenterSetup();
+  const [i, s] = fromHash(); pCur = i; pSub = s; presenterRender();
+  send({ type: 'hello' });
+} else {
+  addEventListener('resize', () => { fitStage(); });
+  fitStage();
+  const [i, s] = fromHash(); render(i, s);
+  document.getElementById('navprev').onclick = prev;
+  document.getElementById('navnext').onclick = next;
+  addEventListener('hashchange', () => { const [i2, s2] = fromHash(); if (i2 !== cur || s2 !== sub) go(i2, s2); });
+}
+</script>
+</body>
+</html>
