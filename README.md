@@ -11,3 +11,7 @@ GitHub doesn't render them – open them locally:
 3. Navigate with ← →.
 
 Don't download just the `.html` – it needs its folders next to it (e.g. `assets/`, `fonts/`).
+
+## Recordings
+
+- [03 Accessibility](https://drive.google.com/file/d/1H-FkmvxEjauVYkFhUiKRw_JBvil--puz/view?usp=sharing)
