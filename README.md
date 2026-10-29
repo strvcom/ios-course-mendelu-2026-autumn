@@ -4,7 +4,10 @@ Each topic has `exercise/` (start + end Xcode projects) and `presentation/`.
 
 ## Presentations
 
-Open the `.html` file in `presentation/` in a browser (double-click). No install, works offline.
-Navigate with ← →.
+GitHub doesn't render them – open them locally:
 
-Keep the `.html` next to its folders (e.g. `assets/`, `fonts/`) – it won't load images without them.
+1. Clone the repo (or **Code → Download ZIP** and unzip).
+2. Open the `.html` file in `presentation/` in a browser (double-click). No install, works offline.
+3. Navigate with ← →.
+
+Don't download just the `.html` – it needs its folders next to it (e.g. `assets/`, `fonts/`).
