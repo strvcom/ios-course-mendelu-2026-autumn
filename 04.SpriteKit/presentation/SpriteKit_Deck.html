@@ -926,6 +926,11 @@
       .tile-image-large { height: 500px; margin: 0; }
       .tile-video-full { width: 100%; height: 100%; object-fit: contain; }
       #notes .preview .tile-video-full { width: 100%; height: auto; }
+      .particle-media { display: grid; grid-template-rows: repeat(2, 300px); gap: 18px; }
+      .particle-media video, .particle-media img {
+        width: 100%; height: 100%; object-fit: contain;
+        border-radius: 18px; background: #111517;
+      }
       .gameplay-video {
         height: 500px;
         border-radius: 22px;
@@ -967,7 +972,17 @@
         <div class="footer">STRV × MENDELU</div>
         <div class="pnum">2</div>
       </section>
-      <section class="slide" aria-label="Slide 3: What SpriteKit gives us">
+      <section class="slide" aria-label="Slide 3: SpriteKit in your app">
+        <div class="title">SpriteKit in your app</div>
+        <div class="body"><div class="grid"><div><p><b>Inside an app</b></p><ul><li>SwiftUI can display a scene with <code>SpriteView</code></li><li>UIKit can present a scene in an <code>SKView</code></li><li>The scene contains the game’s nodes</li></ul></div><div><p><b>Different jobs, together</b></p><ul><li>SwiftUI describes interface views from state</li><li>SpriteKit updates a 2D scene over time: movement, actions and physics</li><li>Use SwiftUI for menus and controls around the game</li></ul></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">3</div>
+      </section>
+      <section class="slide" aria-label="Slide 4: Framework connections">
+        <div class="title">Framework connections</div>
+        <div class="body"><div class="grid"><div><p><b>SwiftUI &amp; UIKit</b></p><ul><li>SwiftUI and UIKit work together on iOS</li><li>Some SwiftUI views use UIKit; others use different rendering paths</li><li>SwiftUI also runs on platforms that use AppKit</li></ul></div><div><p><b>SpriteKit &amp; Metal</b></p><ul><li><code>SpriteView</code> embeds SpriteKit in SwiftUI; <code>SKView</code> presents it in UIKit</li><li>SpriteKit uses Metal for GPU rendering on supported devices</li><li>Metal also supports some SwiftUI rendering paths</li></ul></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">4</div>
+      </section>
+      <section class="slide" aria-label="Slide 5: What SpriteKit gives us">
         <div class="title">What SpriteKit gives us</div>
         <div class="body">
           <div class="grid">
@@ -990,9 +1005,9 @@
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">3</div>
+        <div class="pnum">5</div>
       </section>
-      <section class="slide" aria-label="Slide 4: Meet the game">
+      <section class="slide" aria-label="Slide 6: Meet the game">
         <div class="title">Meet the game</div>
         <div class="body">
           <div class="grid">
@@ -1020,9 +1035,9 @@
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">4</div>
+        <div class="pnum">6</div>
       </section>
-      <section class="slide dark" aria-label="Slide 5: Scenes &amp; rendering">
+      <section class="slide dark" aria-label="Slide 7: Scenes &amp; rendering">
         <div class="body">
           <div class="section-title">
             Scenes & rendering
@@ -1031,9 +1046,9 @@
           <div class="section-num">02</div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">5</div>
+        <div class="pnum">7</div>
       </section>
-      <section class="slide" aria-label="Slide 6: The scene graph">
+      <section class="slide" aria-label="Slide 8: The scene graph">
         <div class="title">The scene graph</div>
         <div class="body">
           <div class="grid">
@@ -1057,9 +1072,9 @@
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">6</div>
+        <div class="pnum">8</div>
       </section>
-      <section class="slide" aria-label="Slide 7: Make a node">
+      <section class="slide" aria-label="Slide 9: Make a node">
         <div class="title">Make a node</div>
         <div class="body">
           <div class="grid">
@@ -1088,9 +1103,9 @@ zombie.addChild(marker)</code></pre>
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">7</div>
+        <div class="pnum">9</div>
       </section>
-      <section class="slide" aria-label="Slide 8: Transforms &amp; coordinates">
+      <section class="slide" aria-label="Slide 10: Transforms &amp; coordinates">
         <div class="title">Transforms & coordinates</div>
         <div class="body">
           <div class="grid">
@@ -1119,9 +1134,9 @@ zombie.addChild(marker)</code></pre>
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">8</div>
+        <div class="pnum">10</div>
       </section>
-      <section class="slide" aria-label="Slide 9: Anchor point · center">
+      <section class="slide" aria-label="Slide 11: Anchor point · center">
         <div class="title">Anchor point · center</div>
         <div class="body">
           <div class="grid">
@@ -1146,9 +1161,9 @@ zombie.anchorPoint = CGPoint(
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">9</div>
+        <div class="pnum">11</div>
       </section>
-      <section class="slide" aria-label="Slide 10: Anchor point · bottom left">
+      <section class="slide" aria-label="Slide 12: Anchor point · bottom left">
         <div class="title">Anchor point · bottom left</div>
         <div class="body">
           <div class="grid">
@@ -1170,9 +1185,9 @@ zombie.anchorPoint = CGPoint(
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">10</div>
+        <div class="pnum">12</div>
       </section>
-      <section class="slide" aria-label="Slide 11: Anchor point · top right">
+      <section class="slide" aria-label="Slide 13: Anchor point · top right">
         <div class="title">Anchor point · top right</div>
         <div class="body">
           <div class="grid">
@@ -1194,9 +1209,9 @@ zombie.anchorPoint = CGPoint(
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">11</div>
+        <div class="pnum">13</div>
       </section>
-      <section class="slide" aria-label="Slide 12: Rotate around center">
+      <section class="slide" aria-label="Slide 14: Rotate around center">
         <div class="title">Rotate around center</div>
         <div class="body">
           <div class="grid">
@@ -1223,9 +1238,9 @@ zombie.zRotation = .pi / 2</code></pre>
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">12</div>
+        <div class="pnum">14</div>
       </section>
-      <section class="slide" aria-label="Slide 13: Rotate around center">
+      <section class="slide" aria-label="Slide 15: Rotate around center">
         <div class="title">Rotate around center</div>
         <div class="body">
           <div class="grid">
@@ -1252,9 +1267,9 @@ zombie.zRotation = .pi</code></pre>
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">13</div>
+        <div class="pnum">15</div>
       </section>
-      <section class="slide" aria-label="Slide 14: Rotate around center">
+      <section class="slide" aria-label="Slide 16: Rotate around center">
         <div class="title">Rotate around center</div>
         <div class="body">
           <div class="grid">
@@ -1281,9 +1296,9 @@ zombie.zRotation = .pi + .pi / 2</code></pre>
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">14</div>
+        <div class="pnum">16</div>
       </section>
-      <section class="slide" aria-label="Slide 15: Rotate around center">
+      <section class="slide" aria-label="Slide 17: Rotate around center">
         <div class="title">Rotate around center</div>
         <div class="body">
           <div class="grid">
@@ -1310,9 +1325,9 @@ zombie.zRotation = 2 * .pi</code></pre>
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">15</div>
+        <div class="pnum">17</div>
       </section>
-      <section class="slide" aria-label="Slide 16: Rotate around bottom left">
+      <section class="slide" aria-label="Slide 18: Rotate around bottom left">
         <div class="title">Rotate around bottom left</div>
         <div class="body">
           <div class="grid">
@@ -1336,9 +1351,9 @@ zombie.zRotation = .pi / 2</code></pre>
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">16</div>
+        <div class="pnum">18</div>
       </section>
-      <section class="slide" aria-label="Slide 17: Rotate around bottom left">
+      <section class="slide" aria-label="Slide 19: Rotate around bottom left">
         <div class="title">Rotate around bottom left</div>
         <div class="body">
           <div class="grid">
@@ -1362,9 +1377,9 @@ zombie.zRotation = .pi</code></pre>
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">17</div>
+        <div class="pnum">19</div>
       </section>
-      <section class="slide" aria-label="Slide 18: Rotate around bottom left">
+      <section class="slide" aria-label="Slide 20: Rotate around bottom left">
         <div class="title">Rotate around bottom left</div>
         <div class="body">
           <div class="grid">
@@ -1388,9 +1403,9 @@ zombie.zRotation = .pi + .pi / 2</code></pre>
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">18</div>
+        <div class="pnum">20</div>
       </section>
-      <section class="slide" aria-label="Slide 19: Rotate around bottom left">
+      <section class="slide" aria-label="Slide 21: Rotate around bottom left">
         <div class="title">Rotate around bottom left</div>
         <div class="body">
           <div class="grid">
@@ -1414,9 +1429,9 @@ zombie.zRotation = 2 * .pi</code></pre>
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">19</div>
+        <div class="pnum">21</div>
       </section>
-      <section class="slide" aria-label="Slide 20: Move the node">
+      <section class="slide" aria-label="Slide 22: Move the node">
         <div class="title">Move the node</div>
         <div class="body">
           <div class="grid">
@@ -1439,9 +1454,9 @@ zombie.position = CGPoint(x: 120, y: 80)</code></pre>
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">20</div>
+        <div class="pnum">22</div>
       </section>
-      <section class="slide" aria-label="Slide 21: Move back across the canvas">
+      <section class="slide" aria-label="Slide 23: Move back across the canvas">
         <div class="title">Move back across the canvas</div>
         <div class="body">
           <div class="grid">
@@ -1464,9 +1479,9 @@ zombie.position = CGPoint(x: -120, y: -60)</code></pre>
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">21</div>
+        <div class="pnum">23</div>
       </section>
-      <section class="slide" aria-label="Slide 22: Scale the sprite">
+      <section class="slide" aria-label="Slide 24: Scale the sprite">
         <div class="title">Scale the sprite</div>
         <div class="body">
           <div class="grid">
@@ -1486,9 +1501,9 @@ zombie.yScale = 2</code></pre>
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">22</div>
+        <div class="pnum">24</div>
       </section>
-      <section class="slide" aria-label="Slide 23: Flip the sprite">
+      <section class="slide" aria-label="Slide 25: Flip the sprite">
         <div class="title">Flip the sprite</div>
         <div class="body">
           <div class="grid">
@@ -1508,9 +1523,9 @@ zombie.yScale = -2</code></pre>
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">23</div>
+        <div class="pnum">25</div>
       </section>
-      <section class="slide" aria-label="Slide 24: Flip the sprite">
+      <section class="slide" aria-label="Slide 26: Flip the sprite">
         <div class="title">Flip the sprite</div>
         <div class="body">
           <div class="grid">
@@ -1530,9 +1545,9 @@ zombie.yScale = -2</code></pre>
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">24</div>
+        <div class="pnum">26</div>
       </section>
-      <section class="slide" aria-label="Slide 25: Add a child">
+      <section class="slide" aria-label="Slide 27: Add a child">
         <div class="title">Add a child</div>
         <div class="body"><div class="grid"><div>
           <pre><code>let parent = SKNode()
@@ -1546,9 +1561,9 @@ addChild(parent)</code></pre>
         </div><div class="anchor-preview"><div class="pixel-world children-added">
           <div class="anchor-node parent-marker"></div><div class="anchor-node"></div><img class="zombie center" src="assets/transform-demo/zombie.png" /><div class="child-node"><img src="PresentationProject/MendeluSpriteKit/Assets/Player/PlayerIdle.atlas/PlayerIdle1.png" alt="Player sprite" /><div class="anchor-node"></div></div>
         </div></div></div></div>
-        <div class="footer">STRV × MENDELU</div><div class="pnum">25</div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">27</div>
       </section>
-      <section class="slide" aria-label="Slide 26: Move the parent">
+      <section class="slide" aria-label="Slide 28: Move the parent">
         <div class="title">Move the parent</div>
         <div class="body"><div class="grid"><div>
           <pre><code>parent.position = CGPoint(x: -80, y: 80)
@@ -1557,14 +1572,14 @@ addChild(parent)</code></pre>
         </div><div class="anchor-preview"><div class="pixel-world children-moved">
           <div class="anchor-node parent-marker"></div><div class="anchor-node"></div><img class="zombie center" src="assets/transform-demo/zombie.png" /><div class="child-node"><img src="PresentationProject/MendeluSpriteKit/Assets/Player/PlayerIdle.atlas/PlayerIdle1.png" alt="Player sprite" /><div class="anchor-node"></div></div>
         </div></div></div></div>
-        <div class="footer">STRV × MENDELU</div><div class="pnum">26</div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">28</div>
       </section>
-      <section class="slide" aria-label="Slide 27: Camera &amp; viewport">
+      <section class="slide" aria-label="Slide 29: Camera &amp; viewport">
         <div class="title">Camera &amp; viewport</div>
         <div class="body"><div class="grid"><div><ul><li>A camera determines which part of the scene is visible</li><li>Moving the camera changes the view of the world</li><li>Camera scale controls how much of the scene is visible</li><li>Camera children can keep controls fixed on screen</li></ul></div><div class="gameplay-video"><video src="assets/camera.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Camera following the player in the game"></video></div></div></div>
-        <div class="footer">STRV × MENDELU</div><div class="pnum">27</div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">29</div>
       </section>
-      <section class="slide" aria-label="Slide 28: Follow the player">
+      <section class="slide" aria-label="Slide 30: Follow the player">
         <div class="title">Follow the player</div>
         <div class="body"><div class="grid"><div><pre><code>let camera = SKCameraNode()
 scene.addChild(camera)
@@ -1575,69 +1590,69 @@ camera.yScale = 0.5
 
 // On each update, after the player moves:
 camera.position = player.position</code></pre></div><div><p class="lead">A camera can follow the player.</p><ul><li>Set up the camera once</li><li>Use scale to zoom the view</li><li>Update its position as the player moves</li></ul><p class="muted">Smaller scale values show less of the scene.</p></div></div></div>
-        <div class="footer">STRV × MENDELU</div><div class="pnum">28</div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">30</div>
       </section>
-      <section class="slide" aria-label="Slide 29: Controls stay on screen">
+      <section class="slide" aria-label="Slide 31: Controls stay on screen">
         <div class="title">Controls stay on screen</div>
         <div class="body"><div class="grid"><div><pre><code>camera.addChild(joystick)
 joystick.position = CGPoint(
     x: -scene.size.width / 2 + safeArea.left,
     y: -scene.size.height / 2 + safeArea.bottom
 )</code></pre></div><div><p class="lead">The joystick is a child of the camera.</p><ul><li>Its position is in camera coordinates</li><li>It moves with the camera, staying fixed on screen</li><li>Safe-area insets keep controls clear of screen edges</li></ul><p class="muted">The joystick handles input; the camera follows the player in its update.</p></div></div></div>
-        <div class="footer">STRV × MENDELU</div><div class="pnum">29</div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">31</div>
       </section>
-      <section class="slide" aria-label="Slide 30: SpriteKit frame cycle">
+      <section class="slide" aria-label="Slide 32: SpriteKit frame cycle">
         <div class="title">SpriteKit frame cycle</div>
         <div class="body"><div class="frame-cycle-layout"><div><p class="lead">SpriteKit updates the scene, then renders a frame.</p><ul><li>Callbacks let your game run logic at specific points</li><li>Actions, physics and constraints can change nodes between callbacks</li></ul></div><img src="assets/frame-cycle-events.png" alt="Apple diagram of SpriteKit frame-cycle events, from update through actions, physics, constraints and rendering" /></div></div>
-        <div class="footer">STRV × MENDELU</div><div class="pnum">30</div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">32</div>
       </section>
-      <section class="slide" aria-label="Slide 31: Frame cycle · update">
+      <section class="slide" aria-label="Slide 33: Frame cycle · update">
         <div class="title">Frame cycle · update</div>
         <div class="body"><div class="grid"><div><pre><code>override func update(_ currentTime: TimeInterval) {
     readInput()
     updateGameState()
     startActionsIfNeeded()
 }</code></pre></div><div><p><b>Use it for</b></p><p>Read movement input, advance a timer, or start an action when a state changes.</p><p><b>Keep in mind</b></p><p>Start a running action once, not on every frame. Actions and physics run later.</p></div></div></div>
-        <div class="footer">STRV × MENDELU</div><div class="pnum">31</div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">33</div>
       </section>
-      <section class="slide" aria-label="Slide 32: Frame cycle · after actions">
+      <section class="slide" aria-label="Slide 34: Frame cycle · after actions">
         <div class="title">Frame cycle · after actions</div>
         <div class="body"><div class="grid"><div><pre><code>override func didEvaluateActions() {
     // Actions have updated node positions.
     updateTrailPosition()
 }</code></pre></div><div><p><b>Use it for</b></p><p>Place a trail at a node’s updated position after its move action runs.</p><p><b>Keep in mind</b></p><p>Physics runs next and may move the node again; use the later callback if you need its physics position.</p></div></div></div>
-        <div class="footer">STRV × MENDELU</div><div class="pnum">32</div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">34</div>
       </section>
-      <section class="slide" aria-label="Slide 33: Frame cycle · after physics">
+      <section class="slide" aria-label="Slide 35: Frame cycle · after physics">
         <div class="title">Frame cycle · after physics</div>
         <div class="body"><div class="grid"><div><pre><code>override func didSimulatePhysics() {
     // Physics has updated body positions.
     camera.position = player.position
 }</code></pre></div><div><p><b>Use it for</b></p><p>Move the camera to the player’s position after physics resolves movement.</p><p><b>Keep in mind</b></p><p>Physics has already run; a new force or body change waits for the next simulation.</p></div></div></div>
-        <div class="footer">STRV × MENDELU</div><div class="pnum">33</div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">35</div>
       </section>
-      <section class="slide" aria-label="Slide 34: Frame cycle · after constraints">
+      <section class="slide" aria-label="Slide 36: Frame cycle · after constraints">
         <div class="title">Frame cycle · after constraints</div>
         <div class="body"><div class="grid"><div><pre><code>override func didApplyConstraints() {
     // Constraints have adjusted the nodes.
     updateIndicatorPosition()
 }</code></pre></div><div><p><b>Use it for</b></p><p>Position an indicator after a constraint has adjusted the target’s position.</p><p><b>Keep in mind</b></p><p>Changing a constraint now won’t apply the new constraint until the next frame.</p></div></div></div>
-        <div class="footer">STRV × MENDELU</div><div class="pnum">34</div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">36</div>
       </section>
-      <section class="slide" aria-label="Slide 35: Frame cycle · before rendering">
+      <section class="slide" aria-label="Slide 37: Frame cycle · before rendering">
         <div class="title">Frame cycle · before rendering</div>
         <div class="body"><div class="grid"><div><pre><code>override func didFinishUpdate() {
     // Final scene adjustments for this frame.
     updateHUD()
 }</code></pre></div><div><p><b>Use it for</b></p><p>Refresh a visible HUD value after the game’s update stages have finished.</p><p><b>Keep in mind</b></p><p>Only update the HUD when its value changes; earlier processing stages won’t run again.</p></div></div></div>
-        <div class="footer">STRV × MENDELU</div><div class="pnum">35</div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">37</div>
       </section>
-      <section class="slide" aria-label="Slide 36: Frame performance">
+      <section class="slide" aria-label="Slide 38: Frame performance">
         <div class="title">Frame performance</div>
         <div class="body"><div class="performance-layout"><div class="performance-budget"><div class="performance-number">16.7 <span>ms</span></div><div class="performance-caption">PER FRAME · 60 FPS</div><ul><li>Every frame shares a limited time budget</li><li>The budget covers game logic, SpriteKit, rendering and other work</li></ul></div><div class="performance-tips"><p><b>Keep each frame light</b></p><ul><li>Reuse nodes and textures instead of recreating them every frame</li><li>Start repeating actions once, rather than restarting them in <code>update(_:)</code></li><li>Update labels and other UI only when their values change</li><li>Avoid expensive searches and work that can be done less often</li></ul></div></div></div>
-        <div class="footer">STRV × MENDELU</div><div class="pnum">36</div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">38</div>
       </section>
-      <section class="slide dark" aria-label="Slide 37: Nodes in action">
+      <section class="slide dark" aria-label="Slide 39: Nodes in action">
         <div class="body">
           <div class="section-title">
             Nodes in action
@@ -1646,14 +1661,16 @@ joystick.position = CGPoint(
           <div class="section-num">03</div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">37</div>
+        <div class="pnum">39</div>
       </section>
-      <section class="slide" aria-label="Slide 38: Sprite nodes">
+      <section class="slide" aria-label="Slide 40: Organizing SpriteKit nodes"><div class="title">Organizing SpriteKit nodes</div><div class="body"><div><p class="lead">The following examples are grouped using the sections in Apple’s SpriteKit documentation.</p><ul><li>Nodes that draw</li><li>Nodes for environmental effects</li><li>Nodes that modify drawing</li></ul></div></div><div class="footer">STRV × MENDELU</div><div class="pnum">40</div></section>
+      <section class="slide" aria-label="Slide 41: Nodes that draw"><div class="title">Nodes that draw</div><div class="body"><div><ul><li>Draw visible content such as images, shapes, text, particles, video and tiles</li><li>Use these nodes when something should appear in the scene</li><li>Examples include <b>SKSpriteNode</b>, <b>SKLabelNode</b> and <b>SKEmitterNode</b></li></ul></div></div><div class="footer">STRV × MENDELU</div><div class="pnum">41</div></section>
+      <section class="slide" aria-label="Slide 42: Sprite nodes">
         <div class="title">Sprite nodes</div>
-        <div class="body"><div class="grid"><div><p><b>Images & textures</b></p><ul><li>A sprite can display an image or a solid color</li><li>Creating a sprite from an image creates its texture automatically</li><li>Multiple sprites can share one texture</li></ul></div><div><p><b>Useful options</b></p><ul><li>Change a sprite’s texture to show a different image</li><li>Apply a color tint, for example when a character takes damage</li><li>Preload textures before a scene when you need them ready</li></ul></div></div></div>
-        <div class="footer">STRV × MENDELU</div><div class="pnum">38</div>
+        <div class="body"><div class="grid"><div><p><b>Images & textures</b></p><ul><li>A sprite can display an image or a solid color</li><li>Creating a sprite from an image creates its texture automatically</li><li>Multiple sprites can share one texture</li><li><b>SK3DNode</b> displays SceneKit content in a SpriteKit scene</li></ul></div><div><p><b>Useful options</b></p><ul><li>Change a sprite’s texture to show a different image</li><li>Apply a color tint, for example when a character takes damage</li><li>Preload textures before a scene when you need them ready</li></ul></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">42</div>
       </section>
-      <section class="slide" aria-label="Slide 39: Animate a sprite">
+      <section class="slide" aria-label="Slide 43: Animate a sprite">
         <div class="title">Animate a sprite</div>
         <div class="body">
           <div class="grid">
@@ -1708,24 +1725,24 @@ player.run(
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">39</div>
+        <div class="pnum">43</div>
       </section>
-      <section class="slide" aria-label="Slide 40: Tile maps">
+      <section class="slide" aria-label="Slide 44: Tile maps">
         <div class="title">Tile maps</div>
         <div class="body"><div class="grid"><div><ul><li><b>SKTileMapNode</b> arranges tile definitions on a grid</li><li>Visual tiles do not automatically create per-tile physics</li><li>The project’s Level builds collision geometry separately</li></ul></div><div><img class="tile-image tile-image-large" src="assets/tiles.png" alt="Tiles used to build a tile map" /></div></div></div>
-        <div class="footer">STRV × MENDELU</div><div class="pnum">40</div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">44</div>
       </section>
-      <section class="slide" aria-label="Slide 41: Tile maps">
+      <section class="slide" aria-label="Slide 45: Tile maps">
         <div class="title">Tile maps</div>
         <div class="body"><video class="tile-video-full" src="assets/creating-tile-map.mov" autoplay muted loop playsinline preload="metadata" aria-label="Creating a tile map in the scene editor"></video></div>
-        <div class="footer">STRV × MENDELU</div><div class="pnum">41</div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">45</div>
       </section>
-      <section class="slide" aria-label="Slide 42: Text, shapes &amp; HUD">
+      <section class="slide" aria-label="Slide 46: Text, shapes &amp; HUD">
         <div class="title">Text, shapes &amp; HUD</div>
-        <div class="body"><div class="grid"><div><ul><li><b>SKLabelNode</b> displays text, such as a score</li><li><b>SKShapeNode</b> draws shapes, such as circles and bars</li><li><b>SKNode</b> groups HUD elements together</li></ul><p class="muted">Attach HUD nodes to the camera to keep them on screen.</p></div><div class="gameplay-video"><video src="assets/hud.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Game HUD showing joystick and buttons"></video></div></div></div>
-        <div class="footer">STRV × MENDELU</div><div class="pnum">42</div>
+        <div class="body"><div class="grid"><div><ul><li><b>SKLabelNode</b> displays text, such as a score</li><li><b>SKShapeNode</b> draws shapes, such as circles and bars</li><li><b>SKVideoNode</b> plays video inside the scene</li><li><b>SKNode</b> groups HUD elements together</li></ul><p class="muted">Attach HUD nodes to the camera to keep them on screen.</p></div><div class="gameplay-video"><video src="assets/hud.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Game HUD showing joystick and buttons"></video></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">46</div>
       </section>
-      <section class="slide" aria-label="Slide 43: HUD controls">
+      <section class="slide" aria-label="Slide 47: HUD controls">
         <div class="title">HUD controls</div>
         <div class="body"><div class="grid"><div><pre><code>let joystick = Joystick()
 let buttons = ControlButtons()
@@ -1738,36 +1755,115 @@ buttons.position = bottomRight
 
 // JumpButton handles touches:
 player.jump()</code></pre></div><div><ul><li>The joystick and buttons are camera children</li><li>The joystick turns input into movement</li><li>Jump and attack buttons respond to touches</li><li>Positions are in camera coordinates</li></ul></div></div></div>
-        <div class="footer">STRV × MENDELU</div><div class="pnum">43</div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">47</div>
       </section>
-      <section class="slide" aria-label="Slide 44: Effects are nodes too">
-        <div class="title">Effects are nodes too</div>
-        <div class="body">
-          <div class="grid">
-            <div>
-              <div class="cards">
-                <div><b>Emitter</b><span>Particles</span></div>
-                <div><b>Crop</b><span>Mask a subtree</span></div>
-                <div><b>Effect</b><span>Process a subtree</span></div>
-                <div><b>Light</b><span>Lighting masks</span></div>
-              </div>
-            </div>
-            <div>
-              <div class="media">
-                <span>LECTURER MEDIA · VIDEO</span
-                ><strong>Fountain: particles, clipping and lighting</strong
-                ><small
-                  >Replace this placeholder after recording and project
-                  verification</small
-                >
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">44</div>
+      <section class="slide" aria-label="Slide 48: Particle emitters">
+        <div class="title">Particle emitters</div>
+        <div class="body"><div class="grid"><div><ul><li><b>SKEmitterNode</b> creates many small particles over time</li><li>Use particles for sparks, smoke, magic and trails</li><li>Design and preview the effect in Xcode’s particle editor</li><li>Birth rate and lifetime affect performance</li></ul></div><div><div class="particle-media"><video src="assets/particles.mov" autoplay muted loop playsinline preload="metadata" aria-label="Wandering eye leaving a particle trail"></video><img src="assets/particle-editor.png" alt="SpriteKit particle editor" /></div></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">48</div>
       </section>
-      <section class="slide" aria-label="Slide 45: Actions compose motion">
+      <section class="slide" aria-label="Slide 49: Particle emitters · example">
+        <div class="title">Particle emitters · example</div>
+        <div class="body"><div class="grid"><div><pre><code>let particles = SKEmitterNode(
+    fileNamed: &quot;EyeParticles.sks&quot;
+)!
+particles.particleBirthRate = 0
+particles.targetNode = scene
+eye.addChild(particles)
+
+// While the eye moves:
+particles.particleBirthRate = 30
+// Stop emitting when it stops.</code></pre></div><div><p><b>How it works</b></p><ul><li>Load an emitter designed in Xcode</li><li>Attach it to the moving eye</li><li>Set a target node so emitted particles stay in the scene</li><li>Start and stop emission with the eye’s movement</li></ul></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">49</div>
+      </section>
+      <section class="slide" aria-label="Slide 50: Nodes for environmental effects"><div class="title">Nodes for environmental effects</div><div class="body"><div><ul><li>Affect the scene with audio, light or forces</li><li>Influence other content or physics bodies rather than drawing their own artwork</li><li>Examples include <b>SKAudioNode</b>, <b>SKLightNode</b> and <b>SKFieldNode</b></li></ul></div></div><div class="footer">STRV × MENDELU</div><div class="pnum">50</div></section>
+      <section class="slide" aria-label="Slide 51: SKAudioNode"><div class="title">SKAudioNode</div><div class="body"><div class="grid"><div><ul><li><b>SKAudioNode</b> plays sound in a scene</li><li>Use positional audio for sounds tied to a location</li><li><b>AVAudioSession</b> configures how the app’s audio behaves on iOS</li><li><code>.ambient</code> mixes with other audio and respects silent mode</li></ul><p class="muted">Add the audio file to the app bundle.</p></div><div><pre><code>import AVFoundation
+
+// Configure once when setting up app audio.
+do {
+    try AVAudioSession.sharedInstance()
+        .setCategory(.ambient)
+} catch {
+    print(&quot;Audio setup failed: \(error)&quot;)
+}
+
+let music = SKAudioNode(fileNamed: &quot;music.mp3&quot;)
+music.isPositional = false
+music.autoplayLooped = true
+scene.addChild(music)</code></pre></div></div></div><div class="footer">STRV × MENDELU</div><div class="pnum">51</div></section>
+      <section class="slide" aria-label="Slide 52: Light nodes">
+        <div class="title">Light nodes</div>
+        <div class="body"><div class="grid"><div><ul><li><b>SKLightNode</b> illuminates matching sprites and tile maps</li><li>Move a light with a character or animate it</li><li>Use it for torches, lamps or a glowing ghost</li><li>A light affects surfaces; it is not visible on its own</li></ul></div><div class="gameplay-video"><video src="assets/light.mov" autoplay muted loop playsinline preload="metadata" aria-label="SpriteKit light effect in the level"></video></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">52</div>
+      </section>
+      <section class="slide" aria-label="Slide 53: Light nodes · example">
+        <div class="title">Light nodes · example</div>
+        <div class="body"><div class="grid"><div><pre><code>let light = SKLightNode()
+light.categoryBitMask = 1
+light.lightColor = .cyan
+light.ambientColor = .darkGray
+light.falloff = 0.7
+
+ghost.addChild(light)
+ground.lightingBitMask = 1</code></pre></div><div><p><b>How it works</b></p><ul><li>The light follows the ghost because it is a child</li><li>Matching masks let the ground receive the light</li><li>Falloff controls how quickly light fades with distance</li><li>Ambient color keeps areas away from the light visible</li></ul></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">53</div>
+      </section>
+      <section class="slide" aria-label="Slide 54: Field nodes">
+        <div class="title">Field nodes</div>
+        <div class="body"><div class="grid"><div><ul><li><b>SKFieldNode</b> applies forces to physics bodies</li><li>Use radial gravity to pull nearby bodies toward a point</li><li>Limit its region and category mask to control its reach</li><li>An eye can attract the player and cause damage on contact</li></ul></div><div class="gameplay-video"><video src="assets/field.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Evil eye field attracts the player"></video></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">54</div>
+      </section>
+      <section class="slide" aria-label="Slide 55: Field nodes · example">
+        <div class="title">Field nodes · example</div>
+        <div class="body"><div class="grid"><div><pre><code>let field = SKFieldNode.radialGravityField()
+field.strength = 5
+field.region = SKRegion(radius: 160)
+field.categoryBitMask = FieldMask.eye
+
+eye.addChild(field)
+player.physicsBody?.fieldBitMask = FieldMask.eye</code></pre></div><div><p><b>How it works</b></p><ul><li>Positive strength attracts toward the field center</li><li>The region limits the effect to nearby bodies</li><li>Matching field masks choose which bodies are affected</li><li>Use a physics contact to damage the player on touch</li></ul></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">55</div>
+      </section>
+      <section class="slide" aria-label="Slide 56: Nodes that modify drawing"><div class="title">Nodes that modify drawing</div><div class="body"><div><ul><li>Change how their child nodes are rendered</li><li>Use them to mask content, apply effects or rotate children in 3D</li><li>Examples include <b>SKCropNode</b>, <b>SKEffectNode</b> and <b>SKTransformNode</b></li></ul></div></div><div class="footer">STRV × MENDELU</div><div class="pnum">56</div></section>
+      <section class="slide" aria-label="Slide 57: Crop nodes">
+        <div class="title">Crop nodes</div>
+        <div class="body"><div class="grid"><div><ul><li><b>SKCropNode</b> draws its children through a mask</li><li>The mask shape determines which parts are visible</li><li>Use it for windows, portals, spotlights or clipped effects</li></ul></div><div class="gameplay-video"><video src="assets/crop.mov" autoplay muted loop playsinline preload="metadata" aria-label="Eye moving through a circular crop"></video></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">57</div>
+      </section>
+      <section class="slide" aria-label="Slide 58: Crop nodes · example">
+        <div class="title">Crop nodes · example</div>
+        <div class="body"><div class="grid"><div><pre><code>let crop = SKCropNode()
+crop.maskNode = SKShapeNode(
+    circleOfRadius: 45
+)
+crop.addChild(eye)
+addChild(crop)</code></pre></div><div><p><b>How it works</b></p><ul><li>The white shape defines the visible window</li><li>Children of the crop node appear only inside the mask</li><li>Move a child through the mask to reveal clipping</li><li>The outline is a separate shape above the crop</li></ul></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">58</div>
+      </section>
+      <section class="slide" aria-label="Slide 59: Effect nodes"><div class="title">Effect nodes</div><div class="body"><div class="grid"><div><ul><li><b>SKEffectNode</b> renders its children into a separate buffer</li><li>Apply a Core Image filter to the rendered children</li><li>Use it for effects such as blur or color adjustments</li><li>Animate filter properties to change the effect over time</li></ul></div><div class="gameplay-video"><video src="assets/blurEffect.mov" autoplay muted loop playsinline preload="metadata" aria-label="Ghost gradually blurring and sharpening"></video></div></div></div><div class="footer">STRV × MENDELU</div><div class="pnum">59</div></section>
+      <section class="slide" aria-label="Slide 60: Effect nodes · example"><div class="title">Effect nodes · example</div><div class="body"><div class="grid"><div><pre><code>let effect = SKEffectNode()
+effect.filter = CIFilter(
+    name: &quot;CIGaussianBlur&quot;,
+    parameters: [kCIInputRadiusKey: 5]
+)
+effect.shouldEnableEffects = true
+effect.addChild(ghost)
+scene.addChild(effect)</code></pre></div><div><p><b>How it works</b></p><ul><li>The ghost is a child of the effect node</li><li>Core Image blurs the rendered children</li><li><code>shouldEnableEffects</code> turns the filter on or off</li></ul></div></div></div><div class="footer">STRV × MENDELU</div><div class="pnum">60</div></section>
+      <section class="slide" aria-label="Slide 61: Constraints">
+        <div class="title">Constraints</div>
+        <div class="body"><div class="grid"><div><p><b>Position and distance</b></p><ul><li>Keep a node within a range on the x or y axis</li><li>Keep a node within a distance of a point or another node</li></ul></div><div><p><b>Orientation</b></p><ul><li>Rotate a node to face a point or another node</li><li>Limit a node’s rotation to a range</li></ul><p class="muted">SpriteKit applies constraints after actions and physics, before rendering.</p></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">61</div>
+      </section>
+      <section class="slide" aria-label="Slide 62: Constraints · example">
+        <div class="title">Constraints · example</div>
+        <div class="body"><div class="grid"><div><pre><code>let lookAtPlayer = SKConstraint.orient(
+    to: player,
+    offset: SKRange(constantValue: 0)
+)
+eye.constraints = [lookAtPlayer]</code></pre></div><div><p><b>How it works</b></p><ul><li>The eye rotates to face the player as they move</li><li>The offset adjusts the artwork’s facing direction</li><li>Apply the constraint to the artwork so the field stays fixed</li></ul></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">62</div>
+      </section>
+      <section class="slide" aria-label="Slide 63: Actions compose motion">
         <div class="title">Actions compose motion</div>
         <div class="body">
           <div class="grid">
@@ -1790,11 +1886,11 @@ node.run(.repeatForever(pulse),
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">45</div>
+        <div class="pnum">63</div>
       </section>
       <section
         class="slide dark"
-        aria-label="Slide 46: Physics &amp; collisions"
+        aria-label="Slide 64: Physics &amp; collisions"
       >
         <div class="body">
           <div class="section-title">
@@ -1804,9 +1900,9 @@ node.run(.repeatForever(pulse),
           <div class="section-num">04</div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">46</div>
+        <div class="pnum">64</div>
       </section>
-      <section class="slide" aria-label="Slide 47: Bodies in a physics world">
+      <section class="slide" aria-label="Slide 65: Bodies in a physics world">
         <div class="title">Bodies in a physics world</div>
         <div class="body">
           <div class="grid">
@@ -1815,7 +1911,7 @@ node.run(.repeatForever(pulse),
                 <li>Gravity acts on dynamic bodies</li>
                 <li>Static bodies provide walls and ground</li>
                 <li>
-                  A body has a shape, velocity and other physical properties
+                  <b>SKPhysicsBody</b> defines a node’s shape, velocity and other physical properties
                 </li>
                 <li>An impulse changes momentum immediately</li>
               </ul>
@@ -1831,12 +1927,12 @@ player.physicsBody?.applyImpulse(
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">47</div>
+        <div class="pnum">65</div>
       </section>
-      <section class="slide" aria-label="Slide 48: Collision vs contact">
+      <section class="slide" aria-label="Slide 66: Collision vs contact">
         <div class="title">Collision vs contact</div>
         <div class="body">
-          <table>
+          <table style="font-size: 42px">
             <tr>
               <th>Body</th>
               <th>Category</th>
@@ -1845,21 +1941,21 @@ player.physicsBody?.applyImpulse(
             </tr>
             <tr>
               <td>Player</td>
-              <td>000100</td>
-              <td>101011</td>
-              <td>000001</td>
+              <td>00<b>1</b></td>
+              <td><b>1</b><b>1</b>0</td>
+              <td>0<b>1</b>0</td>
             </tr>
             <tr>
               <td>Ground</td>
-              <td>000001</td>
-              <td>001100</td>
-              <td>000000</td>
+              <td>0<b>1</b>0</td>
+              <td>00<b>1</b></td>
+              <td>000</td>
             </tr>
             <tr>
               <td>Zombie</td>
-              <td>001000</td>
-              <td>000111</td>
-              <td>000000</td>
+              <td><b>1</b>00</td>
+              <td>00<b>1</b></td>
+              <td>000</td>
             </tr>
           </table>
           <p class="lead">
@@ -1867,55 +1963,90 @@ player.physicsBody?.applyImpulse(
             zombie: collision; no contact notification requested.
           </p>
           <p class="muted">
-            Bits shown: door · projectile · zombie · player · boundary · ground
+            Bits shown: zombie · ground · player
           </p>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">48</div>
+        <div class="pnum">66</div>
       </section>
-      <section class="slide" aria-label="Slide 49: Masks &amp; callbacks">
-        <div class="title">Masks & callbacks</div>
+      <section class="slide" aria-label="Slide 67: Physics mask constants">
+        <div class="title">Physics mask constants</div>
+        <div class="body">
+          <div class="grid"><div><pre><code>enum CategoryBitMask {
+    static let groundTile: UInt32 = 0b1
+    static let player: UInt32 = 0b100
+    static let zombie: UInt32 = 0b1000
+}
+
+// Combine categories with bitwise OR
+let collision = CategoryBitMask.groundTile |
+    CategoryBitMask.zombie</code></pre></div><div><ul><li><b>Named constants</b> explain what each bit represents</li><li>Define categories in one place and reuse them throughout the game</li><li>Combine categories with <code>|</code> to describe interactions</li><li>Avoid hardcoded values when assigning masks</li></ul></div></div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">67</div>
+      </section>
+      <section class="slide" aria-label="Slide 68: SKPhysicsContactDelegate">
+        <div class="title">SKPhysicsContactDelegate</div>
+        <div class="body">
+          <div class="grid"><div><pre><code>// In the scene setup
+physicsWorld.contactDelegate = self
+
+extension LevelScene: SKPhysicsContactDelegate {
+    func didBegin(_ contact: SKPhysicsContact) {
+        let a = contact.bodyA
+        let b = contact.bodyB
+        // Check their categories and handle the contact.
+    }
+}</code></pre></div><div><ul><li>Set the physics world’s <b>contact delegate</b> to receive notifications</li><li><b>didBegin</b> runs when a requested contact starts; <b>didEnd</b> runs when it ends</li><li>Contact masks decide which interactions generate callbacks</li><li>Check both bodies before applying game logic</li></ul></div></div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">68</div>
+      </section>
+      <section class="slide" aria-label="Slide 69: Physics joints">
+        <div class="title">Physics joints</div>
+        <div class="body"><div class="grid"><div><ul><li><b>SKPhysicsJoint</b> connects two physics bodies</li><li><b>Pin joints</b> let connected bodies rotate around an anchor</li><li>Chain multiple segments together to create a flexible rope</li><li>Attach the player to the rope’s end, then remove the joint to let go</li></ul></div><div class="gameplay-video"><video src="assets/rope.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Player grabbing and swinging on a rope"></video></div></div></div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">69</div>
+      </section>
+      <section class="slide" aria-label="Slide 70: Physics joints · rope example">
+        <div class="title">Physics joints · rope example</div>
+        <div class="body"><div class="grid"><div><pre><code>var previous = anchor.physicsBody!
+
+for segment in ropeSegments {
+    let body = segment.physicsBody!
+    let pin = SKPhysicsJointPin.joint(
+        withBodyA: previous,
+        bodyB: body,
+        anchor: segmentTopInScene
+    )
+    physicsWorld.add(pin)
+    previous = body
+}</code></pre></div><div><p><b>How it works</b></p><ul><li>The first segment connects to a fixed anchor</li><li>Each pin connects a segment to the previous body</li><li>Joint anchors use scene coordinates</li><li>Another pin attaches the player; remove it when they jump</li></ul></div></div></div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">70</div>
+      </section>
+      <section class="slide" aria-label="Slide 71: Debug the invisible">
+        <div class="title">Debug the invisible</div>
         <div class="body">
           <div class="grid">
             <div>
-              <pre><code>let player: UInt32 = 1 &lt;&lt; 0
-let ground: UInt32 = 1 &lt;&lt; 1
-body.categoryBitMask = player
-body.collisionBitMask = ground
-body.contactTestBitMask = ground</code></pre>
+              <ul>
+                <li>Turn on <code>view.showsPhysics = true</code></li>
+                <li>Inspect body shapes and unexpected contacts</li>
+                <li>
+                  A contact normal depends on body ordering: identify bodies
+                  before interpreting its direction
+                </li>
+                <li>Consider precise collision detection for fast bodies</li>
+              </ul>
             </div>
-            <div>
-              <pre><code>func didBegin(_ contact: SKPhysicsContact) {
-    let a = contact.bodyA.categoryBitMask
-    let b = contact.bodyB.categoryBitMask
-    // Identify both bodies before handling.
-}</code></pre>
-            </div>
+            <div class="gameplay-video"><video src="assets/debug.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Gameplay with physics debugging"></video></div>
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">49</div>
+        <div class="pnum">71</div>
       </section>
-      <section class="slide" aria-label="Slide 50: Masks: change the result">
-        <div class="title">Masks: change the result</div>
-        <div class="body">
-          <div class="grid">
-            <div>
-              <pre><code>body.collisionBitMask = ground
-body.contactTestBitMask = ground</code></pre>
-            </div>
-            <div class="card-result">
-              <div style="font: 44px Oswald">RESULT · DIAGRAM</div>
-              <p>PLAYER ↓</p>
-              <p style="border-top: 6px solid #ef0d33">GROUND</p>
-              <p>Physical response + contact callback</p>
-            </div>
-          </div>
-        </div>
-        <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">50</div>
-      </section>
-      <section class="slide" aria-label="Slide 51: Combat: overlapping regions">
+      <section class="slide" aria-label="Slide 72: Combat: overlapping regions">
         <div class="title">Combat: overlapping regions</div>
         <div class="body">
           <div class="grid">
@@ -1932,53 +2063,13 @@ body.contactTestBitMask = ground</code></pre>
                 </li>
               </ul>
             </div>
-            <div>
-              <div class="media">
-                <span>LECTURER MEDIA · VIDEO</span
-                ><strong
-                  >Attack, hit detection, zombie death and HUD counter</strong
-                ><small
-                  >Replace this placeholder after recording and project
-                  verification</small
-                >
-              </div>
-            </div>
+            <div class="gameplay-video"><video src="assets/debug.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Gameplay with physics debugging"></video></div>
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">51</div>
+        <div class="pnum">72</div>
       </section>
-      <section class="slide" aria-label="Slide 52: Debug the invisible">
-        <div class="title">Debug the invisible</div>
-        <div class="body">
-          <div class="grid">
-            <div>
-              <ul>
-                <li>Turn on <code>view.showsPhysics = true</code></li>
-                <li>Inspect body shapes and unexpected contacts</li>
-                <li>
-                  A contact normal depends on body ordering: identify bodies
-                  before interpreting its direction
-                </li>
-                <li>Consider precise collision detection for fast bodies</li>
-              </ul>
-            </div>
-            <div>
-              <div class="media">
-                <span>LECTURER MEDIA · VIDEO</span
-                ><strong>Physics overlay, movement and jumping</strong
-                ><small
-                  >Replace this placeholder after recording and project
-                  verification</small
-                >
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">52</div>
-      </section>
-      <section class="slide dark" aria-label="Slide 53: State machines">
+      <section class="slide dark" aria-label="Slide 73: State machines">
         <div class="body">
           <div class="section-title">
             State machines
@@ -1987,9 +2078,9 @@ body.contactTestBitMask = ground</code></pre>
           <div class="section-num">05</div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">53</div>
+        <div class="pnum">73</div>
       </section>
-      <section class="slide" aria-label="Slide 54: Make behavior explicit">
+      <section class="slide" aria-label="Slide 74: Make behavior explicit">
         <div class="title">Make behavior explicit</div>
         <div class="body">
           <div class="states">
@@ -2010,9 +2101,9 @@ body.contactTestBitMask = ground</code></pre>
           </p>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">54</div>
+        <div class="pnum">74</div>
       </section>
-      <section class="slide" aria-label="Slide 55: GKStateMachine">
+      <section class="slide" aria-label="Slide 75: GKStateMachine">
         <div class="title">GKStateMachine</div>
         <div class="body">
           <div class="grid">
@@ -2038,9 +2129,9 @@ machine.update(deltaTime: dt)</code></pre>
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">55</div>
+        <div class="pnum">75</div>
       </section>
-      <section class="slide" aria-label="Slide 56: A state lifecycle">
+      <section class="slide" aria-label="Slide 76: A state lifecycle">
         <div class="title">A state lifecycle</div>
         <div class="body">
           <div class="grid">
@@ -2071,9 +2162,9 @@ machine.update(deltaTime: dt)</code></pre>
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">56</div>
+        <div class="pnum">76</div>
       </section>
-      <section class="slide dark" aria-label="Slide 57: Beyond 2D">
+      <section class="slide dark" aria-label="Slide 77: Beyond 2D">
         <div class="body">
           <div class="section-title">
             Beyond 2D
@@ -2082,9 +2173,9 @@ machine.update(deltaTime: dt)</code></pre>
           <div class="section-num">06</div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">57</div>
+        <div class="pnum">77</div>
       </section>
-      <section class="slide" aria-label="Slide 58: Concepts transfer">
+      <section class="slide" aria-label="Slide 78: Concepts transfer">
         <div class="title">Concepts transfer</div>
         <div class="body">
           <table>
@@ -2119,11 +2210,11 @@ machine.update(deltaTime: dt)</code></pre>
           </p>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">58</div>
+        <div class="pnum">78</div>
       </section>
       <section
         class="slide"
-        aria-label="Slide 59: Entities, components, systems"
+        aria-label="Slide 79: Entities, components, systems"
       >
         <div class="title">Entities, components, systems</div>
         <div class="body">
@@ -2140,129 +2231,20 @@ machine.update(deltaTime: dt)</code></pre>
           </p>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">59</div>
+        <div class="pnum">79</div>
       </section>
-      <section class="slide dark" aria-label="Slide 60: Build a game">
-        <div class="body">
-          <div class="section-title">
-            Build a game
-            <div class="section-sub">Pipeline & procedural maps</div>
-          </div>
-          <div class="section-num">07</div>
-        </div>
-        <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">60</div>
-      </section>
-      <section
-        class="slide"
-        aria-label="Slide 61: From assets to a playable scene"
-      >
-        <div class="title">From assets to a playable scene</div>
-        <div class="body">
-          <div class="steps">
-            <div>DRAW</div>
-            <span>→</span>
-            <div>IMPORT</div>
-            <span>→</span>
-            <div>ASSEMBLE</div>
-            <span>→</span>
-            <div>PLAYTEST</div>
-          </div>
-          <p class="lead">
-            Sprites & sheets · tiles · audio · effects · atlases
-          </p>
-          <p class="muted">
-            Examples: Aseprite, Krita, Tiled, Audacity, GarageBand and Xcode’s
-            SpriteKit editors.
-          </p>
-        </div>
-        <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">61</div>
-      </section>
-      <section class="slide" aria-label="Slide 62: Generate data first">
-        <div class="title">Generate data first</div>
-        <div class="body">
-          <div class="grid">
-            <div>
-              <div class="flow vertical">
-                <div>Seed</div>
-                <b>↓</b>
-                <div>Place rooms / chunks</div>
-                <b>↓</b>
-                <div>Connect & validate</div>
-                <b>↓</b>
-                <div>Tiles · collision · objects</div>
-              </div>
-            </div>
-            <div>
-              <ul>
-                <li>A seed makes a generated layout reproducible</li>
-                <li>Check reachability before building the scene</li>
-                <li>
-                  Finite room maps and streaming chunk worlds solve different
-                  problems
-                </li>
-                <li>Diablo and Minecraft are conceptual inspirations</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">62</div>
-      </section>
-      <section class="slide" aria-label="Slide 63: Procedural map sketch">
-        <div class="title">Procedural map sketch</div>
-        <div class="body">
-          <div class="grid">
-            <div>
-              <pre><code>var state: UInt64 = 42
-let heights = (0..&lt;10).map { _ in
-    state = state &amp;* 6364136223846793005
-        &amp;+ 1442695040888963407
-    return (state &gt;&gt; 32) % 3
-}</code></pre>
-            </div>
-            <div class="card-result">
-              <div style="font: 44px Oswald">RESULT · SCHEMATIC</div>
-              <p>ENTRANCE → ▂▃▂▁▃▂▁▂▃▁ → EXIT</p>
-              <p>10 connected floor sections</p>
-            </div>
-          </div>
-        </div>
-        <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">63</div>
-      </section>
-      <section class="slide" aria-label="Slide 64: Practical finishing touches">
-        <div class="title">Practical finishing touches</div>
-        <div class="body">
-          <div class="cards three">
-            <div>
-              <b>Performance</b><span>Atlases, profiling, node counts</span>
-            </div>
-            <div><b>Polish</b><span>Particles, shaders, sound</span></div>
-            <div>
-              <b>People</b
-              ><span
-                >Accessibility, readable feedback, deterministic seeds</span
-              >
-            </div>
-          </div>
-        </div>
-        <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">64</div>
-      </section>
-      <section class="slide dark" aria-label="Slide 65: Your turn">
+      <section class="slide dark" aria-label="Slide 80: Your turn">
         <div class="body">
           <div class="section-title">
             Your turn
             <div class="section-sub">Wrap-up and questions</div>
           </div>
-          <div class="section-num">08</div>
+          <div class="section-num">07</div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">65</div>
+        <div class="pnum">80</div>
       </section>
-      <section class="slide" aria-label="Slide 66: Five ideas to keep">
+      <section class="slide" aria-label="Slide 81: Five ideas to keep">
         <div class="title">Five ideas to keep</div>
         <div class="body">
           <ul>
@@ -2280,9 +2262,9 @@ let heights = (0..&lt;10).map { _ in
           </ul>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">66</div>
+        <div class="pnum">81</div>
       </section>
-      <section class="slide" aria-label="Slide 67: Exercise: add a collectible">
+      <section class="slide" aria-label="Slide 82: Exercise: add a collectible">
         <div class="title">Exercise: add a collectible</div>
         <div class="body">
           <div class="grid exercise-grid">
@@ -2307,9 +2289,9 @@ let heights = (0..&lt;10).map { _ in
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">67</div>
+        <div class="pnum">82</div>
       </section>
-      <section class="slide dark" aria-label="Slide 68: Questions?">
+      <section class="slide dark" aria-label="Slide 83: Questions?">
         <div class="body">
           <div class="closing">
             QUESTIONS<span>?</span>
@@ -2317,7 +2299,7 @@ let heights = (0..&lt;10).map { _ in
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">68</div>
+        <div class="pnum">83</div>
       </section>
     </main>
     <div id="blank"></div>
@@ -2335,6 +2317,8 @@ let heights = (0..&lt;10).map { _ in
           notes: "",
           body: '<div class="section-title">A 2D world<div class="section-sub">Introduction · 8 minutes<\/div><\/div><div class="section-num">01<\/div>',
         },
+        { title: "SpriteKit in your app", notes: "SwiftUI SpriteView and UIKit SKView can both present an SKScene. SwiftUI and SpriteKit can coexist in the same app; SpriteKit manages the scene update and rendering cycle.", body: "<div class=\"grid\"><div><p><b>Inside an app<\/b><\/p><ul><li>SwiftUI can display a scene with <code>SpriteView<\/code><\/li><li>UIKit can present a scene in an <code>SKView<\/code><\/li><li>The scene contains the game’s nodes<\/li><\/ul><\/div><div><p><b>Different jobs, together<\/b><\/p><ul><li>SwiftUI describes interface views from state<\/li><li>SpriteKit updates a 2D scene over time: movement, actions and physics<\/li><li>Use SwiftUI for menus and controls around the game<\/li><\/ul><\/div><\/div>" },
+        { title: "Framework connections", notes: "Metal is a low-level GPU API, but not every drawing operation necessarily uses Metal. SpriteKit uses Metal on supported devices; SwiftUI has multiple rendering paths, and some views are not UIKit-backed.", body: "<div class=\"grid\"><div><p><b>SwiftUI &amp; UIKit<\/b><\/p><ul><li>SwiftUI and UIKit work together on iOS<\/li><li>Some SwiftUI views use UIKit; others use different rendering paths<\/li><li>SwiftUI also runs on platforms that use AppKit<\/li><\/ul><\/div><div><p><b>SpriteKit &amp; Metal<\/b><\/p><ul><li><code>SpriteView<\/code> embeds SpriteKit in SwiftUI; <code>SKView<\/code> presents it in UIKit<\/li><li>SpriteKit uses Metal for GPU rendering on supported devices<\/li><li>Metal also supports some SwiftUI rendering paths<\/li><\/ul><\/div><\/div>" },
         {
           title: "What SpriteKit gives us",
           notes:
@@ -2527,10 +2511,12 @@ let heights = (0..&lt;10).map { _ in
           notes: "",
           body: '<div class="section-title">Nodes in action<div class="section-sub">15 minutes<\/div><\/div><div class="section-num">03<\/div>',
         },
+        { title: "Organizing SpriteKit nodes", notes: "The following node groups follow the SpriteKit documentation.", body: "<div><p class=\"lead\">The following examples are grouped using the sections in Apple’s SpriteKit documentation.<\/p><ul><li>Nodes that draw<\/li><li>Nodes for environmental effects<\/li><li>Nodes that modify drawing<\/li><\/ul><\/div>" },
+        { title: "Nodes that draw", notes: "", body: "<div><ul><li>Draw visible content such as images, shapes, text, particles, video and tiles<\/li><li>Use these nodes when something should appear in the scene<\/li><li>Examples include <b>SKSpriteNode<\/b>, <b>SKLabelNode<\/b> and <b>SKEmitterNode<\/b><\/li><\/ul><\/div>" },
         {
           title: "Sprite nodes",
           notes: "SpriteKit creates a texture for an image-named sprite. Textures can be shared, replaced, animated or preloaded; SpriteKit also manages texture data as needed. For a tint, set both color and colorBlendFactor. Based on Apple’s Getting Started with Sprite Nodes.",
-          body: '<div class="grid"><div><p><b>Images & textures<\/b><\/p><ul><li>A sprite can display an image or a solid color<\/li><li>Creating a sprite from an image creates its texture automatically<\/li><li>Multiple sprites can share one texture<\/li><\/ul><\/div><div><p><b>Useful options<\/b><\/p><ul><li>Change a sprite’s texture to show a different image<\/li><li>Apply a color tint, for example when a character takes damage<\/li><li>Preload textures before a scene when you need them ready<\/li><\/ul><\/div><\/div>',
+          body: '<div class="grid"><div><p><b>Images & textures<\/b><\/p><ul><li>A sprite can display an image or a solid color<\/li><li>Creating a sprite from an image creates its texture automatically<\/li><li>Multiple sprites can share one texture<\/li><li><b>SK3DNode<\/b> displays SceneKit content in a SpriteKit scene<\/li><\/ul><\/div><div><p><b>Useful options<\/b><\/p><ul><li>Change a sprite’s texture to show a different image<\/li><li>Apply a color tint, for example when a character takes damage<\/li><li>Preload textures before a scene when you need them ready<\/li><\/ul><\/div><\/div>',
         },
         {
           title: "Animate a sprite",
@@ -2551,7 +2537,7 @@ let heights = (0..&lt;10).map { _ in
         {
           title: "Text, shapes & HUD",
           notes: "Use the video to point out the joystick and control buttons. HUD elements can be camera children so they remain visible as the camera moves.",
-          body: '<div class="grid"><div><ul><li><b>SKLabelNode<\/b> displays text, such as a score<\/li><li><b>SKShapeNode<\/b> draws shapes, such as circles and bars<\/li><li><b>SKNode<\/b> groups HUD elements together<\/li><\/ul><p class="muted">Attach HUD nodes to the camera to keep them on screen.<\/p><\/div><div class="gameplay-video"><video src="assets/hud.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Game HUD showing joystick and buttons"><\/video><\/div><\/div>',
+          body: '<div class="grid"><div><ul><li><b>SKLabelNode<\/b> displays text, such as a score<\/li><li><b>SKShapeNode<\/b> draws shapes, such as circles and bars<\/li><li><b>SKVideoNode<\/b> plays video inside the scene<\/li><li><b>SKNode<\/b> groups HUD elements together<\/li><\/ul><p class="muted">Attach HUD nodes to the camera to keep them on screen.<\/p><\/div><div class="gameplay-video"><video src="assets/hud.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Game HUD showing joystick and buttons"><\/video><\/div><\/div>',
         },
         {
           title: "HUD controls",
@@ -2559,11 +2545,36 @@ let heights = (0..&lt;10).map { _ in
           body: '<div class="grid"><div><pre><code>let joystick = Joystick()\nlet buttons = ControlButtons()\n\ncamera.addChild(joystick)\ncamera.addChild(buttons)\n\njoystick.position = bottomLeft\nbuttons.position = bottomRight\n\n// JumpButton handles touches:\nplayer.jump()<\/code><\/pre><\/div><div><ul><li>The joystick and buttons are camera children<\/li><li>The joystick turns input into movement<\/li><li>Jump and attack buttons respond to touches<\/li><li>Positions are in camera coordinates<\/li><\/ul><\/div><\/div>',
         },
         {
-          title: "Effects are nodes too",
-          notes:
-            'PresentationProject Fountain.swift creates a crop, emitter and light; visual output has not been verified. <a href="https://developer.apple.com/documentation/spritekit">SpriteKit documentation<\/a>.',
-          body: '<div class="grid"><div><div class="cards"><div><b>Emitter<\/b><span>Particles<\/span><\/div><div><b>Crop<\/b><span>Mask a subtree<\/span><\/div><div><b>Effect<\/b><span>Process a subtree<\/span><\/div><div><b>Light<\/b><span>Lighting masks<\/span><\/div><\/div><\/div><div><div class="media"><span>LECTURER MEDIA · VIDEO<\/span><strong>Fountain: particles, clipping and lighting<\/strong><small>Replace this placeholder after recording and project verification<\/small><\/div><\/div><\/div>',
+          title: "Particle emitters",
+          notes: "The example uses the green eye asset and an editable particle file based on Xcode’s Magic template. The video shows the eye leaving a particle trail.",
+          body: '<div class="grid"><div><ul><li><b>SKEmitterNode<\/b> creates many small particles over time<\/li><li>Use particles for sparks, smoke, magic and trails<\/li><li>Design and preview the effect in Xcode’s particle editor<\/li><li>Birth rate and lifetime affect performance<\/li><\/ul><\/div><div><div class="particle-media"><video src="assets/particles.mov" autoplay muted loop playsinline preload="metadata" aria-label="Wandering eye leaving a particle trail"><\/video><img src="assets/particle-editor.png" alt="SpriteKit particle editor" /><\/div><\/div><\/div>',
         },
+        {
+          title: "Particle emitters · example",
+          notes: "The example simplifies WanderingEye.swift: the eye emits while moving to a random nearby position, then stops the emitter until the next movement. targetNode keeps emitted particles in scene coordinates.",
+          body: '<div class="grid"><div><pre><code>let particles = SKEmitterNode(\n    fileNamed: &quot;EyeParticles.sks&quot;\n)!\nparticles.particleBirthRate = 0\nparticles.targetNode = scene\neye.addChild(particles)\n\n// While the eye moves:\nparticles.particleBirthRate = 30\n// Stop emitting when it stops.<\/code><\/pre><\/div><div><p><b>How it works<\/b><\/p><ul><li>Load an emitter designed in Xcode<\/li><li>Attach it to the moving eye<\/li><li>Set a target node so emitted particles stay in the scene<\/li><li>Start and stop emission with the eye’s movement<\/li><\/ul><\/div><\/div>',
+        },
+        { title: "Nodes for environmental effects", notes: "", body: "<div><ul><li>Affect the scene with audio, light or forces<\/li><li>Influence other content or physics bodies rather than drawing their own artwork<\/li><li>Examples include <b>SKAudioNode<\/b>, <b>SKLightNode<\/b> and <b>SKFieldNode<\/b><\/li><\/ul><\/div>" },
+        { title: "SKAudioNode", notes: "This iOS example configures the app audio session once. Ambient allows other audio to continue and respects silent mode. A scene listener is needed for positional effects; the music example is non-positional. A default audio session already exists.", body: "<div class=\"grid\"><div><ul><li><b>SKAudioNode<\/b> plays sound in a scene<\/li><li>Use positional audio for sounds tied to a location<\/li><li><b>AVAudioSession<\/b> configures how the app’s audio behaves on iOS<\/li><li><code>.ambient<\/code> mixes with other audio and respects silent mode<\/li><\/ul><p class=\"muted\">Add the audio file to the app bundle.<\/p><\/div><div><pre><code>import AVFoundation\n\n// Configure once when setting up app audio.\ndo {\n    try AVAudioSession.sharedInstance()\n        .setCategory(.ambient)\n} catch {\n    print(&quot;Audio setup failed: \\(error)&quot;)\n}\n\nlet music = SKAudioNode(fileNamed: &quot;music.mp3&quot;)\nmusic.isPositional = false\nmusic.autoplayLooped = true\nscene.addChild(music)<\/code><\/pre><\/div><\/div>" },
+        {
+          title: "Light nodes",
+          notes: "The light itself is invisible: point out the change in the illuminated ground as the ghost moves. Lights can affect sprites or tile maps with matching lighting masks.",
+          body: '<div class="grid"><div><ul><li><b>SKLightNode<\/b> illuminates matching sprites and tile maps<\/li><li>Move a light with a character or animate it<\/li><li>Use it for torches, lamps or a glowing ghost<\/li><li>A light affects surfaces; it is not visible on its own<\/li><\/ul><\/div><div class="gameplay-video"><video src="assets/light.mov" autoplay muted loop playsinline preload="metadata" aria-label="SpriteKit light effect in the level"><\/video><\/div><\/div>',
+        },
+        {
+          title: "Light nodes · example",
+          notes: "Simplified from Ghost.swift. The light category and ground lighting mask must overlap. Ambient lighting affects the whole receiving surface and is not reduced by falloff.",
+          body: '<div class="grid"><div><pre><code>let light = SKLightNode()\nlight.categoryBitMask = 1\nlight.lightColor = .cyan\nlight.ambientColor = .darkGray\nlight.falloff = 0.7\n\nghost.addChild(light)\nground.lightingBitMask = 1<\/code><\/pre><\/div><div><p><b>How it works<\/b><\/p><ul><li>The light follows the ghost because it is a child<\/li><li>Matching masks let the ground receive the light<\/li><li>Falloff controls how quickly light fades with distance<\/li><li>Ambient color keeps areas away from the light visible<\/li><\/ul><\/div><\/div>',
+        },
+        { title: "Field nodes", notes: "Video demonstrates the EvilEye field pulling the player. The eye also deals contact damage.", body: '<div class="grid"><div><ul><li><b>SKFieldNode</b> applies forces to physics bodies</li><li>Use radial gravity to pull nearby bodies toward a point</li><li>Limit its region and category mask to control its reach</li><li>An eye can attract the player and cause damage on contact</li></ul></div><div class="gameplay-video"><video src="assets/field.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Evil eye field attracts the player"></video></div></div>' },
+        { title: "Field nodes · example", notes: "Based on EvilEye.swift and Physics.swift: positive radial gravity attracts; field masks restrict which physics bodies respond. Contact masks independently request damage callbacks.", body: '<div class="grid"><div><pre><code>let field = SKFieldNode.radialGravityField()\\nfield.strength = 5\\nfield.region = SKRegion(radius: 160)\\nfield.categoryBitMask = FieldMask.eye\\n\\neye.addChild(field)\\nplayer.physicsBody?.fieldBitMask = FieldMask.eye<\/code><\/pre><\/div><div><p><b>How it works<\/b><\/p><ul><li>Positive strength attracts toward the field center<\/li><li>The region limits the effect to nearby bodies<\/li><li>Matching field masks choose which bodies are affected<\/li><li>Use a physics contact to damage the player on touch<\/li><\/ul><\/div><\/div>' },
+        { title: "Nodes that modify drawing", notes: "", body: "<div><ul><li>Change how their child nodes are rendered<\/li><li>Use them to mask content, apply effects or rotate children in 3D<\/li><li>Examples include <b>SKCropNode<\/b>, <b>SKEffectNode<\/b> and <b>SKTransformNode<\/b><\/li><\/ul><\/div>" },
+        { title: "Crop nodes", notes: "The video shows CroppedEye moving through its circular mask.", body: '<div class="grid"><div><ul><li><b>SKCropNode<\/b> draws its children through a mask<\/li><li>The mask shape determines which parts are visible<\/li><li>Use it for windows, portals, spotlights or clipped effects<\/li><\/ul><\/div><div class="gameplay-video"><video src="assets/crop.mov" autoplay muted loop playsinline preload="metadata" aria-label="Eye moving through a circular crop"><\/video><\/div><\/div>' },
+        { title: "Crop nodes · example", notes: "CroppedEye uses a circular mask and moving eye artwork.", body: "<div class=\"grid\"><div><pre><code>let crop = SKCropNode()\ncrop.maskNode = SKShapeNode(\n    circleOfRadius: 45\n)\ncrop.addChild(eye)\naddChild(crop)<\/code><\/pre><\/div><div><p><b>How it works<\/b><\/p><ul><li>The white shape defines the visible window<\/li><li>Children of the crop node appear only inside the mask<\/li><li>Move a child through the mask to reveal clipping<\/li><li>The outline is a separate shape above the crop<\/li><\/ul><\/div><\/div>" },
+        { title: "Effect nodes", notes: "The BlurryGhost object floats while its blur radius gradually increases and decreases.", body: "<div class=\"grid\"><div><ul><li><b>SKEffectNode<\/b> renders its children into a separate buffer<\/li><li>Apply a Core Image filter to the rendered children<\/li><li>Use it for effects such as blur or color adjustments<\/li><li>Animate filter properties to change the effect over time<\/li><\/ul><\/div><div class=\"gameplay-video\"><video src=\"assets/blurEffect.mov\" autoplay muted loop playsinline preload=\"metadata\" aria-label=\"Ghost gradually blurring and sharpening\"><\/video><\/div><\/div>" },
+        { title: "Effect nodes · example", notes: "Based on BlurryGhost.swift. The example enables a fixed blur; the project animates the filter radius over time.", body: "<div class=\"grid\"><div><pre><code>let effect = SKEffectNode()\neffect.filter = CIFilter(\n    name: &quot;CIGaussianBlur&quot;,\n    parameters: [kCIInputRadiusKey: 5]\n)\neffect.shouldEnableEffects = true\neffect.addChild(ghost)\nscene.addChild(effect)<\/code><\/pre><\/div><div><p><b>How it works<\/b><\/p><ul><li>The ghost is a child of the effect node<\/li><li>Core Image blurs the rendered children<\/li><li><code>shouldEnableEffects<\/code> turns the filter on or off<\/li><\/ul><\/div><\/div>" },
+        { title: "Constraints", notes: "Constraints maintain a relationship between nodes or coordinates. SpriteKit applies them after actions and physics.", body: "<div class=\"grid\"><div><p><b>Position and distance<\/b><\/p><ul><li>Keep a node within a range on the x or y axis<\/li><li>Keep a node within a distance of a point or another node<\/li><\/ul><\/div><div><p><b>Orientation<\/b><\/p><ul><li>Rotate a node to face a point or another node<\/li><li>Limit a node’s rotation to a range<\/li><\/ul><p class=\"muted\">SpriteKit applies constraints after actions and physics, before rendering.<\/p><\/div><\/div>" },
+        { title: "Constraints · example", notes: "Based on EvilEye.swift: the look-at constraint is attached to the eye artwork, leaving the attraction field on its unrotated parent.", body: "<div class=\"grid\"><div><pre><code>let lookAtPlayer = SKConstraint.orient(\n    to: player,\n    offset: SKRange(constantValue: 0)\n)\neye.constraints = [lookAtPlayer]<\/code><\/pre><\/div><div><p><b>How it works<\/b><\/p><ul><li>The eye rotates to face the player as they move<\/li><li>The offset adjusts the artwork’s facing direction<\/li><li>Apply the constraint to the artwork so the field stays fixed<\/li><\/ul><\/div><\/div>" },
         {
           title: "Actions compose motion",
           notes:
@@ -2579,37 +2590,45 @@ let heights = (0..&lt;10).map { _ in
           title: "Bodies in a physics world",
           notes:
             "Illustrative impulse; tuning depends on mass and scale. Project Player.jump uses an impulse based on sprite height.",
-          body: '<div class="grid"><div><ul><li>Gravity acts on dynamic bodies<\/li><li>Static bodies provide walls and ground<\/li><li>A body has a shape, velocity and other physical properties<\/li><li>An impulse changes momentum immediately<\/li><\/ul><\/div><div><pre><code>player.physicsBody = SKPhysicsBody(\n    rectangleOf: player.size\n)\nplayer.physicsBody?.applyImpulse(\n    CGVector(dx: 0, dy: 120)\n)<\/code><\/pre><\/div><\/div>',
+          body: '<div class="grid"><div><ul><li>Gravity acts on dynamic bodies<\/li><li>Static bodies provide walls and ground<\/li><li><b>SKPhysicsBody<\/b> defines a node’s shape, velocity and other physical properties<\/li><li>An impulse changes momentum immediately<\/li><\/ul><\/div><div><pre><code>player.physicsBody = SKPhysicsBody(\n    rectangleOf: player.size\n)\nplayer.physicsBody?.applyImpulse(\n    CGVector(dx: 0, dy: 120)\n)<\/code><\/pre><\/div><\/div>',
         },
         {
           title: "Collision vs contact",
           notes:
-            "Actual constants in Physics.swift. Ground and zombie do not set contact masks, so the SpriteKit default is zero. Physical response depends on each body’s collision mask; either contact test mask can request notification.",
-          body: '<table><tr><th>Body<\/th><th>Category<\/th><th>Collision mask<\/th><th>Contact mask<\/th><\/tr><tr><td>Player<\/td><td>000100<\/td><td>101011<\/td><td>000001<\/td><\/tr><tr><td>Ground<\/td><td>000001<\/td><td>001100<\/td><td>000000<\/td><\/tr><tr><td>Zombie<\/td><td>001000<\/td><td>000111<\/td><td>000000<\/td><\/tr><\/table><p class="lead">Player + ground: collision and contact notification.<br>Player + zombie: collision; no contact notification requested.<\/p><p class="muted">Bits shown: door · projectile · zombie · player · boundary · ground<\/p>',
+            "Simplified three-category example. Ground and zombie do not request contact notifications. Physical response depends on each body’s collision mask; either contact test mask can request notification.",
+          body: '<table style="font-size:42px"><tr><th>Body<\/th><th>Category<\/th><th>Collision mask<\/th><th>Contact mask<\/th><\/tr><tr><td>Player<\/td><td>00<b>1<\/b><\/td><td><b>1<\/b><b>1<\/b>0<\/td><td>0<b>1<\/b>0<\/td><\/tr><tr><td>Ground<\/td><td>0<b>1<\/b>0<\/td><td>00<b>1<\/b><\/td><td>000<\/td><\/tr><tr><td>Zombie<\/td><td><b>1<\/b>00<\/td><td>00<b>1<\/b><\/td><td>000<\/td><\/tr><\/table><p class="lead">Player + ground: collision and contact notification.<br>Player + zombie: collision; no contact notification requested.<\/p><p class="muted">Bits shown: zombie · ground · player<\/p>',
         },
         {
-          title: "Masks & callbacks",
-          notes:
-            "Illustrative fragments: assign the scene as physicsWorld.contactDelegate. Check both body orderings; avoid assuming bodyA is always the player.",
-          body: '<div class="grid"><div><pre><code>let player: UInt32 = 1 &lt;&lt; 0\nlet ground: UInt32 = 1 &lt;&lt; 1\nbody.categoryBitMask = player\nbody.collisionBitMask = ground\nbody.contactTestBitMask = ground<\/code><\/pre><\/div><div><pre><code>func didBegin(_ contact: SKPhysicsContact) {\n    let a = contact.bodyA.categoryBitMask\n    let b = contact.bodyB.categoryBitMask\n    // Identify both bodies before handling.\n}<\/code><\/pre><\/div><\/div>',
+          title: "Physics mask constants",
+          notes: "Based on Physics.swift. The collision combination is a shortened example; the project defines its complete collision masks in the same file.",
+          body: "<div class=\"grid\"><div><pre><code>enum CategoryBitMask {\n    static let groundTile: UInt32 = 0b1\n    static let player: UInt32 = 0b100\n    static let zombie: UInt32 = 0b1000\n}\n\n// Combine categories with bitwise OR\nlet collision = CategoryBitMask.groundTile |\n    CategoryBitMask.zombie</code></pre></div><div><ul><li><b>Named constants</b> explain what each bit represents</li><li>Define categories in one place and reuse them throughout the game</li><li>Combine categories with <code>|</code> to describe interactions</li><li>Avoid hardcoded values when assigning masks</li></ul></div></div>",
         },
         {
-          title: "Masks: change the result",
-          body: '<div class="grid"><div><pre><code>body.collisionBitMask = ground\nbody.contactTestBitMask = ground<\/code><\/pre><\/div><div class="card-result"><div style="font:44px Oswald">RESULT · DIAGRAM<\/div><p>PLAYER ↓<\/p><p style="border-top:6px solid #ef0d33">GROUND<\/p><p>Physical response + contact callback<\/p><\/div><\/div>',
-          notes:
-            "Illustrative configuration: assume ground has the matching category and a contact delegate is assigned. Collision response for each body depends on its own mask.",
+          title: "SKPhysicsContactDelegate",
+          notes: "Set the delegate during scene setup and inspect both bodies; either body can appear first.",
+          body: "<div class=\"grid\"><div><pre><code>// In the scene setup\nphysicsWorld.contactDelegate = self\n\nextension LevelScene: SKPhysicsContactDelegate {\n    func didBegin(_ contact: SKPhysicsContact) {\n        let a = contact.bodyA\n        let b = contact.bodyB\n        // Check their categories and handle the contact.\n    }\n}</code></pre></div><div><ul><li>Set the physics world’s <b>contact delegate</b> to receive notifications</li><li><b>didBegin</b> runs when a requested contact starts; <b>didEnd</b> runs when it ends</li><li>Contact masks decide which interactions generate callbacks</li><li>Check both bodies before applying game logic</li></ul></div></div>",
         },
         {
-          title: "Combat: overlapping regions",
-          notes:
-            "PresentationProject Player.swift and Zombie.swift use intersects. Player.hit guards isHurt and resets it after a blinking sequence. Verify runtime behavior before showing footage.",
-          body: '<div class="grid"><div><ul><li><b>Hitbox<\/b> receives a hit; <b>hurtbox<\/b> represents an attack area in this project<\/li><li>Attack checks run while the hurtbox is attached<\/li><li>Damage starts a temporary invulnerability window<\/li><li>The project uses <code>intersects<\/code> for these checks<\/li><\/ul><\/div><div><div class="media"><span>LECTURER MEDIA · VIDEO<\/span><strong>Attack, hit detection, zombie death and HUD counter<\/strong><small>Replace this placeholder after recording and project verification<\/small><\/div><\/div><\/div>',
+          title: "Physics joints",
+          notes: "The rope uses pin joints between its segments and attaches the player with another pin joint.",
+          body: "<div class=\"grid\"><div><ul><li><b>SKPhysicsJoint</b> connects two physics bodies</li><li><b>Pin joints</b> let connected bodies rotate around an anchor</li><li>Chain multiple segments together to create a flexible rope</li><li>Attach the player to the rope’s end, then remove the joint to let go</li></ul></div><div class=\"gameplay-video\"><video src=\"assets/rope.mp4\" autoplay muted loop playsinline preload=\"metadata\" aria-label=\"Player grabbing and swinging on a rope\"></video></div></div>",
+        },
+        {
+          title: "Physics joints · rope example",
+          notes: "Simplified from Rope.swift. segmentTopInScene represents each segment’s top converted to scene coordinates; the actual implementation also builds the segment bodies and attaches the tip.",
+          body: "<div class=\"grid\"><div><pre><code>var previous = anchor.physicsBody!\n\nfor segment in ropeSegments {\n    let body = segment.physicsBody!\n    let pin = SKPhysicsJointPin.joint(\n        withBodyA: previous,\n        bodyB: body,\n        anchor: segmentTopInScene\n    )\n    physicsWorld.add(pin)\n    previous = body\n}</code></pre></div><div><p><b>How it works</b></p><ul><li>The first segment connects to a fixed anchor</li><li>Each pin connects a segment to the previous body</li><li>Joint anchors use scene coordinates</li><li>Another pin attaches the player; remove it when they jump</li></ul></div></div>",
         },
         {
           title: "Debug the invisible",
           notes:
             'Use usesPreciseCollisionDetection selectively; it costs more. Check the sign convention against the actual body ordering. <a href="https://developer.apple.com/documentation/spritekit/skphysicscontact/contactnormal">Contact normal<\/a>.',
-          body: '<div class="grid"><div><ul><li>Turn on <code>view.showsPhysics = true<\/code><\/li><li>Inspect body shapes and unexpected contacts<\/li><li>A contact normal depends on body ordering: identify bodies before interpreting its direction<\/li><li>Consider precise collision detection for fast bodies<\/li><\/ul><\/div><div><div class="media"><span>LECTURER MEDIA · VIDEO<\/span><strong>Physics overlay, movement and jumping<\/strong><small>Replace this placeholder after recording and project verification<\/small><\/div><\/div><\/div>',
+          body: '<div class="grid"><div><ul><li>Turn on <code>view.showsPhysics = true<\/code><\/li><li>Inspect body shapes and unexpected contacts<\/li><li>A contact normal depends on body ordering: identify bodies before interpreting its direction<\/li><li>Consider precise collision detection for fast bodies<\/li><\/ul><\/div><div class="gameplay-video"><video src="assets/debug.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Gameplay with physics debugging"><\/video><\/div><\/div>',
+        },
+        {
+          title: "Combat: overlapping regions",
+          notes:
+            "PresentationProject Player.swift and Zombie.swift use intersects. Player.hit guards isHurt and resets it after a blinking sequence.",
+          body: '<div class="grid"><div><ul><li><b>Hitbox<\/b> receives a hit; <b>hurtbox<\/b> represents an attack area in this project<\/li><li>Attack checks run while the hurtbox is attached<\/li><li>Damage starts a temporary invulnerability window<\/li><li>The project uses <code>intersects<\/code> for these checks<\/li><\/ul><\/div><div class="gameplay-video"><video src="assets/debug.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Gameplay with physics debugging"><\/video><\/div><\/div>',
         },
         {
           title: "State machines",
@@ -2652,38 +2671,9 @@ let heights = (0..&lt;10).map { _ in
           body: '<div class="cards three"><div><b>Entity<\/b><span>A zombie in the scene<\/span><\/div><div><b>Component<\/b><span>Health data: 3 hit points<\/span><\/div><div><b>System<\/b><span>Find entities with health and apply pending damage<\/span><\/div><\/div><p class="lead">The same damage system can process a player, zombie or door.<\/p>',
         },
         {
-          title: "Build a game",
-          notes: "",
-          body: '<div class="section-title">Build a game<div class="section-sub">Pipeline & procedural maps · 11 minutes<\/div><\/div><div class="section-num">07<\/div>',
-        },
-        {
-          title: "From assets to a playable scene",
-          notes:
-            "Draw frames and tiles, export consistent transparent PNGs, import into Xcode, group animation frames in atlases, and arrange tiles in the scene editor. Import audio and particle assets, attach them to events, then profile and playtest on device.",
-          body: '<div class="steps"><div>DRAW<\/div><span>→<\/span><div>IMPORT<\/div><span>→<\/span><div>ASSEMBLE<\/div><span>→<\/span><div>PLAYTEST<\/div><\/div><p class="lead">Sprites & sheets · tiles · audio · effects · atlases<\/p><p class="muted">Examples: Aseprite, Krita, Tiled, Audacity, GarageBand and Xcode’s SpriteKit editors.<\/p>',
-        },
-        {
-          title: "Generate data first",
-          notes:
-            "Do not claim a specific algorithm for either game. Deterministic results also require deterministic implementation and inputs.",
-          body: '<div class="grid"><div><div class="flow vertical"><div>Seed<\/div><b>↓<\/b><div>Place rooms / chunks<\/div><b>↓<\/b><div>Connect & validate<\/div><b>↓<\/b><div>Tiles · collision · objects<\/div><\/div><\/div><div><ul><li>A seed makes a generated layout reproducible<\/li><li>Check reachability before building the scene<\/li><li>Finite room maps and streaming chunk worlds solve different problems<\/li><li>Diablo and Minecraft are conceptual inspirations<\/li><\/ul><\/div><\/div>',
-        },
-        {
-          title: "Procedural map sketch",
-          notes:
-            "Simplified excerpt from ProceduralDemoScene. Seed 42 produces reproducible heights; floor sections form a finite continuous route. A streaming world generates and unloads chunks as the player travels. Diagram is schematic, not a simulator capture.",
-          body: '<div class="grid"><div><pre><code>var state: UInt64 = 42\nlet heights = (0..&lt;10).map { _ in\n    state = state &amp;* 6364136223846793005\n        &amp;+ 1442695040888963407\n    return (state &gt;&gt; 32) % 3\n}<\/code><\/pre><\/div><div class="card-result"><div style="font:44px Oswald">RESULT · SCHEMATIC<\/div><p>ENTRANCE → ▂▃▂▁▃▂▁▂▃▁ → EXIT<\/p><p>10 connected floor sections<\/p><\/div><\/div>',
-        },
-        {
-          title: "Practical finishing touches",
-          notes:
-            "Profile on target devices. Accessibility includes input alternatives, readable HUD, and feedback that does not rely only on color or sound.",
-          body: '<div class="cards three"><div><b>Performance<\/b><span>Atlases, profiling, node counts<\/span><\/div><div><b>Polish<\/b><span>Particles, shaders, sound<\/span><\/div><div><b>People<\/b><span>Accessibility, readable feedback, deterministic seeds<\/span><\/div><\/div>',
-        },
-        {
           title: "Your turn",
           notes: "",
-          body: '<div class="section-title">Your turn<div class="section-sub">Wrap-up & questions · 7 minutes<\/div><\/div><div class="section-num">08<\/div>',
+          body: '<div class="section-title">Your turn<div class="section-sub">Wrap-up & questions · 7 minutes<\/div><\/div><div class="section-num">07<\/div>',
         },
         {
           title: "Five ideas to keep",
@@ -2701,7 +2691,7 @@ let heights = (0..&lt;10).map { _ in
           notes:
             "Thank you. Revisit the exercise or demonstrate the project if time remains.",
           body: '<div class="closing">QUESTIONS<span>?<\/span><p>What will you build next?<\/p><\/div>',
-        },
+        }
       ];
       function highlightCode(root) {
         root.querySelectorAll("pre code").forEach((code) => {
@@ -2794,11 +2784,11 @@ let heights = (0..&lt;10).map { _ in
       }
       function updateSharedPreview(previous) {
         clearTimeout(transformTimer);
-        const active = !presenter && cur >= 8 && cur <= 25;
+        const active = !presenter && cur >= 10 && cur <= 27;
         sharedPreview.hidden = !active;
         if (!active) return;
-        sharedChild.style.opacity = cur >= 24 ? "1" : "0";
-        sharedParent.style.opacity = cur >= 24 ? "1" : "0";
+        sharedChild.style.opacity = cur >= 26 ? "1" : "0";
+        sharedParent.style.opacity = cur >= 26 ? "1" : "0";
         const placeholder = slides[cur].querySelector(".pixel-world");
         const rect = placeholder.getBoundingClientRect();
         const deckRect = deck.getBoundingClientRect();
@@ -2809,22 +2799,22 @@ let heights = (0..&lt;10).map { _ in
           width: `${rect.width / scale}px`,
           height: `${rect.height / scale}px`,
         });
-        const continuous = previous >= 8 && previous <= 25;
+        const continuous = previous >= 10 && previous <= 27;
         if (!continuous) {
           sharedZombie.style.transition = "none";
           sharedDot.style.transition = "none";
         }
-        // On slide 12, center the sprite before applying its rotation.
-        if (continuous && previous === 10 && cur === 11 &&
+        // Center the sprite before applying its rotation.
+        if (continuous && previous === 12 && cur === 13 &&
             !matchMedia("(prefers-reduced-motion: reduce)").matches) {
           setTransformState([0.5, 0.5, 0, 0, 0]);
           transformTimer = setTimeout(() => setTransformState(transformStates[3]), 750);
-        } else if (continuous && previous === 20 && cur === 21 &&
+        } else if (continuous && previous === 22 && cur === 23 &&
             !matchMedia("(prefers-reduced-motion: reduce)").matches) {
           setTransformState([0.5, 0.5, 0, 0, -720]);
           transformTimer = setTimeout(() => setTransformState(transformStates[13]), 750);
         } else {
-          setTransformState(transformStates[cur - 8]);
+          setTransformState(transformStates[cur - 10]);
         }
         if (!continuous) {
           void sharedPreview.offsetWidth;
@@ -2844,7 +2834,7 @@ let heights = (0..&lt;10).map { _ in
           }
         });
         if (!presenter) {
-          slides.slice(8, 26).forEach((slide) => {
+          slides.slice(10, 28).forEach((slide) => {
             slide.querySelector(".pixel-world").style.visibility = "hidden";
           });
           updateSharedPreview(previous);
