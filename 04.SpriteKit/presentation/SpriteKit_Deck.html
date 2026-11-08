@@ -451,6 +451,16 @@
         padding: 24px;
         gap: 28px;
       }
+      .portrait-video video.video-screen {
+        display: block;
+        width: 380px;
+        height: 675px;
+        border: 0;
+        border-radius: 0;
+        padding: 0;
+        object-fit: contain;
+        background: transparent;
+      }
       .video-screen span {
         font: 25px Oswald;
         color: #ef0d33;
@@ -551,6 +561,10 @@
         gap: 70px;
         align-items: center;
         height: 100%;
+      }
+      /* Put code on the right while keeping existing two-column content together. */
+      .grid:has(> :first-child pre):has(> :nth-child(2)):not(:has(> :nth-child(2) pre)) > :first-child {
+        order: 1;
       }
       ul {
         padding-left: 1.1em;
@@ -955,7 +969,6 @@
             <div class="eyebrow">STRV × MENDELU · iOS DEVELOPMENT</div>
             <h1>SPRITE<span>KIT</span></h1>
             <p>Building a 2D world, one node at a time.</p>
-            <div class="hand">Scenes · physics · gameplay</div>
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
@@ -1559,7 +1572,7 @@ parent.addChild(player)
 addChild(parent)</code></pre>
           <p class="muted">The zombie and player are children of the same parent. Red dots mark their positions.</p>
         </div><div class="anchor-preview"><div class="pixel-world children-added">
-          <div class="anchor-node parent-marker"></div><div class="anchor-node"></div><img class="zombie center" src="assets/transform-demo/zombie.png" /><div class="child-node"><img src="PresentationProject/MendeluSpriteKit/Assets/Player/PlayerIdle.atlas/PlayerIdle1.png" alt="Player sprite" /><div class="anchor-node"></div></div>
+          <div class="anchor-node parent-marker"></div><div class="anchor-node"></div><img class="zombie center" src="assets/transform-demo/zombie.png" /><div class="child-node"><img src="PresentationProject/Halloweenland/Assets/Player/PlayerIdle.atlas/PlayerIdle1.png" alt="Player sprite" /><div class="anchor-node"></div></div>
         </div></div></div></div>
         <div class="footer">STRV × MENDELU</div><div class="pnum">27</div>
       </section>
@@ -1570,7 +1583,7 @@ addChild(parent)</code></pre>
 // Both children keep their local positions</code></pre>
           <p class="muted">Moving the parent moves both children. Their local positions stay the same.</p>
         </div><div class="anchor-preview"><div class="pixel-world children-moved">
-          <div class="anchor-node parent-marker"></div><div class="anchor-node"></div><img class="zombie center" src="assets/transform-demo/zombie.png" /><div class="child-node"><img src="PresentationProject/MendeluSpriteKit/Assets/Player/PlayerIdle.atlas/PlayerIdle1.png" alt="Player sprite" /><div class="anchor-node"></div></div>
+          <div class="anchor-node parent-marker"></div><div class="anchor-node"></div><img class="zombie center" src="assets/transform-demo/zombie.png" /><div class="child-node"><img src="PresentationProject/Halloweenland/Assets/Player/PlayerIdle.atlas/PlayerIdle1.png" alt="Player sprite" /><div class="anchor-node"></div></div>
         </div></div></div></div>
         <div class="footer">STRV × MENDELU</div><div class="pnum">28</div>
       </section>
@@ -1849,21 +1862,41 @@ effect.filter = CIFilter(
 effect.shouldEnableEffects = true
 effect.addChild(ghost)
 scene.addChild(effect)</code></pre></div><div><p><b>How it works</b></p><ul><li>The ghost is a child of the effect node</li><li>Core Image blurs the rendered children</li><li><code>shouldEnableEffects</code> turns the filter on or off</li></ul></div></div></div><div class="footer">STRV × MENDELU</div><div class="pnum">60</div></section>
-      <section class="slide" aria-label="Slide 61: Constraints">
-        <div class="title">Constraints</div>
-        <div class="body"><div class="grid"><div><p><b>Position and distance</b></p><ul><li>Keep a node within a range on the x or y axis</li><li>Keep a node within a distance of a point or another node</li></ul></div><div><p><b>Orientation</b></p><ul><li>Rotate a node to face a point or another node</li><li>Limit a node’s rotation to a range</li></ul><p class="muted">SpriteKit applies constraints after actions and physics, before rendering.</p></div></div></div>
+      <section class="slide" aria-label="Slide 61: Shaders">
+        <div class="title">Shaders</div>
+        <div class="body"><div class="grid"><div><ul><li><b>SKShader</b> changes how a node is drawn with a fragment shader</li><li>The shader computes the color of each pixel</li><li>Use it for color changes, distortion or other visual effects</li><li>The ghost smoothly changes between white, red and dark gray</li></ul></div><div class="gameplay-video"><video src="assets/shader.mov" autoplay muted loop playsinline preload="metadata" aria-label="Ghost changing colors with a shader"></video></div></div></div>
         <div class="footer">STRV × MENDELU</div><div class="pnum">61</div>
       </section>
-      <section class="slide" aria-label="Slide 62: Constraints · example">
+      <section class="slide" aria-label="Slide 62: Shaders · example">
+        <div class="title">Shaders · example</div>
+        <div class="body"><div class="grid"><div><p><b>How it works</b></p><ul><li><code>SKDefaultShading()</code> gives the sprite’s normal color and transparency</li><li><code>u_time</code> changes the tint smoothly over time</li><li>The shader blends the tint with the sprite’s color</li><li>Assign it to the ghost’s <code>shader</code> property</li></ul></div><div><pre><code>let shader = SKShader(source: &quot;&quot;&quot;
+void main() {
+    vec4 color = SKDefaultShading();
+    float t = 0.5 + 0.5 * sin(u_time);
+    vec3 tint = mix(vec3(1.0),
+                    vec3(0.75, 0.02, 0.03), t);
+    color.rgb = mix(color.rgb, tint * color.a, 0.85);
+    gl_FragColor = color;
+}
+&quot;&quot;&quot;)
+ghost.shader = shader</code></pre></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">62</div>
+      </section>
+      <section class="slide" aria-label="Slide 63: Constraints">
+        <div class="title">Constraints</div>
+        <div class="body"><div class="grid"><div><ul><li><b>Position:</b> keep a node within a range on the x or y axis</li><li><b>Distance:</b> keep a node within a range of a point or another node</li><li><b>Orientation:</b> rotate a node to face a point or another node</li><li><b>Rotation:</b> limit a node’s rotation to a range</li></ul><p class="muted">SpriteKit applies constraints after actions and physics, before rendering.</p></div><div class="gameplay-video"><video src="assets/constraints.mp4" autoplay muted loop playsinline preload="metadata" aria-label="SpriteKit constraints in action"></video></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">63</div>
+      </section>
+      <section class="slide" aria-label="Slide 64: Constraints · example">
         <div class="title">Constraints · example</div>
         <div class="body"><div class="grid"><div><pre><code>let lookAtPlayer = SKConstraint.orient(
     to: player,
     offset: SKRange(constantValue: 0)
 )
 eye.constraints = [lookAtPlayer]</code></pre></div><div><p><b>How it works</b></p><ul><li>The eye rotates to face the player as they move</li><li>The offset adjusts the artwork’s facing direction</li><li>Apply the constraint to the artwork so the field stays fixed</li></ul></div></div></div>
-        <div class="footer">STRV × MENDELU</div><div class="pnum">62</div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">64</div>
       </section>
-      <section class="slide" aria-label="Slide 63: Actions compose motion">
+      <section class="slide" aria-label="Slide 65: Actions compose motion">
         <div class="title">Actions compose motion</div>
         <div class="body">
           <div class="grid">
@@ -1886,11 +1919,11 @@ node.run(.repeatForever(pulse),
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">63</div>
+        <div class="pnum">65</div>
       </section>
       <section
         class="slide dark"
-        aria-label="Slide 64: Physics &amp; collisions"
+        aria-label="Slide 66: Physics &amp; collisions"
       >
         <div class="body">
           <div class="section-title">
@@ -1900,9 +1933,9 @@ node.run(.repeatForever(pulse),
           <div class="section-num">04</div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">64</div>
+        <div class="pnum">66</div>
       </section>
-      <section class="slide" aria-label="Slide 65: Bodies in a physics world">
+      <section class="slide" aria-label="Slide 67: Bodies in a physics world">
         <div class="title">Bodies in a physics world</div>
         <div class="body">
           <div class="grid">
@@ -1927,9 +1960,9 @@ player.physicsBody?.applyImpulse(
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">65</div>
+        <div class="pnum">67</div>
       </section>
-      <section class="slide" aria-label="Slide 66: Collision vs contact">
+      <section class="slide" aria-label="Slide 68: Collision vs contact">
         <div class="title">Collision vs contact</div>
         <div class="body">
           <table style="font-size: 42px">
@@ -1967,9 +2000,9 @@ player.physicsBody?.applyImpulse(
           </p>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">66</div>
+        <div class="pnum">68</div>
       </section>
-      <section class="slide" aria-label="Slide 67: Physics mask constants">
+      <section class="slide" aria-label="Slide 69: Physics mask constants">
         <div class="title">Physics mask constants</div>
         <div class="body">
           <div class="grid"><div><pre><code>enum CategoryBitMask {
@@ -1983,9 +2016,9 @@ let collision = CategoryBitMask.groundTile |
     CategoryBitMask.zombie</code></pre></div><div><ul><li><b>Named constants</b> explain what each bit represents</li><li>Define categories in one place and reuse them throughout the game</li><li>Combine categories with <code>|</code> to describe interactions</li><li>Avoid hardcoded values when assigning masks</li></ul></div></div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">67</div>
+        <div class="pnum">69</div>
       </section>
-      <section class="slide" aria-label="Slide 68: SKPhysicsContactDelegate">
+      <section class="slide" aria-label="Slide 70: SKPhysicsContactDelegate">
         <div class="title">SKPhysicsContactDelegate</div>
         <div class="body">
           <div class="grid"><div><pre><code>// In the scene setup
@@ -2000,15 +2033,15 @@ extension LevelScene: SKPhysicsContactDelegate {
 }</code></pre></div><div><ul><li>Set the physics world’s <b>contact delegate</b> to receive notifications</li><li><b>didBegin</b> runs when a requested contact starts; <b>didEnd</b> runs when it ends</li><li>Contact masks decide which interactions generate callbacks</li><li>Check both bodies before applying game logic</li></ul></div></div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">68</div>
+        <div class="pnum">70</div>
       </section>
-      <section class="slide" aria-label="Slide 69: Physics joints">
+      <section class="slide" aria-label="Slide 71: Physics joints">
         <div class="title">Physics joints</div>
         <div class="body"><div class="grid"><div><ul><li><b>SKPhysicsJoint</b> connects two physics bodies</li><li><b>Pin joints</b> let connected bodies rotate around an anchor</li><li>Chain multiple segments together to create a flexible rope</li><li>Attach the player to the rope’s end, then remove the joint to let go</li></ul></div><div class="gameplay-video"><video src="assets/rope.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Player grabbing and swinging on a rope"></video></div></div></div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">69</div>
+        <div class="pnum">71</div>
       </section>
-      <section class="slide" aria-label="Slide 70: Physics joints · rope example">
+      <section class="slide" aria-label="Slide 72: Physics joints · rope example">
         <div class="title">Physics joints · rope example</div>
         <div class="body"><div class="grid"><div><pre><code>var previous = anchor.physicsBody!
 
@@ -2023,9 +2056,9 @@ for segment in ropeSegments {
     previous = body
 }</code></pre></div><div><p><b>How it works</b></p><ul><li>The first segment connects to a fixed anchor</li><li>Each pin connects a segment to the previous body</li><li>Joint anchors use scene coordinates</li><li>Another pin attaches the player; remove it when they jump</li></ul></div></div></div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">70</div>
+        <div class="pnum">72</div>
       </section>
-      <section class="slide" aria-label="Slide 71: Debug the invisible">
+      <section class="slide" aria-label="Slide 73: Debug the invisible">
         <div class="title">Debug the invisible</div>
         <div class="body">
           <div class="grid">
@@ -2044,9 +2077,9 @@ for segment in ropeSegments {
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">71</div>
+        <div class="pnum">73</div>
       </section>
-      <section class="slide" aria-label="Slide 72: Combat: overlapping regions">
+      <section class="slide" aria-label="Slide 74: Combat: overlapping regions">
         <div class="title">Combat: overlapping regions</div>
         <div class="body">
           <div class="grid">
@@ -2067,9 +2100,9 @@ for segment in ropeSegments {
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">72</div>
+        <div class="pnum">74</div>
       </section>
-      <section class="slide dark" aria-label="Slide 73: State machines">
+      <section class="slide dark" aria-label="Slide 75: State machines">
         <div class="body">
           <div class="section-title">
             State machines
@@ -2078,93 +2111,125 @@ for segment in ropeSegments {
           <div class="section-num">05</div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">73</div>
-      </section>
-      <section class="slide" aria-label="Slide 74: Make behavior explicit">
-        <div class="title">Make behavior explicit</div>
-        <div class="body">
-          <div class="states">
-            <div>IDLE</div>
-            <span>↔</span>
-            <div>WALKING</div>
-            <span>→</span>
-            <div>ATTACKING</div>
-            <span>→</span>
-            <div>DEAD</div>
-          </div>
-          <p class="lead">
-            A state decides what is allowed now—and what can happen next.
-          </p>
-          <p class="muted">
-            Death may interrupt an attack. Jumping and temporary invulnerability
-            can be independent.
-          </p>
-        </div>
-        <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">74</div>
-      </section>
-      <section class="slide" aria-label="Slide 75: GKStateMachine">
-        <div class="title">GKStateMachine</div>
-        <div class="body">
-          <div class="grid">
-            <div>
-              <pre><code>let machine = GKStateMachine(states: [
-    IdleState(), WalkingState(),
-    AttackingState(), DeadState()
-])
-machine.enter(IdleState.self)
-// In the frame loop, when needed:
-machine.update(deltaTime: dt)</code></pre>
-            </div>
-            <div>
-              <ul>
-                <li><code>isValidNextState</code> controls transitions</li>
-                <li>
-                  <code>didEnter</code> and <code>willExit</code> handle
-                  lifecycle
-                </li>
-                <li>Update a state each frame when its behavior needs it</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="footer">STRV × MENDELU</div>
         <div class="pnum">75</div>
       </section>
-      <section class="slide" aria-label="Slide 76: A state lifecycle">
-        <div class="title">A state lifecycle</div>
-        <div class="body">
-          <div class="grid">
-            <div>
-              <pre><code>final class AttackState: GKState {
-    override func didEnter(
-        from previousState: GKState?
-    ) {
-        // Start attack animation and hit window.
-    }
-    override func willExit(
-        to nextState: GKState
-    ) {
-        // Remove attack area.
-    }
-}</code></pre>
-            </div>
-            <div>
-              <div class="media">
-                <span>LECTURER MEDIA · VIDEO</span
-                ><strong>Idle, walking, attack and death transitions</strong
-                ><small
-                  >Replace this placeholder after recording and project
-                  verification</small
-                >
-              </div>
-            </div>
-          </div>
-        </div>
+      <section class="slide" aria-label="Slide 76: Introducing GameplayKit states">
+        <div class="title">Introducing GameplayKit states</div>
+        <div class="body"><p class="lead">A state machine organizes behavior into distinct states.</p><ul><li><b>GKState</b> describes one state, such as idle or walking</li><li><b>GKStateMachine</b> holds the states and manages which one is active</li><li><b>Transitions</b> switch states when something changes, such as player input</li><li>States can run code on entry, on exit and during each update</li><li>Transition rules can prevent invalid changes, such as leaving a dead state</li></ul></div>
         <div class="footer">STRV × MENDELU</div>
         <div class="pnum">76</div>
       </section>
-      <section class="slide dark" aria-label="Slide 77: Beyond 2D">
+      <section class="slide" aria-label="Slide 77: One player, three state machines">
+        <div class="title">One player, three state machines</div>
+        <div class="body"><p class="lead">Each state machine manages a different part of the player.</p><ul><li><b>Behavior:</b> idle, walking, attacking or dead</li><li><b>Movement:</b> grounded or jumping</li><li><b>Damage:</b> vulnerable or hurt</li><li>These states can overlap: the player can jump, attack and be hurt at the same time</li></ul></div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">77</div>
+      </section>
+      <section class="slide" aria-label="Slide 78: Create the state machines">
+        <div class="title">Create the state machines</div>
+        <div class="body"><div class="grid"><div><ul><li><b>Behavior</b> chooses the animation and attack</li><li><b>Movement</b> tracks whether the player can jump</li><li><b>Damage</b> tracks temporary invulnerability</li><li>Each machine starts in an initial state</li></ul></div><div><pre><code>let behavior = GKStateMachine(states: [
+    IdleState(player: self),
+    WalkingState(player: self),
+    AttackingState(player: self),
+    DeadState(player: self)
+])
+behavior.enter(IdleState.self)
+
+let movement = GKStateMachine(states: [
+    GroundedState(player: self),
+    JumpingState(player: self)
+])
+movement.enter(GroundedState.self)
+// Damage starts in VulnerableState.</code></pre></div></div></div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">78</div>
+      </section>
+      <section class="slide" aria-label="Slide 79: Update the current states">
+        <div class="title">Update the current states</div>
+        <div class="body"><div class="grid"><div><ul><li><b>SpriteKit</b> calls the player once per frame</li><li>Convert the frame timestamp into elapsed time</li><li><b>Array extension</b> updates each machine in order</li><li>The interval is capped to limit large jumps in time</li></ul></div><div><pre><code>func update(_ currentTime: TimeInterval) {
+    let dt = previousUpdateTime.map {
+        max(0, min(currentTime - $0, 0.1))
+    } ?? 0
+    previousUpdateTime = currentTime
+
+    stateMachines.update(deltaTime: dt)
+}</code></pre></div></div></div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">79</div>
+      </section>
+      <section class="slide" aria-label="Slide 80: Animations and behavior">
+        <div class="title">Animations and behavior</div>
+        <div class="body"><div class="grid"><div><ul><li><b>didEnter</b> starts the animation once</li><li><b>update</b> checks for a change each frame</li><li>Walking returns to idle when input stops</li><li>Attacking checks the hurtbox until the attack ends</li></ul></div><div><pre><code>final class IdleState: PlayerState {
+    override func didEnter(from previous: GKState?) {
+        player?.playAnimation(key: "idle")
+    }
+
+    override func update(deltaTime: TimeInterval) {
+        guard let player, player.isWalking else { return }
+        stateMachine?.enter(WalkingState.self)
+    }
+}</code></pre></div></div></div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">80</div>
+      </section>
+      <section class="slide" aria-label="Slide 81: Grounded and jumping">
+        <div class="title">Grounded and jumping</div>
+        <div class="body"><div class="grid"><div><ul><li><b>Grounded</b> allows a jump; <b>jumping</b> prevents another jump in the air</li><li>Both states share horizontal movement</li><li>A ground contact returns the player to grounded</li></ul></div><div><pre><code>class MovementState: PlayerState {
+    override func update(deltaTime: TimeInterval) {
+        guard let player, !player.isDead else { return }
+        player.updateDirection()
+        player.updatePosition()
+    }
+}
+final class GroundedState: MovementState {}
+final class JumpingState: MovementState {}
+
+// Jump input / ground contact:
+movementStateMachine.enter(JumpingState.self)
+movementStateMachine.enter(GroundedState.self)</code></pre></div></div></div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">81</div>
+      </section>
+      <section class="slide" aria-label="Slide 82: Damage and invulnerability">
+        <div class="title">Damage and invulnerability</div>
+        <div class="body"><div class="grid"><div><ul><li><b>Hurt</b> starts the blinking effect</li><li>While hurt, additional hits are ignored</li><li><b>update</b> counts down the invulnerability window</li><li><b>willExit</b> stops blinking and restores visibility</li></ul></div><div><pre><code>final class HurtState: PlayerState {
+    private var timeRemaining: TimeInterval = 0
+
+    override func didEnter(from previous: GKState?) {
+        timeRemaining = 1.5
+        // Start the blinking SKAction.
+    }
+    override func update(deltaTime: TimeInterval) {
+        timeRemaining -= deltaTime
+        if timeRemaining &lt;= 0 {
+            stateMachine?.enter(VulnerableState.self)
+        }
+    }
+}</code></pre></div></div></div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">82</div>
+      </section>
+      <section class="slide" aria-label="Slide 83: Death and transitions">
+        <div class="title">Death and transitions</div>
+        <div class="body"><div class="grid"><div><ul><li><b>The final hit</b> enters the dead state</li><li><b>didEnter</b> removes the hurtbox and starts death animation</li><li><b>isValidNextState</b> prevents leaving the dead state</li><li>The death animation finishes the cleanup</li></ul></div><div><pre><code>// After taking damage:
+lifes -= 1
+if lifes &lt;= 0 {
+    stateMachine.enter(DeadState.self)
+}
+
+final class DeadState: PlayerState {
+    override func didEnter(from previous: GKState?) {
+        player?.hurtBox.removeFromParent()
+        player?.playAnimation(key: "death")
+    }
+    override func isValidNextState(_ state: AnyClass) -&gt; Bool {
+        false
+    }
+}</code></pre></div></div></div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">83</div>
+      </section>
+      <section class="slide dark" aria-label="Slide 84: Beyond 2D">
         <div class="body">
           <div class="section-title">
             Beyond 2D
@@ -2173,9 +2238,9 @@ machine.update(deltaTime: dt)</code></pre>
           <div class="section-num">06</div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">77</div>
+        <div class="pnum">84</div>
       </section>
-      <section class="slide" aria-label="Slide 78: Concepts transfer">
+      <section class="slide" aria-label="Slide 85: Concepts transfer">
         <div class="title">Concepts transfer</div>
         <div class="body">
           <table>
@@ -2210,11 +2275,11 @@ machine.update(deltaTime: dt)</code></pre>
           </p>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">78</div>
+        <div class="pnum">85</div>
       </section>
       <section
         class="slide"
-        aria-label="Slide 79: Entities, components, systems"
+        aria-label="Slide 86: Entities, components, systems"
       >
         <div class="title">Entities, components, systems</div>
         <div class="body">
@@ -2231,9 +2296,9 @@ machine.update(deltaTime: dt)</code></pre>
           </p>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">79</div>
+        <div class="pnum">86</div>
       </section>
-      <section class="slide dark" aria-label="Slide 80: Your turn">
+      <section class="slide dark" aria-label="Slide 87: Your turn">
         <div class="body">
           <div class="section-title">
             Your turn
@@ -2242,9 +2307,9 @@ machine.update(deltaTime: dt)</code></pre>
           <div class="section-num">07</div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">80</div>
+        <div class="pnum">87</div>
       </section>
-      <section class="slide" aria-label="Slide 81: Five ideas to keep">
+      <section class="slide" aria-label="Slide 88: Five ideas to keep">
         <div class="title">Five ideas to keep</div>
         <div class="body">
           <ul>
@@ -2262,9 +2327,9 @@ machine.update(deltaTime: dt)</code></pre>
           </ul>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">81</div>
+        <div class="pnum">88</div>
       </section>
-      <section class="slide" aria-label="Slide 82: Exercise: add a collectible">
+      <section class="slide" aria-label="Slide 89: Exercise: add a collectible">
         <div class="title">Exercise: add a collectible</div>
         <div class="body">
           <div class="grid exercise-grid">
@@ -2280,18 +2345,14 @@ machine.update(deltaTime: dt)</code></pre>
               </ol>
             </div>
             <div class="portrait-video">
-              <div class="video-screen">
-                <span>PORTRAIT GAMEPLAY VIDEO</span
-                ><b>Play · score · game over · restart</b
-                ><small>Replace with a vertical phone recording</small>
-              </div>
+              <video class="video-screen" src="assets/flappy.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Flappy Bird gameplay"></video>
             </div>
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">82</div>
+        <div class="pnum">89</div>
       </section>
-      <section class="slide dark" aria-label="Slide 83: Questions?">
+      <section class="slide dark" aria-label="Slide 90: Questions?">
         <div class="body">
           <div class="closing">
             QUESTIONS<span>?</span>
@@ -2299,7 +2360,7 @@ machine.update(deltaTime: dt)</code></pre>
           </div>
         </div>
         <div class="footer">STRV × MENDELU</div>
-        <div class="pnum">83</div>
+        <div class="pnum">90</div>
       </section>
     </main>
     <div id="blank"></div>
@@ -2310,7 +2371,7 @@ machine.update(deltaTime: dt)</code></pre>
           title: "SpriteKit",
           notes:
             "90 minutes including questions and media. Arrow keys to navigate; P opens presenter notes; F fullscreen; B black screen.",
-          body: '<div class="cover"><div class="eyebrow">STRV × MENDELU · iOS DEVELOPMENT<\/div><h1>SPRITE<span>KIT<\/span><\/h1><p>Building a 2D world, one node at a time.<\/p><div class="hand">Scenes · physics · gameplay<\/div><\/div>',
+          body: '<div class="cover"><div class="eyebrow">STRV × MENDELU · iOS DEVELOPMENT<\/div><h1>SPRITE<span>KIT<\/span><\/h1><p>Building a 2D world, one node at a time.<\/p><\/div>',
         },
         {
           title: "A 2D world",
@@ -2448,12 +2509,12 @@ machine.update(deltaTime: dt)</code></pre>
         },
         {
           title: "Add a child",
-          body: '<div class="grid"><div><pre><code>let parent = SKNode()\nlet player = SKSpriteNode(imageNamed: "PlayerIdle1")\nzombie.position = CGPoint(x: 120, y: 0)\nplayer.position = CGPoint(x: -120, y: 0)\nparent.addChild(zombie)\nparent.addChild(player)\naddChild(parent)<\/code><\/pre><p class="muted">The zombie and player are children of the same parent. Red dots mark their positions.<\/p><\/div><div class="anchor-preview"><div class="pixel-world children-added"><div class="anchor-node parent-marker"><\/div><div class="anchor-node"><\/div><img class="zombie center" src="assets/transform-demo/zombie.png" /><div class="child-node"><img src="PresentationProject/MendeluSpriteKit/Assets/Player/PlayerIdle.atlas/PlayerIdle1.png" alt="Player sprite" /><div class="anchor-node"><\/div><\/div><\/div><\/div><\/div>',
+          body: '<div class="grid"><div><pre><code>let parent = SKNode()\nlet player = SKSpriteNode(imageNamed: "PlayerIdle1")\nzombie.position = CGPoint(x: 120, y: 0)\nplayer.position = CGPoint(x: -120, y: 0)\nparent.addChild(zombie)\nparent.addChild(player)\naddChild(parent)<\/code><\/pre><p class="muted">The zombie and player are children of the same parent. Red dots mark their positions.<\/p><\/div><div class="anchor-preview"><div class="pixel-world children-added"><div class="anchor-node parent-marker"><\/div><div class="anchor-node"><\/div><img class="zombie center" src="assets/transform-demo/zombie.png" /><div class="child-node"><img src="PresentationProject/Halloweenland/Assets/Player/PlayerIdle.atlas/PlayerIdle1.png" alt="Player sprite" /><div class="anchor-node"><\/div><\/div><\/div><\/div><\/div>',
           notes: "The children sit equally far from the parent, using positions in its local coordinates.",
         },
         {
           title: "Move the parent",
-          body: '<div class="grid"><div><pre><code>parent.position = CGPoint(x: -80, y: 80)\n// Both children keep their local positions<\/code><\/pre><p class="muted">Moving the parent moves both children. Their local positions stay the same.<\/p><\/div><div class="anchor-preview"><div class="pixel-world children-moved"><div class="anchor-node parent-marker"><\/div><div class="anchor-node"><\/div><img class="zombie center" src="assets/transform-demo/zombie.png" /><div class="child-node"><img src="PresentationProject/MendeluSpriteKit/Assets/Player/PlayerIdle.atlas/PlayerIdle1.png" alt="Player sprite" /><div class="anchor-node"><\/div><\/div><\/div><\/div><\/div>',
+          body: '<div class="grid"><div><pre><code>parent.position = CGPoint(x: -80, y: 80)\n// Both children keep their local positions<\/code><\/pre><p class="muted">Moving the parent moves both children. Their local positions stay the same.<\/p><\/div><div class="anchor-preview"><div class="pixel-world children-moved"><div class="anchor-node parent-marker"><\/div><div class="anchor-node"><\/div><img class="zombie center" src="assets/transform-demo/zombie.png" /><div class="child-node"><img src="PresentationProject/Halloweenland/Assets/Player/PlayerIdle.atlas/PlayerIdle1.png" alt="Player sprite" /><div class="anchor-node"><\/div><\/div><\/div><\/div><\/div>',
           notes: "The parent moves; both children retain their local positions and move with it.",
         },
         {
@@ -2573,7 +2634,9 @@ machine.update(deltaTime: dt)</code></pre>
         { title: "Crop nodes · example", notes: "CroppedEye uses a circular mask and moving eye artwork.", body: "<div class=\"grid\"><div><pre><code>let crop = SKCropNode()\ncrop.maskNode = SKShapeNode(\n    circleOfRadius: 45\n)\ncrop.addChild(eye)\naddChild(crop)<\/code><\/pre><\/div><div><p><b>How it works<\/b><\/p><ul><li>The white shape defines the visible window<\/li><li>Children of the crop node appear only inside the mask<\/li><li>Move a child through the mask to reveal clipping<\/li><li>The outline is a separate shape above the crop<\/li><\/ul><\/div><\/div>" },
         { title: "Effect nodes", notes: "The BlurryGhost object floats while its blur radius gradually increases and decreases.", body: "<div class=\"grid\"><div><ul><li><b>SKEffectNode<\/b> renders its children into a separate buffer<\/li><li>Apply a Core Image filter to the rendered children<\/li><li>Use it for effects such as blur or color adjustments<\/li><li>Animate filter properties to change the effect over time<\/li><\/ul><\/div><div class=\"gameplay-video\"><video src=\"assets/blurEffect.mov\" autoplay muted loop playsinline preload=\"metadata\" aria-label=\"Ghost gradually blurring and sharpening\"><\/video><\/div><\/div>" },
         { title: "Effect nodes · example", notes: "Based on BlurryGhost.swift. The example enables a fixed blur; the project animates the filter radius over time.", body: "<div class=\"grid\"><div><pre><code>let effect = SKEffectNode()\neffect.filter = CIFilter(\n    name: &quot;CIGaussianBlur&quot;,\n    parameters: [kCIInputRadiusKey: 5]\n)\neffect.shouldEnableEffects = true\neffect.addChild(ghost)\nscene.addChild(effect)<\/code><\/pre><\/div><div><p><b>How it works<\/b><\/p><ul><li>The ghost is a child of the effect node<\/li><li>Core Image blurs the rendered children<\/li><li><code>shouldEnableEffects<\/code> turns the filter on or off<\/li><\/ul><\/div><\/div>" },
-        { title: "Constraints", notes: "Constraints maintain a relationship between nodes or coordinates. SpriteKit applies them after actions and physics.", body: "<div class=\"grid\"><div><p><b>Position and distance<\/b><\/p><ul><li>Keep a node within a range on the x or y axis<\/li><li>Keep a node within a distance of a point or another node<\/li><\/ul><\/div><div><p><b>Orientation<\/b><\/p><ul><li>Rotate a node to face a point or another node<\/li><li>Limit a node’s rotation to a range<\/li><\/ul><p class=\"muted\">SpriteKit applies constraints after actions and physics, before rendering.<\/p><\/div><\/div>" },
+        { title: "Shaders", notes: "ShimmeringGhost uses a fragment shader to smoothly change the ghost's color. SpriteKit supplies u_time.", body: "<div class=\"grid\"><div><ul><li><b>SKShader<\/b> changes how a node is drawn with a fragment shader<\/li><li>The shader computes the color of each pixel<\/li><li>Use it for color changes, distortion or other visual effects<\/li><li>The ghost smoothly changes between white, red and dark gray<\/li><\/ul><\/div><div class=\"gameplay-video\"><video src=\"assets/shader.mov\" autoplay muted loop playsinline preload=\"metadata\" aria-label=\"Ghost changing colors with a shader\"><\/video><\/div><\/div>" },
+        { title: "Shaders · example", notes: "Simplified from ShimmeringGhost.swift: the project transitions between randomly selected colors; this example alternates white and red.", body: "<div class=\"grid\"><div><p><b>How it works<\/b><\/p><ul><li><code>SKDefaultShading()<\/code> gives the sprite’s normal color and transparency<\/li><li><code>u_time<\/code> changes the tint smoothly over time<\/li><li>The shader blends the tint with the sprite’s color<\/li><li>Assign it to the ghost’s <code>shader<\/code> property<\/li><\/ul><\/div><div><pre><code>let shader = SKShader(source: &quot;&quot;&quot;\nvoid main() {\n    vec4 color = SKDefaultShading();\n    float t = 0.5 + 0.5 * sin(u_time);\n    vec3 tint = mix(vec3(1.0),\n                    vec3(0.75, 0.02, 0.03), t);\n    color.rgb = mix(color.rgb, tint * color.a, 0.85);\n    gl_FragColor = color;\n}\n&quot;&quot;&quot;)\nghost.shader = shader<\/code><\/pre><\/div><\/div>" },
+        { title: "Constraints", notes: "Constraints maintain a relationship between nodes or coordinates. SpriteKit applies them after actions and physics.", body: "<div class=\"grid\"><div><ul><li><b>Position:</b> keep a node within a range on the x or y axis</li><li><b>Distance:</b> keep a node within a range of a point or another node</li><li><b>Orientation:</b> rotate a node to face a point or another node</li><li><b>Rotation:</b> limit a node’s rotation to a range</li></ul><p class=\"muted\">SpriteKit applies constraints after actions and physics, before rendering.</p></div><div class=\"gameplay-video\"><video src=\"assets/constraints.mp4\" autoplay muted loop playsinline preload=\"metadata\" aria-label=\"SpriteKit constraints in action\"></video></div></div>" },
         { title: "Constraints · example", notes: "Based on EvilEye.swift: the look-at constraint is attached to the eye artwork, leaving the attraction field on its unrotated parent.", body: "<div class=\"grid\"><div><pre><code>let lookAtPlayer = SKConstraint.orient(\n    to: player,\n    offset: SKRange(constantValue: 0)\n)\neye.constraints = [lookAtPlayer]<\/code><\/pre><\/div><div><p><b>How it works<\/b><\/p><ul><li>The eye rotates to face the player as they move<\/li><li>The offset adjusts the artwork’s facing direction<\/li><li>Apply the constraint to the artwork so the field stays fixed<\/li><\/ul><\/div><\/div>" },
         {
           title: "Actions compose motion",
@@ -2636,22 +2699,44 @@ machine.update(deltaTime: dt)</code></pre>
           body: '<div class="section-title">State machines<div class="section-sub">GameplayKit · 10 minutes<\/div><\/div><div class="section-num">05<\/div>',
         },
         {
-          title: "Make behavior explicit",
-          notes:
-            "Diagram is conceptual: idle and walking can enter attack; attack finishes back into movement or idle; death may interrupt other states. Project removes the hurtbox when dead.",
-          body: '<div class="states"><div>IDLE<\/div><span>↔<\/span><div>WALKING<\/div><span>→<\/span><div>ATTACKING<\/div><span>→<\/span><div>DEAD<\/div><\/div><p class="lead">A state decides what is allowed now—and what can happen next.<\/p><p class="muted">Death may interrupt an attack. Jumping and temporary invulnerability can be independent.<\/p>',
+          title: "Introducing GameplayKit states",
+          notes: "A machine has one current state at a time. Entering a state calls didEnter; leaving it calls willExit. isValidNextState can restrict transitions, and update(deltaTime:) forwards time to the current state.",
+          body: "<p class=\"lead\">A state machine organizes behavior into distinct states.</p><ul><li><b>GKState</b> describes one state, such as idle or walking</li><li><b>GKStateMachine</b> holds the states and manages which one is active</li><li><b>Transitions</b> switch states when something changes, such as player input</li><li>States can run code on entry, on exit and during each update</li><li>Transition rules can prevent invalid changes, such as leaving a dead state</li></ul>",
         },
         {
-          title: "GKStateMachine",
-          notes:
-            'Illustrative creation and update. Project state classes and transition code should be checked before presenting as exact implementation. <a href="https://developer.apple.com/documentation/gameplaykit/gkstatemachine">GKStateMachine<\/a> and <a href="https://developer.apple.com/documentation/gameplaykit/gkstate">GKState<\/a>.',
-          body: '<div class="grid"><div><pre><code>let machine = GKStateMachine(states: [\n    IdleState(), WalkingState(),\n    AttackingState(), DeadState()\n])\nmachine.enter(IdleState.self)\n// In the frame loop, when needed:\nmachine.update(deltaTime: dt)<\/code><\/pre><\/div><div><ul><li><code>isValidNextState<\/code> controls transitions<\/li><li><code>didEnter<\/code> and <code>willExit<\/code> handle lifecycle<\/li><li>Update a state each frame when its behavior needs it<\/li><\/ul><\/div><\/div>',
+          title: "One player, three state machines",
+          notes: "Player.swift uses independent state machines so behavior, movement and temporary invulnerability can overlap.",
+          body: "<p class=\"lead\">Each state machine manages a different part of the player.</p><ul><li><b>Behavior:</b> idle, walking, attacking or dead</li><li><b>Movement:</b> grounded or jumping</li><li><b>Damage:</b> vulnerable or hurt</li><li>These states can overlap: the player can jump, attack and be hurt at the same time</li></ul>",
         },
         {
-          title: "A state lifecycle",
-          notes:
-            "Illustrative lifecycle, not an excerpt from the project. Explain attack completion and death interruption; clean up on either path.",
-          body: '<div class="grid"><div><pre><code>final class AttackState: GKState {\n    override func didEnter(\n        from previousState: GKState?\n    ) {\n        // Start attack animation and hit window.\n    }\n    override func willExit(\n        to nextState: GKState\n    ) {\n        // Remove attack area.\n    }\n}<\/code><\/pre><\/div><div><div class="media"><span>LECTURER MEDIA · VIDEO<\/span><strong>Idle, walking, attack and death transitions<\/strong><small>Replace this placeholder after recording and project verification<\/small><\/div><\/div><\/div>',
+          title: "Create the state machines",
+          notes: "The actual machines use player references in states that need access to the sprite. Grounded and vulnerable are initial states.",
+          body: "<div class=\"grid\"><div><ul><li><b>Behavior</b> chooses the animation and attack</li><li><b>Movement</b> tracks whether the player can jump</li><li><b>Damage</b> tracks temporary invulnerability</li><li>Each machine starts in an initial state</li></ul></div><div><pre><code>let behavior = GKStateMachine(states: [\n    IdleState(player: self),\n    WalkingState(player: self),\n    AttackingState(player: self),\n    DeadState(player: self)\n])\nbehavior.enter(IdleState.self)\n\nlet movement = GKStateMachine(states: [\n    GroundedState(player: self),\n    JumpingState(player: self)\n])\nmovement.enter(GroundedState.self)\n// Damage starts in VulnerableState.</code></pre></div></div>",
+        },
+        {
+          title: "Update the current states",
+          notes: "The array extension forwards the update to each state machine in order. SpriteKit supplies an absolute currentTime. The code caps the elapsed interval at 0.1 seconds to avoid a large update after a long gap; this also slows the hurt timer during long frames.",
+          body: "<div class=\"grid\"><div><ul><li><b>SpriteKit</b> calls the player once per frame</li><li>Convert the frame timestamp into elapsed time</li><li><b>Array extension</b> updates each machine in order</li><li>The interval is capped to limit large jumps in time</li></ul></div><div><pre><code>func update(_ currentTime: TimeInterval) {\n    let dt = previousUpdateTime.map {\n        max(0, min(currentTime - $0, 0.1))\n    } ?? 0\n    previousUpdateTime = currentTime\n\n    stateMachines.update(deltaTime: dt)\n}</code></pre></div></div>",
+        },
+        {
+          title: "Animations and behavior",
+          notes: "WalkingState similarly enters IdleState when joystick input stops. AttackingState starts its animation on entry and checks the hurtbox on each update.",
+          body: "<div class=\"grid\"><div><ul><li><b>didEnter</b> starts the animation once</li><li><b>update</b> checks for a change each frame</li><li>Walking returns to idle when input stops</li><li>Attacking checks the hurtbox until the attack ends</li></ul></div><div><pre><code>final class IdleState: PlayerState {\n    override func didEnter(from previous: GKState?) {\n        player?.playAnimation(key: \"idle\")\n    }\n\n    override func update(deltaTime: TimeInterval) {\n        guard let player, player.isWalking else { return }\n        stateMachine?.enter(WalkingState.self)\n    }\n}</code></pre></div></div>",
+        },
+        {
+          title: "Grounded and jumping",
+          notes: "Both movement states inherit MovementState, which applies horizontal movement and direction while alive. Jumping is triggered by input and landing by a tile contact; rope release is omitted from this excerpt.",
+          body: "<div class=\"grid\"><div><ul><li><b>Grounded</b> allows a jump; <b>jumping</b> prevents another jump in the air</li><li>Both states share horizontal movement</li><li>A ground contact returns the player to grounded</li></ul></div><div><pre><code>class MovementState: PlayerState {\n    override func update(deltaTime: TimeInterval) {\n        guard let player, !player.isDead else { return }\n        player.updateDirection()\n        player.updatePosition()\n    }\n}\nfinal class GroundedState: MovementState {}\nfinal class JumpingState: MovementState {}\n\n// Jump input / ground contact:\nmovementStateMachine.enter(JumpingState.self)\nmovementStateMachine.enter(GroundedState.self)</code></pre></div></div>",
+        },
+        {
+          title: "Damage and invulnerability",
+          notes: "The project uses SKActions for the blink. HurtState counts down 1.5 seconds using the capped frame delta, then restores VulnerableState. hit() ignores damage while hurt or dead.",
+          body: "<div class=\"grid\"><div><ul><li><b>Hurt</b> starts the blinking effect</li><li>While hurt, additional hits are ignored</li><li><b>update</b> counts down the invulnerability window</li><li><b>willExit</b> stops blinking and restores visibility</li></ul></div><div><pre><code>final class HurtState: PlayerState {\n    private var timeRemaining: TimeInterval = 0\n\n    override func didEnter(from previous: GKState?) {\n        timeRemaining = 1.5\n        // Start the blinking SKAction.\n    }\n    override func update(deltaTime: TimeInterval) {\n        timeRemaining -= deltaTime\n        if timeRemaining &lt;= 0 {\n            stateMachine?.enter(VulnerableState.self)\n        }\n    }\n}</code></pre></div></div>",
+        },
+        {
+          title: "Death and transitions",
+          notes: "On the final hit Player enters DeadState. Its didEnter removes the hurtbox and starts the death animation; isValidNextState prevents leaving this state. The animation handles physics cleanup and removal.",
+          body: "<div class=\"grid\"><div><ul><li><b>The final hit</b> enters the dead state</li><li><b>didEnter</b> removes the hurtbox and starts death animation</li><li><b>isValidNextState</b> prevents leaving the dead state</li><li>The death animation finishes the cleanup</li></ul></div><div><pre><code>// After taking damage:\nlifes -= 1\nif lifes &lt;= 0 {\n    stateMachine.enter(DeadState.self)\n}\n\nfinal class DeadState: PlayerState {\n    override func didEnter(from previous: GKState?) {\n        player?.hurtBox.removeFromParent()\n        player?.playAnimation(key: \"death\")\n    }\n    override func isValidNextState(_ state: AnyClass) -&gt; Bool {\n        false\n    }\n}</code></pre></div></div>",
         },
         {
           title: "Beyond 2D",
@@ -2683,8 +2768,8 @@ machine.update(deltaTime: dt)</code></pre>
         {
           title: "Exercise: add a collectible",
           notes:
-            "Guided Flappy Bird build: configure a gap sensor, detect and score a successful pass, then add a game-over screen with restart. Finish with a game-loop state machine (TBD). Project source represents a near-final result. Portrait video placeholder is for phone gameplay.",
-          body: '<div class="grid exercise-grid"><div><p class="lead">Together, we’ll build a Flappy Bird game loop.<\/p><ol><li>Inspect player and pipe physics categories<\/li><li>Add a non-colliding sensor in the gap<\/li><li>Handle the player contact once<\/li><li>Update the score and play the point sound<\/li><li>Make a game-over screen with a restart option<\/li><li>Connect the game loop with a state machine <span class="muted">(TBD)<\/span><\/li><\/ol><\/div><div class="portrait-video"><div class="video-screen"><span>PORTRAIT GAMEPLAY VIDEO<\/span><b>Play · score · game over · restart<\/b><small>Replace with a vertical phone recording<\/small><\/div><\/div><\/div>',
+            "Guided Flappy Bird build: configure a gap sensor, detect and score a successful pass, then add a game-over screen with restart. Finish with a game-loop state machine (TBD). Project source represents a near-final result.",
+          body: '<div class="grid exercise-grid"><div><p class="lead">Together, we’ll build a Flappy Bird game loop.<\/p><ol><li>Inspect player and pipe physics categories<\/li><li>Add a non-colliding sensor in the gap<\/li><li>Handle the player contact once<\/li><li>Update the score and play the point sound<\/li><li>Make a game-over screen with a restart option<\/li><li>Connect the game loop with a state machine <span class="muted">(TBD)<\/span><\/li><\/ol><\/div><div class="portrait-video"><video class="video-screen" src="assets/flappy.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Flappy Bird gameplay"><\/video><\/div><\/div>',
         },
         {
           title: "Questions?",
@@ -2742,7 +2827,7 @@ machine.update(deltaTime: dt)</code></pre>
       // Keep one visual alive while the surrounding slide content changes.
       const sharedPreview = document.createElement("div");
       sharedPreview.className = "pixel-world shared-transform-preview";
-      sharedPreview.innerHTML = '<div class="anchor-node"></div><div class="anchor-node parent-marker"></div><img class="zombie" src="assets/transform-demo/zombie.png" alt="Zombie sprite"><div class="child-node"><img src="PresentationProject/MendeluSpriteKit/Assets/Player/PlayerIdle.atlas/PlayerIdle1.png" alt="Player sprite" /><div class="anchor-node"></div></div>';
+      sharedPreview.innerHTML = '<div class="anchor-node"></div><div class="anchor-node parent-marker"></div><img class="zombie" src="assets/transform-demo/zombie.png" alt="Zombie sprite"><div class="child-node"><img src="PresentationProject/Halloweenland/Assets/Player/PlayerIdle.atlas/PlayerIdle1.png" alt="Player sprite" /><div class="anchor-node"></div></div>';
       sharedPreview.hidden = true;
       deck.append(sharedPreview);
       const sharedZombie = sharedPreview.querySelector(".zombie");
