@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "eye_green.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

@@ -1,0 +1,2973 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>SpriteKit – STRV × MENDELU</title>
+    <style>
+      @font-face {
+        font-family: Oswald;
+        src: url(../../03.Accessibility/presentation/fonts/TK3_WkUHHAIjg75cFRf3bXL8LICs1_FvgUE.ttf);
+      }
+      @font-face {
+        font-family: Roboto;
+        src: url(../../03.Accessibility/presentation/fonts/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWubEbWmT.ttf);
+      }
+      @font-face {
+        font-family: Mono;
+        src: url(../../03.Accessibility/presentation/fonts/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxjPQ.ttf);
+      }
+      @font-face {
+        font-family: Caveat;
+        src: url(../../03.Accessibility/presentation/fonts/WnznHAc5bAfYB2QRah7pcpNvOx-pjRV6SII.ttf);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        background: #000;
+        height: 100%;
+        overflow: hidden;
+      }
+      body {
+        font-family: Roboto, Arial, sans-serif;
+        color: #111517;
+      }
+      #deck {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        width: 1920px;
+        height: 1080px;
+        transform-origin: center;
+      }
+      .slide {
+        display: none;
+        position: absolute;
+        width: 1920px;
+        height: 1080px;
+        background: white;
+        overflow: hidden;
+      }
+      .slide.on {
+        display: block;
+      }
+      .dark {
+        background: #111517;
+        color: white;
+      }
+      .dark .mini circle:first-child {
+        stroke: #454b50;
+      }
+      .title {
+        position: absolute;
+        top: 75px;
+        left: 110px;
+        font:
+          68px Oswald,
+          sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .body {
+        position: absolute;
+        left: 110px;
+        right: 110px;
+        top: 225px;
+        bottom: 120px;
+        font-size: 40px;
+        line-height: 1.34;
+      }
+      .footer {
+        position: absolute;
+        left: 52px;
+        bottom: 40px;
+        font: 600 25px Oswald;
+        letter-spacing: 1px;
+      }
+      .pnum {
+        position: absolute;
+        right: 52px;
+        bottom: 40px;
+        color: #6b7075;
+        font-size: 20px;
+      }
+      .mini {
+        position: absolute;
+        right: 96px;
+        bottom: 22px;
+        width: 70px;
+        height: 70px;
+      }
+      .mini svg {
+        width: 70px;
+        height: 70px;
+      }
+      .pixel-world {
+        height: 500px;
+        position: relative;
+        overflow: hidden;
+        border-radius: 18px;
+        background: #f4f6f6;
+        border: 2px solid #e3e6e8;
+      }
+      .pixel-world > img:first-child {
+        display: none;
+      }
+      .pixel-world .ground {
+        display: none;
+      }
+      .pixel-world .zombie {
+        position: absolute;
+        transition:
+          left 0.7s ease,
+          bottom 0.7s ease,
+          transform 0.7s ease;
+        width: 155px;
+        height: 190px;
+        object-fit: contain;
+        image-rendering: pixelated;
+      }
+      .pixel-world .zombie {
+        left: calc(50% - 77.5px);
+        bottom: calc(50% - 95px);
+        transform: rotate(0deg);
+        transform-origin: 50% 50%;
+      }
+      .pixel-world .zombie.bl {
+        left: 50%;
+        bottom: 50%;
+        transform-origin: 0% 100%;
+      }
+      .pixel-world .zombie.tr {
+        left: calc(50% - 155px);
+        bottom: calc(50% - 190px);
+        transform-origin: 100% 0%;
+      }
+      .pixel-world .zombie.bl {
+        --ax: 0;
+        --ay: 0;
+        --from-x: 0.5;
+        --from-y: 0.5;
+      }
+      .pixel-world .zombie.center {
+        --ax: 0.5;
+        --ay: 0.5;
+        --from-x: 0.5;
+        --from-y: 0.5;
+      }
+      .pixel-world .zombie.tr {
+        --ax: 1;
+        --ay: 1;
+        --from-x: 0;
+        --from-y: 0;
+      }
+      .rotate-bl .zombie {
+        --ax: 0;
+        --ay: 0;
+        left: 50%;
+        bottom: 50%;
+        transform-origin: 0% 100%;
+      }
+      .rotate-center .zombie,
+      .move-node .zombie,
+      .move-negative .zombie {
+        transform: rotate(-45deg);
+        transform-origin: 50% 50%;
+      }
+      .rotate-bl .zombie {
+        transform: rotate(-45deg);
+        transform-origin: 0% 100%;
+      }
+      .move-node .zombie, .move-negative .zombie { transform: rotate(-360deg); }
+      .move-node .zombie {
+        left: calc(50% + 42.5px);
+        bottom: calc(50% - 15px);
+        transform-origin: 50% 50%;
+      }
+      .move-negative .zombie {
+        left: calc(50% - 197.5px);
+        bottom: calc(50% - 155px);
+        transform-origin: 50% 50%;
+      }
+      .move-node .anchor-node {
+        left: calc(50% + 120px);
+        bottom: calc(50% + 80px);
+      }
+      .move-negative .anchor-node {
+        left: calc(50% - 120px);
+        bottom: calc(50% - 60px);
+      }
+      .slide.on .pixel-world .zombie {
+        animation: anchorArrive 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      }
+      .pixel-world i,
+      .anchor-node {
+        transition:
+          left 0.7s ease,
+          bottom 0.7s ease;
+        position: absolute;
+        left: 50%;
+        bottom: 50%;
+        transform: translate(-50%, 50%);
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #ef0d33;
+        box-shadow: 0 0 0 5px #fff;
+        z-index: 4;
+      }
+      @keyframes anchorArrive {
+        from {
+          opacity: 0.85;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      .slide.on .pixel-world .zombie.bl {
+        animation: anchorToBottomLeft 0.75s ease-in-out both;
+      }
+      .slide.on .pixel-world .zombie.tr {
+        animation: anchorToTopRight 0.75s ease-in-out both;
+      }
+      @keyframes anchorToBottomLeft {
+        from {
+          left: calc(50% - 77.5px);
+          bottom: calc(50% - 95px);
+        }
+        to {
+          left: 50%;
+          bottom: 50%;
+        }
+      }
+      @keyframes anchorToTopRight {
+        from {
+          left: 50%;
+          bottom: 50%;
+        }
+        to {
+          left: calc(50% - 155px);
+          bottom: calc(50% - 190px);
+        }
+      }
+      .slide.on .rotate-center .zombie {
+        animation:
+          centerFromTopRight 0.75s ease-in-out both,
+          rotateSprite 0.8s ease-out 0.75s both;
+      }
+      .slide.on .rotate-bl .zombie {
+        animation: rotateFromCenter 0.8s ease-out both;
+      }
+      .slide.on .move-node .zombie {
+        animation: none;
+      }
+      .slide.on .move-node .anchor-node {
+        animation: moveDot 0.8s ease-out both;
+      }
+      .slide.on .move-negative .zombie {
+        animation: none;
+      }
+      .slide.on .move-negative .anchor-node {
+        animation: moveDotNegative 0.8s ease-out both;
+      }
+      @keyframes centerFromTopRight {
+        from {
+          left: calc(50% - 155px);
+          bottom: calc(50% - 190px);
+        }
+        to {
+          left: calc(50% - 77.5px);
+          bottom: calc(50% - 95px);
+        }
+      }
+      @keyframes rotateSprite {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(-45deg);
+        }
+      }
+      @keyframes rotateFromCenter {
+        from {
+          left: calc(50% - 77.5px);
+          bottom: calc(50% - 95px);
+          transform: rotate(-45deg);
+          transform-origin: 50% 50%;
+        }
+        to {
+          left: 50%;
+          bottom: 50%;
+          transform: rotate(-45deg);
+          transform-origin: 0% 100%;
+        }
+      }
+      @keyframes moveSprite {
+        from {
+          left: 50%;
+          bottom: 50%;
+        }
+        to {
+          left: calc(50% + 120px);
+          bottom: calc(50% + 80px);
+        }
+      }
+      @keyframes moveDot {
+        from {
+          left: 50%;
+          bottom: 50%;
+        }
+        to {
+          left: calc(50% + 120px);
+          bottom: calc(50% + 80px);
+        }
+      }
+      @keyframes moveSpriteNegative {
+        from {
+          left: calc(50% + 120px);
+          bottom: calc(50% + 80px);
+        }
+        to {
+          left: calc(50% - 120px);
+          bottom: calc(50% - 60px);
+        }
+      }
+      @keyframes moveDotNegative {
+        from {
+          left: calc(50% + 120px);
+          bottom: calc(50% + 80px);
+        }
+        to {
+          left: calc(50% - 120px);
+          bottom: calc(50% - 60px);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .slide.on .pixel-world .zombie,
+        .slide.on .pixel-world .anchor-node {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+      .rotation-step-1 .zombie { transform: rotate(-90deg); }
+      .rotation-step-2 .zombie { transform: rotate(-180deg); }
+      .rotation-step-3 .zombie { transform: rotate(-270deg); }
+      .rotation-step-4 .zombie { transform: rotate(-360deg); }
+      .slide.on .rotation-step-1 .zombie,
+      .slide.on .rotation-step-2 .zombie,
+      .slide.on .rotation-step-3 .zombie,
+      .slide.on .rotation-step-4 .zombie { animation: none; }
+      .bottom-rotation-step-1 .zombie { transform: rotate(-90deg); }
+      .bottom-rotation-step-2 .zombie { transform: rotate(-180deg); }
+      .bottom-rotation-step-3 .zombie { transform: rotate(-270deg); }
+      .bottom-rotation-step-4 .zombie { transform: rotate(-360deg); }
+      .slide.on .bottom-rotation-step-1 .zombie,
+      .slide.on .bottom-rotation-step-2 .zombie,
+      .slide.on .bottom-rotation-step-3 .zombie,
+      .slide.on .bottom-rotation-step-4 .zombie { animation: none; }
+      .scale-sprite .zombie { transform: scale(2); }
+      .flip-1 .zombie { transform: scale(2, -2); }
+      .flip-2 .zombie { transform: scale(-2, -2); }
+      .slide.on .scale-sprite .zombie { animation: none; }
+      .child-node {
+        position: absolute;
+        left: calc(50% - 120px);
+        bottom: 50%;
+        width: 155px;
+        height: 190px;
+        transform: translate(-50%, 50%);
+        transition: left 0.75s ease-in-out, bottom 0.75s ease-in-out, opacity 0.35s ease;
+      }
+      .child-node img { width: 100%; height: 100%; object-fit: contain; image-rendering: pixelated; }
+      .child-node .anchor-node { left: 50%; bottom: 50%; }
+      .parent-marker { opacity: 0; transition: left 0.75s ease-in-out, bottom 0.75s ease-in-out, opacity 0.35s ease; }
+      .children-added > .parent-marker { left: 50%; opacity: 1; }
+      .children-moved > .parent-marker { left: calc(50% - 80px); bottom: calc(50% + 80px); opacity: 1; }
+      .children-moved .child-node { left: calc(50% - 200px); bottom: calc(50% + 80px); }
+      .children-added .zombie, .children-moved .zombie { transform: none; }
+      .children-added .zombie { left: calc(50% + 42.5px); bottom: calc(50% - 95px); }
+      .children-moved .zombie { left: calc(50% - 37.5px); bottom: calc(50% - 15px); }
+      .children-added > .anchor-node:not(.parent-marker) { left: calc(50% + 120px); }
+      .children-moved > .anchor-node:not(.parent-marker) { left: calc(50% + 40px); bottom: calc(50% + 80px); }
+      .slide.on .children-added .zombie, .slide.on .children-moved .zombie { animation: none; }
+      @media (prefers-reduced-motion: reduce) { .child-node { transition: none; } }
+      .shared-transform-preview {
+        position: absolute;
+        pointer-events: none;
+        z-index: 5;
+      }
+      .shared-transform-preview .zombie,
+      .shared-transform-preview .anchor-node {
+        transition: left 0.75s ease-in-out, bottom 0.75s ease-in-out,
+          transform 0.75s ease-in-out, transform-origin 0.75s ease-in-out;
+      }
+      @media (prefers-reduced-motion: reduce), print {
+        .shared-transform-preview .zombie,
+        .shared-transform-preview .anchor-node {
+          transition: none;
+        }
+      }
+      @media print {
+        .shared-transform-preview { display: none !important; }
+        .slide .anchor-preview .pixel-world { visibility: visible !important; }
+      }
+      .anchor-preview .muted {
+        font-size: 23px;
+      }
+      .exercise-grid {
+        grid-template-columns: 1.65fr 0.55fr;
+        gap: 38px;
+      }
+      .exercise-grid ol {
+        font-size: 34px;
+        white-space: nowrap;
+      }
+      .exercise-grid .lead {
+        font-size: 38px;
+        white-space: nowrap;
+      }
+      .exercise-grid ol {
+        line-height: 1.45;
+        padding-left: 1.2em;
+      }
+      .portrait-video {
+        display: flex;
+        justify-content: center;
+      }
+      .video-screen {
+        width: 340px;
+        height: 605px;
+        border: 12px solid #111517;
+        border-radius: 38px;
+        background: #f4f6f6;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 24px;
+        gap: 28px;
+      }
+      .portrait-video video.video-screen {
+        display: block;
+        width: 380px;
+        height: 675px;
+        border: 0;
+        border-radius: 0;
+        padding: 0;
+        object-fit: contain;
+        background: transparent;
+      }
+      .video-screen span {
+        font: 25px Oswald;
+        color: #ef0d33;
+        letter-spacing: 1px;
+      }
+      .video-screen b {
+        font: 36px Oswald;
+      }
+      .video-screen small {
+        font: 19px Roboto;
+        color: #5f6368;
+      }
+      .sprite-demo {
+        text-align: center;
+      }
+      .frame-strip {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 14px;
+        height: 210px;
+        margin-bottom: 14px;
+      }
+      .frame-strip img {
+        flex: 1;
+        min-width: 0;
+        width: 0;
+        height: 200px;
+        object-fit: contain;
+        image-rendering: pixelated;
+      }
+      .sprite-stage {
+        height: 210px;
+        position: relative;
+        background: #f7f7f7;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .sprite-stage img {
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        max-width: none;
+        max-height: none;
+        image-rendering: pixelated;
+        object-fit: contain;
+        opacity: 0;
+        animation: spriteFrame 0.6s steps(1, end) infinite;
+      }
+      .sprite-stage img:nth-child(1) {
+        animation-delay: 0s;
+      }
+      .sprite-stage img:nth-child(2) {
+        animation-delay: -0.5s;
+      }
+      .sprite-stage img:nth-child(3) {
+        animation-delay: -0.4s;
+      }
+      .sprite-stage img:nth-child(4) {
+        animation-delay: -0.3s;
+      }
+      .sprite-stage img:nth-child(5) {
+        animation-delay: -0.2s;
+      }
+      .sprite-stage img:nth-child(6) {
+        animation-delay: -0.1s;
+      }
+      @keyframes spriteFrame {
+        0%,
+        16.65% {
+          opacity: 1;
+        }
+        16.66%,
+        100% {
+          opacity: 0;
+        }
+      }
+      .sprite-demo b,
+      .sprite-demo small {
+        display: block;
+        margin-top: 16px;
+      }
+      .sprite-demo small {
+        font-size: 24px;
+        color: #5f6368;
+      }
+      .card-result {
+        border: 2px solid #e3e6e8;
+        border-radius: 20px;
+        padding: 36px;
+        font-size: 36px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 70px;
+        align-items: center;
+        height: 100%;
+      }
+      /* Put code on the right while keeping existing two-column content together. */
+      .grid:has(> :first-child pre):has(> :nth-child(2)):not(:has(> :nth-child(2) pre)) > :first-child {
+        order: 1;
+      }
+      ul {
+        padding-left: 1.1em;
+        margin: 0;
+      }
+      li {
+        margin-bottom: 0.5em;
+      }
+      li::marker {
+        color: #ef0d33;
+      }
+      code {
+        font-family: Mono, monospace;
+        font-size: 0.85em;
+      }
+      pre {
+        font:
+          25px/1.5 Mono,
+          monospace;
+        white-space: pre;
+        background: #fff;
+        border: 2px solid #e3e6e8;
+        border-radius: 18px;
+        padding: 30px;
+        overflow: hidden;
+      }
+      pre code {
+        font: inherit;
+      }
+      .c-kw {
+        color: #ad3da4;
+        font-weight: 700;
+      }
+      .c-str {
+        color: #c41a16;
+      }
+      .c-com {
+        color: #5d6c79;
+        font-style: italic;
+      }
+      .c-num {
+        color: #1c00cf;
+      }
+      .c-type {
+        color: #703daa;
+      }
+      .c-mem {
+        color: #326d74;
+      }
+      .muted {
+        color: #5f6368;
+        font-size: 31px;
+      }
+      .lead {
+        font-size: 42px;
+        margin-top: 65px;
+      }
+      .media {
+        min-height: 480px;
+        border: 4px dashed #b7c1c4;
+        border-radius: 22px;
+        background: #f4f6f6;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 50px;
+        color: #5f6368;
+        gap: 24px;
+      }
+      .media span {
+        font: 30px Oswald;
+        letter-spacing: 2px;
+        color: #ef0d33;
+      }
+      .media strong {
+        font: 48px Oswald;
+        text-transform: uppercase;
+        color: #111517;
+      }
+      .media small {
+        font-size: 25px;
+      }
+      .cover {
+        position: absolute;
+        top: 80px;
+        left: 65px;
+      }
+      .cover h1 {
+        font: 200px/0.95 Oswald;
+        margin: 35px 0;
+      }
+      .cover h1 span {
+        color: #ef0d33;
+      }
+      .cover p {
+        font-size: 48px;
+      }
+      .eyebrow {
+        font: 32px Oswald;
+        letter-spacing: 3px;
+        color: #5f6368;
+      }
+      .hand {
+        font: 80px Caveat;
+        color: #ef0d33;
+      }
+      .section-title {
+        position: absolute;
+        left: 10px;
+        top: 215px;
+        font: 120px/1.05 Oswald;
+        text-transform: uppercase;
+      }
+      .section-sub {
+        font: 38px Roboto;
+        text-transform: none;
+        color: #9aa0a6;
+        margin-top: 25px;
+      }
+      .section-num {
+        position: absolute;
+        right: 35px;
+        top: 100px;
+        font: 330px Oswald;
+        color: #ef0d33;
+      }
+      .flow,
+      .steps,
+      .states {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 25px;
+      }
+      .flow div,
+      .steps div,
+      .states div {
+        border: 2px solid #e3e6e8;
+        border-radius: 18px;
+        padding: 27px;
+        font: 40px Oswald;
+        text-align: center;
+      }
+      .flow small {
+        display: block;
+        font: 26px Roboto;
+        color: #5f6368;
+      }
+      .flow b,
+      .steps span,
+      .states span {
+        color: #ef0d33;
+      }
+      .vertical {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .vertical div {
+        padding: 9px 30px;
+      }
+      .tree {
+        font: 44px/1.5 Mono;
+        color: #ef0d33;
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+      .cards.three {
+        grid-template-columns: repeat(3, 1fr);
+        margin-top: 120px;
+      }
+      .cards div {
+        border: 2px solid #e3e6e8;
+        border-radius: 20px;
+        padding: 35px;
+      }
+      .cards b {
+        display: block;
+        font: 45px Oswald;
+        text-transform: uppercase;
+      }
+      .cards span {
+        display: block;
+        color: #5f6368;
+        font-size: 31px;
+        margin-top: 15px;
+      }
+      .bottom {
+        margin-top: 90px;
+      }
+      .states {
+        margin-top: 180px;
+      }
+      .states div {
+        font-size: 38px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 34px;
+      }
+      th {
+        font: 32px Oswald;
+        text-transform: uppercase;
+        color: #5f6368;
+        text-align: left;
+        border-bottom: 3px solid #111517;
+      }
+      td,
+      th {
+        padding: 22px;
+        border-bottom: 2px solid #e3e6e8;
+      }
+      .big-red {
+        font: 100px/1.1 Oswald;
+        color: #ef0d33;
+      }
+      .closing {
+        position: absolute;
+        top: 160px;
+        font: 180px Oswald;
+      }
+      .closing span {
+        color: #ef0d33;
+      }
+      .closing p {
+        font: 45px Roboto;
+        color: #9aa0a6;
+      }
+      #blank {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: #000;
+        z-index: 99;
+      }
+      body.blank #blank {
+        display: block;
+      }
+      #notes {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: #111517;
+        color: white;
+        padding: 40px;
+        overflow: auto;
+        font: 22px/1.5 Roboto;
+      }
+      body.presenter #deck {
+        display: none;
+      }
+      body.presenter #notes {
+        display: block;
+      }
+      #notes a {
+        color: #65d2df;
+      }
+      #notes button {
+        font: 20px Roboto;
+        padding: 10px;
+        margin-right: 10px;
+      }
+      #notes .hint {
+        color: #9aa0a6;
+      }
+      #notes h1 {
+        font: 48px Oswald;
+        margin: 0;
+      }
+      #notes h2 {
+        font: 32px Oswald;
+      }
+      #notes .preview {
+        border: 1px solid #596166;
+        padding: 22px;
+        margin-top: 30px;
+        max-width: 1100px;
+      }
+      #notes .preview .media {
+        min-height: 100px;
+        padding: 15px;
+      }
+      #notes .preview .media strong {
+        font-size: 23px;
+      }
+      #notes .preview .media small {
+        font-size: 15px;
+      }
+      #notes .preview pre {
+        font-size: 15px;
+      }
+      #notes .preview ul {
+        font-size: 24px;
+      }
+      #notes .preview .cards.three {
+        margin: 0;
+      }
+      #notes .preview .section-num {
+        display: none;
+      }
+      #notes .preview .section-title {
+        position: static;
+        font-size: 50px;
+      }
+      #notes .preview .cover h1 {
+        font-size: 70px;
+      }
+      @media print {
+        html,
+        body {
+          overflow: visible;
+          background: white;
+        }
+        #deck {
+          position: static;
+          transform: none !important;
+        }
+        .slide,
+        .slide.on {
+          display: block;
+          position: relative;
+          break-after: page;
+        }
+        #notes,
+        #blank {
+          display: none !important;
+        }
+        @page {
+          size: 1920px 1080px;
+          margin: 0;
+        }
+      }
+      .performance-layout {
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 36px;
+        height: 100%;
+        align-items: center;
+      }
+      .performance-budget, .performance-tips {
+        border-radius: 22px;
+        padding: 38px 44px;
+      }
+      .performance-number { font: 96px Oswald, sans-serif; color: #ef0d33; line-height: 1; }
+      .performance-number span { font-size: 42px; }
+      .performance-caption { font: 600 24px Oswald, sans-serif; letter-spacing: 1.5px; margin: 12px 0 28px; }
+      .performance-layout ul { font-size: 31px; }
+      .performance-tips p { margin: 0 0 22px; }
+      .frame-cycle-layout {
+        display: grid;
+        grid-template-columns: 0.75fr 1.25fr;
+        align-items: center;
+        gap: 45px;
+        height: 100%;
+      }
+      .frame-cycle-layout img {
+        width: 100%;
+        max-height: 710px;
+        object-fit: contain;
+      }
+      .tile-image {
+        display: block;
+        width: 100%;
+        height: 290px;
+        object-fit: contain;
+        margin-top: 20px;
+      }
+      .tile-image-large { height: 500px; margin: 0; }
+      .tile-video-full { width: 100%; height: 100%; object-fit: contain; }
+      #notes .preview .tile-video-full { width: 100%; height: auto; }
+      .particle-media { display: grid; grid-template-rows: repeat(2, 300px); gap: 18px; }
+      .particle-media video, .particle-media img {
+        width: 100%; height: 100%; object-fit: contain;
+        border-radius: 18px; background: #111517;
+      }
+      .gameplay-video {
+        height: 500px;
+        border-radius: 22px;
+        overflow: hidden;
+        background: #111517;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .gameplay-video video {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+    </style>
+  </head>
+  <body>
+    <main id="deck">
+      <section class="slide" aria-label="Slide 1: SpriteKit">
+        <div class="body">
+          <div class="cover">
+            <div class="eyebrow">STRV × MENDELU · iOS DEVELOPMENT</div>
+            <h1>SPRITE<span>KIT</span></h1>
+            <p>Building a 2D world, one node at a time.</p>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">1</div>
+      </section>
+      <section class="slide dark" aria-label="Slide 2: A 2D world">
+        <div class="body">
+          <div class="section-title">
+            A 2D world
+            <div class="section-sub">Introduction</div>
+          </div>
+          <div class="section-num">01</div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">2</div>
+      </section>
+      <section class="slide" aria-label="Slide 3: SpriteKit in your app">
+        <div class="title">SpriteKit in your app</div>
+        <div class="body"><div class="grid"><div><p><b>Inside an app</b></p><ul><li>SwiftUI can display a scene with <code>SpriteView</code></li><li>UIKit can present a scene in an <code>SKView</code></li><li>The scene contains the game’s nodes</li></ul></div><div><p><b>Different jobs, together</b></p><ul><li>SwiftUI describes interface views from state</li><li>SpriteKit updates a 2D scene over time: movement, actions and physics</li><li>Use SwiftUI for menus and controls around the game</li></ul></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">3</div>
+      </section>
+      <section class="slide" aria-label="Slide 4: Framework connections">
+        <div class="title">Framework connections</div>
+        <div class="body"><div class="grid"><div><p><b>SwiftUI &amp; UIKit</b></p><ul><li>SwiftUI and UIKit work together on iOS</li><li>Some SwiftUI views use UIKit; others use different rendering paths</li><li>SwiftUI also runs on platforms that use AppKit</li></ul></div><div><p><b>SpriteKit &amp; Metal</b></p><ul><li><code>SpriteView</code> embeds SpriteKit in SwiftUI; <code>SKView</code> presents it in UIKit</li><li>SpriteKit uses Metal for GPU rendering on supported devices</li><li>Metal also supports some SwiftUI rendering paths</li></ul></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">4</div>
+      </section>
+      <section class="slide" aria-label="Slide 5: What SpriteKit gives us">
+        <div class="title">What SpriteKit gives us</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <ul>
+                <li>A framework for <b>2D scenes</b> on Apple platforms</li>
+                <li>Sprites, animation, actions, effects, physics and sound</li>
+                <li>Compose a world from small objects</li>
+              </ul>
+            </div>
+            <div>
+              <div class="flow">
+                <div>SKView<small>presents</small></div>
+                <b>→</b>
+                <div>SKScene<small>contains</small></div>
+                <b>→</b>
+                <div>SKNode<small>builds the world</small></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">5</div>
+      </section>
+      <section class="slide" aria-label="Slide 6: Meet the game">
+        <div class="title">Meet the game</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <ul>
+                <li>A player moves, jumps and attacks</li>
+                <li>Enemies inhabit a tile-based level</li>
+                <li>An exit gives the level a goal</li>
+                <li>We will use the project as a recurring example</li>
+              </ul>
+            </div>
+            <div>
+              <div class="gameplay-video">
+                <video
+                  src="assets/intro.mp4"
+                  autoplay
+                  muted
+                  loop
+                  playsinline
+                  preload="auto"
+                  aria-label="SpriteKit gameplay overview"
+                ></video>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">6</div>
+      </section>
+      <section class="slide dark" aria-label="Slide 7: Scenes &amp; rendering">
+        <div class="body">
+          <div class="section-title">
+            Scenes & rendering
+            <div class="section-sub">Scenes, nodes and rendering</div>
+          </div>
+          <div class="section-num">02</div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">7</div>
+      </section>
+      <section class="slide" aria-label="Slide 8: The scene graph">
+        <div class="title">The scene graph</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <div class="tree">
+                SKView<br />└── SKScene<br />　　├── Level / tiles<br />　　├──
+                Player<br />　　├── Enemies<br />　　└── Camera<br />　　　　└──
+                HUD
+              </div>
+            </div>
+            <div>
+              <ul>
+                <li>A scene is a <b>tree of nodes</b></li>
+                <li>Children inherit their parent’s transforms</li>
+                <li>
+                  The graph is conceptual; inspect the scene editor for the
+                  actual hierarchy
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">8</div>
+      </section>
+      <section class="slide" aria-label="Slide 9: Make a node">
+        <div class="title">Make a node</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <pre><code>let zombie = SKSpriteNode(imageNamed: &quot;Zombie&quot;)
+zombie.position = CGPoint(x: 0, y: 0)
+zombie.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+zombie.xScale = 1
+zombie.yScale = 1
+zombie.zRotation = 0
+zombie.zPosition = 10
+scene.addChild(zombie)
+
+let marker = SKShapeNode(circleOfRadius: 8)
+zombie.addChild(marker)</code></pre>
+            </div>
+            <div>
+              <ul>
+                <li>
+                  A child’s position is in its <b>parent’s coordinates</b>
+                </li>
+                <li>Moving the parent moves its children</li>
+                <li><code>zPosition</code> controls drawing order</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">9</div>
+      </section>
+      <section class="slide" aria-label="Slide 10: Transforms &amp; coordinates">
+        <div class="title">Transforms & coordinates</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <p class="lead">The anchor point is the sprite’s local origin.</p>
+              <ul>
+                <li>Position locates that origin in the parent</li>
+                <li>Scale and rotation act around the origin</li>
+                <li>Compare the same position with three anchors</li>
+              </ul>
+              <p class="muted">
+                Next: watch the picture move while the code stays at (0, 0).
+              </p>
+            </div>
+            <div class="anchor-preview">
+              <div class="pixel-world">
+                <img src="assets/transform-demo/background.png" /><img
+                  class="ground"
+                  src="assets/transform-demo/ground.png"
+                /><img
+                  class="zombie"
+                  src="assets/transform-demo/zombie.png"
+                /><i></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">10</div>
+      </section>
+      <section class="slide" aria-label="Slide 11: Anchor point · center">
+        <div class="title">Anchor point · center</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <pre><code>zombie.position = CGPoint(x: 0, y: 0)
+zombie.anchorPoint = CGPoint(
+    x: 0.5, y: 0.5
+)</code></pre>
+              <p class="muted">
+                The origin sits at the center; this is SpriteKit’s default.
+              </p>
+            </div>
+            <div class="anchor-preview">
+              <div class="pixel-world">
+                <div class="anchor-node"></div>
+                <img
+                  class="zombie center"
+                  src="assets/transform-demo/zombie.png"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">11</div>
+      </section>
+      <section class="slide" aria-label="Slide 12: Anchor point · bottom left">
+        <div class="title">Anchor point · bottom left</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <pre><code>zombie.position = CGPoint(x: 0, y: 0)
+zombie.anchorPoint = CGPoint(
+    x: 0, y: 0
+)</code></pre>
+              <p class="muted">
+                The origin sits at the sprite’s lower-left corner.
+              </p>
+            </div>
+            <div class="anchor-preview">
+              <div class="pixel-world">
+                <div class="anchor-node"></div>
+                <img class="zombie bl" src="assets/transform-demo/zombie.png" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">12</div>
+      </section>
+      <section class="slide" aria-label="Slide 13: Anchor point · top right">
+        <div class="title">Anchor point · top right</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <pre><code>zombie.position = CGPoint(x: 0, y: 0)
+zombie.anchorPoint = CGPoint(
+    x: 1, y: 1
+)</code></pre>
+              <p class="muted">
+                The origin sits at the sprite’s upper-right corner.
+              </p>
+            </div>
+            <div class="anchor-preview">
+              <div class="pixel-world">
+                <div class="anchor-node"></div>
+                <img class="zombie tr" src="assets/transform-demo/zombie.png" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">13</div>
+      </section>
+      <section class="slide" aria-label="Slide 14: Rotate around center">
+        <div class="title">Rotate around center</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <pre><code>zombie.position = CGPoint(x: 0, y: 0)
+zombie.anchorPoint = CGPoint(
+    x: 0.5, y: 0.5
+)
+zombie.zRotation = .pi / 2</code></pre>
+              <p class="muted">
+                Anchor and position stay fixed. Positive rotation is
+                counterclockwise.
+              </p>
+            </div>
+            <div class="anchor-preview">
+              <div class="pixel-world rotate-center rotation-step-1">
+                <div class="anchor-node"></div>
+                <img
+                  class="zombie center"
+                  src="assets/transform-demo/zombie.png"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">14</div>
+      </section>
+      <section class="slide" aria-label="Slide 15: Rotate around center">
+        <div class="title">Rotate around center</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <pre><code>zombie.position = CGPoint(x: 0, y: 0)
+zombie.anchorPoint = CGPoint(
+    x: 0.5, y: 0.5
+)
+zombie.zRotation = .pi</code></pre>
+              <p class="muted">
+                Anchor and position stay fixed. Positive rotation is
+                counterclockwise.
+              </p>
+            </div>
+            <div class="anchor-preview">
+              <div class="pixel-world rotate-center rotation-step-2">
+                <div class="anchor-node"></div>
+                <img
+                  class="zombie center"
+                  src="assets/transform-demo/zombie.png"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">15</div>
+      </section>
+      <section class="slide" aria-label="Slide 16: Rotate around center">
+        <div class="title">Rotate around center</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <pre><code>zombie.position = CGPoint(x: 0, y: 0)
+zombie.anchorPoint = CGPoint(
+    x: 0.5, y: 0.5
+)
+zombie.zRotation = .pi + .pi / 2</code></pre>
+              <p class="muted">
+                Anchor and position stay fixed. Positive rotation is
+                counterclockwise.
+              </p>
+            </div>
+            <div class="anchor-preview">
+              <div class="pixel-world rotate-center rotation-step-3">
+                <div class="anchor-node"></div>
+                <img
+                  class="zombie center"
+                  src="assets/transform-demo/zombie.png"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">16</div>
+      </section>
+      <section class="slide" aria-label="Slide 17: Rotate around center">
+        <div class="title">Rotate around center</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <pre><code>zombie.position = CGPoint(x: 0, y: 0)
+zombie.anchorPoint = CGPoint(
+    x: 0.5, y: 0.5
+)
+zombie.zRotation = 2 * .pi</code></pre>
+              <p class="muted">
+                Anchor and position stay fixed. Positive rotation is
+                counterclockwise.
+              </p>
+            </div>
+            <div class="anchor-preview">
+              <div class="pixel-world rotate-center rotation-step-4">
+                <div class="anchor-node"></div>
+                <img
+                  class="zombie center"
+                  src="assets/transform-demo/zombie.png"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">17</div>
+      </section>
+      <section class="slide" aria-label="Slide 18: Rotate around bottom left">
+        <div class="title">Rotate around bottom left</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <pre><code>zombie.anchorPoint = CGPoint(x: 0, y: 0)
+zombie.position = CGPoint(x: 0, y: 0)
+zombie.zRotation = .pi / 2</code></pre>
+              <p class="muted">
+                The pivot moves to the bottom-left anchor and the rotation changes.
+              </p>
+            </div>
+            <div class="anchor-preview">
+              <div class="pixel-world rotate-bl bottom-rotation-step-1">
+                <div class="anchor-node"></div>
+                <img
+                  class="zombie center"
+                  src="assets/transform-demo/zombie.png"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">18</div>
+      </section>
+      <section class="slide" aria-label="Slide 19: Rotate around bottom left">
+        <div class="title">Rotate around bottom left</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <pre><code>zombie.anchorPoint = CGPoint(x: 0, y: 0)
+zombie.position = CGPoint(x: 0, y: 0)
+zombie.zRotation = .pi</code></pre>
+              <p class="muted">
+                The sprite continues rotating around its bottom-left anchor.
+              </p>
+            </div>
+            <div class="anchor-preview">
+              <div class="pixel-world rotate-bl bottom-rotation-step-2">
+                <div class="anchor-node"></div>
+                <img
+                  class="zombie center"
+                  src="assets/transform-demo/zombie.png"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">19</div>
+      </section>
+      <section class="slide" aria-label="Slide 20: Rotate around bottom left">
+        <div class="title">Rotate around bottom left</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <pre><code>zombie.anchorPoint = CGPoint(x: 0, y: 0)
+zombie.position = CGPoint(x: 0, y: 0)
+zombie.zRotation = .pi + .pi / 2</code></pre>
+              <p class="muted">
+                The sprite continues rotating around its bottom-left anchor.
+              </p>
+            </div>
+            <div class="anchor-preview">
+              <div class="pixel-world rotate-bl bottom-rotation-step-3">
+                <div class="anchor-node"></div>
+                <img
+                  class="zombie center"
+                  src="assets/transform-demo/zombie.png"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">20</div>
+      </section>
+      <section class="slide" aria-label="Slide 21: Rotate around bottom left">
+        <div class="title">Rotate around bottom left</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <pre><code>zombie.anchorPoint = CGPoint(x: 0, y: 0)
+zombie.position = CGPoint(x: 0, y: 0)
+zombie.zRotation = 2 * .pi</code></pre>
+              <p class="muted">
+                The sprite continues rotating around its bottom-left anchor.
+              </p>
+            </div>
+            <div class="anchor-preview">
+              <div class="pixel-world rotate-bl bottom-rotation-step-4">
+                <div class="anchor-node"></div>
+                <img
+                  class="zombie center"
+                  src="assets/transform-demo/zombie.png"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">21</div>
+      </section>
+      <section class="slide" aria-label="Slide 22: Move the node">
+        <div class="title">Move the node</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <pre><code>zombie.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+zombie.position = CGPoint(x: 120, y: 80)</code></pre>
+              <p class="muted">
+                The centered anchor follows the node position, moving the zombie with it.
+              </p>
+            </div>
+            <div class="anchor-preview">
+              <div class="pixel-world move-node">
+                <div class="anchor-node"></div>
+                <img
+                  class="zombie center"
+                  src="assets/transform-demo/zombie.png"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">22</div>
+      </section>
+      <section class="slide" aria-label="Slide 23: Move back across the canvas">
+        <div class="title">Move back across the canvas</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <pre><code>zombie.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+zombie.position = CGPoint(x: -120, y: -60)</code></pre>
+              <p class="muted">
+                A negative position moves the centered anchor left and down.
+              </p>
+            </div>
+            <div class="anchor-preview">
+              <div class="pixel-world move-negative">
+                <div class="anchor-node"></div>
+                <img
+                  class="zombie center"
+                  src="assets/transform-demo/zombie.png"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">23</div>
+      </section>
+      <section class="slide" aria-label="Slide 24: Scale the sprite">
+        <div class="title">Scale the sprite</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <pre><code>zombie.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+zombie.position = CGPoint(x: 0, y: 0)
+zombie.xScale = 2
+zombie.yScale = 2</code></pre>
+              <p class="muted">Scaling doubles the sprite’s width and height around its centered anchor.</p>
+            </div>
+            <div class="anchor-preview">
+              <div class="pixel-world scale-sprite">
+                <div class="anchor-node"></div>
+                <img class="zombie center" src="assets/transform-demo/zombie.png" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">24</div>
+      </section>
+      <section class="slide" aria-label="Slide 25: Flip the sprite">
+        <div class="title">Flip the sprite</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <pre><code>zombie.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+zombie.position = CGPoint(x: 0, y: 0)
+zombie.xScale = 2
+zombie.yScale = -2</code></pre>
+              <p class="muted">A negative yScale flips the sprite vertically.</p>
+            </div>
+            <div class="anchor-preview">
+              <div class="pixel-world scale-sprite flip-1">
+                <div class="anchor-node"></div>
+                <img class="zombie center" src="assets/transform-demo/zombie.png" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">25</div>
+      </section>
+      <section class="slide" aria-label="Slide 26: Flip the sprite">
+        <div class="title">Flip the sprite</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <pre><code>zombie.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+zombie.position = CGPoint(x: 0, y: 0)
+zombie.xScale = -2
+zombie.yScale = -2</code></pre>
+              <p class="muted">A negative xScale also flips the sprite horizontally.</p>
+            </div>
+            <div class="anchor-preview">
+              <div class="pixel-world scale-sprite flip-2">
+                <div class="anchor-node"></div>
+                <img class="zombie center" src="assets/transform-demo/zombie.png" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">26</div>
+      </section>
+      <section class="slide" aria-label="Slide 27: Add a child">
+        <div class="title">Add a child</div>
+        <div class="body"><div class="grid"><div>
+          <pre><code>let parent = SKNode()
+let player = SKSpriteNode(imageNamed: "PlayerIdle1")
+zombie.position = CGPoint(x: 120, y: 0)
+player.position = CGPoint(x: -120, y: 0)
+parent.addChild(zombie)
+parent.addChild(player)
+addChild(parent)</code></pre>
+          <p class="muted">The zombie and player are children of the same parent. Red dots mark their positions.</p>
+        </div><div class="anchor-preview"><div class="pixel-world children-added">
+          <div class="anchor-node parent-marker"></div><div class="anchor-node"></div><img class="zombie center" src="assets/transform-demo/zombie.png" /><div class="child-node"><img src="PresentationProject/Halloweenland/Assets/Player/PlayerIdle.atlas/PlayerIdle1.png" alt="Player sprite" /><div class="anchor-node"></div></div>
+        </div></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">27</div>
+      </section>
+      <section class="slide" aria-label="Slide 28: Move the parent">
+        <div class="title">Move the parent</div>
+        <div class="body"><div class="grid"><div>
+          <pre><code>parent.position = CGPoint(x: -80, y: 80)
+// Both children keep their local positions</code></pre>
+          <p class="muted">Moving the parent moves both children. Their local positions stay the same.</p>
+        </div><div class="anchor-preview"><div class="pixel-world children-moved">
+          <div class="anchor-node parent-marker"></div><div class="anchor-node"></div><img class="zombie center" src="assets/transform-demo/zombie.png" /><div class="child-node"><img src="PresentationProject/Halloweenland/Assets/Player/PlayerIdle.atlas/PlayerIdle1.png" alt="Player sprite" /><div class="anchor-node"></div></div>
+        </div></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">28</div>
+      </section>
+      <section class="slide" aria-label="Slide 29: Camera &amp; viewport">
+        <div class="title">Camera &amp; viewport</div>
+        <div class="body"><div class="grid"><div><ul><li>A camera determines which part of the scene is visible</li><li>Moving the camera changes the view of the world</li><li>Camera scale controls how much of the scene is visible</li><li>Camera children can keep controls fixed on screen</li></ul></div><div class="gameplay-video"><video src="assets/camera.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Camera following the player in the game"></video></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">29</div>
+      </section>
+      <section class="slide" aria-label="Slide 30: Follow the player">
+        <div class="title">Follow the player</div>
+        <div class="body"><div class="grid"><div><pre><code>let camera = SKCameraNode()
+scene.addChild(camera)
+scene.camera = camera
+
+camera.xScale = 0.5
+camera.yScale = 0.5
+
+// On each update, after the player moves:
+camera.position = player.position</code></pre></div><div><p class="lead">A camera can follow the player.</p><ul><li>Set up the camera once</li><li>Use scale to zoom the view</li><li>Update its position as the player moves</li></ul><p class="muted">Smaller scale values show less of the scene.</p></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">30</div>
+      </section>
+      <section class="slide" aria-label="Slide 31: Controls stay on screen">
+        <div class="title">Controls stay on screen</div>
+        <div class="body"><div class="grid"><div><pre><code>camera.addChild(joystick)
+joystick.position = CGPoint(
+    x: -scene.size.width / 2 + safeArea.left,
+    y: -scene.size.height / 2 + safeArea.bottom
+)</code></pre></div><div><p class="lead">The joystick is a child of the camera.</p><ul><li>Its position is in camera coordinates</li><li>It moves with the camera, staying fixed on screen</li><li>Safe-area insets keep controls clear of screen edges</li></ul><p class="muted">The joystick handles input; the camera follows the player in its update.</p></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">31</div>
+      </section>
+      <section class="slide" aria-label="Slide 32: SpriteKit frame cycle">
+        <div class="title">SpriteKit frame cycle</div>
+        <div class="body"><div class="frame-cycle-layout"><div><p class="lead">SpriteKit updates the scene, then renders a frame.</p><ul><li>Callbacks let your game run logic at specific points</li><li>Actions, physics and constraints can change nodes between callbacks</li></ul></div><img src="assets/frame-cycle-events.png" alt="Apple diagram of SpriteKit frame-cycle events, from update through actions, physics, constraints and rendering" /></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">32</div>
+      </section>
+      <section class="slide" aria-label="Slide 33: Frame cycle · update">
+        <div class="title">Frame cycle · update</div>
+        <div class="body"><div class="grid"><div><pre><code>override func update(_ currentTime: TimeInterval) {
+    readInput()
+    updateGameState()
+    startActionsIfNeeded()
+}</code></pre></div><div><p><b>Use it for</b></p><p>Read movement input, advance a timer, or start an action when a state changes.</p><p><b>Keep in mind</b></p><p>Start a running action once, not on every frame. Actions and physics run later.</p></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">33</div>
+      </section>
+      <section class="slide" aria-label="Slide 34: Frame cycle · after actions">
+        <div class="title">Frame cycle · after actions</div>
+        <div class="body"><div class="grid"><div><pre><code>override func didEvaluateActions() {
+    // Actions have updated node positions.
+    updateTrailPosition()
+}</code></pre></div><div><p><b>Use it for</b></p><p>Place a trail at a node’s updated position after its move action runs.</p><p><b>Keep in mind</b></p><p>Physics runs next and may move the node again; use the later callback if you need its physics position.</p></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">34</div>
+      </section>
+      <section class="slide" aria-label="Slide 35: Frame cycle · after physics">
+        <div class="title">Frame cycle · after physics</div>
+        <div class="body"><div class="grid"><div><pre><code>override func didSimulatePhysics() {
+    // Physics has updated body positions.
+    camera.position = player.position
+}</code></pre></div><div><p><b>Use it for</b></p><p>Move the camera to the player’s position after physics resolves movement.</p><p><b>Keep in mind</b></p><p>Physics has already run; a new force or body change waits for the next simulation.</p></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">35</div>
+      </section>
+      <section class="slide" aria-label="Slide 36: Frame cycle · after constraints">
+        <div class="title">Frame cycle · after constraints</div>
+        <div class="body"><div class="grid"><div><pre><code>override func didApplyConstraints() {
+    // Constraints have adjusted the nodes.
+    updateIndicatorPosition()
+}</code></pre></div><div><p><b>Use it for</b></p><p>Position an indicator after a constraint has adjusted the target’s position.</p><p><b>Keep in mind</b></p><p>Changing a constraint now won’t apply the new constraint until the next frame.</p></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">36</div>
+      </section>
+      <section class="slide" aria-label="Slide 37: Frame cycle · before rendering">
+        <div class="title">Frame cycle · before rendering</div>
+        <div class="body"><div class="grid"><div><pre><code>override func didFinishUpdate() {
+    // Final scene adjustments for this frame.
+    updateHUD()
+}</code></pre></div><div><p><b>Use it for</b></p><p>Refresh a visible HUD value after the game’s update stages have finished.</p><p><b>Keep in mind</b></p><p>Only update the HUD when its value changes; earlier processing stages won’t run again.</p></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">37</div>
+      </section>
+      <section class="slide" aria-label="Slide 38: Frame performance">
+        <div class="title">Frame performance</div>
+        <div class="body"><div class="performance-layout"><div class="performance-budget"><div class="performance-number">16.7 <span>ms</span></div><div class="performance-caption">PER FRAME · 60 FPS</div><ul><li>Every frame shares a limited time budget</li><li>The budget covers game logic, SpriteKit, rendering and other work</li></ul></div><div class="performance-tips"><p><b>Keep each frame light</b></p><ul><li>Reuse nodes and textures instead of recreating them every frame</li><li>Start repeating actions once, rather than restarting them in <code>update(_:)</code></li><li>Update labels and other UI only when their values change</li><li>Avoid expensive searches and work that can be done less often</li></ul></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">38</div>
+      </section>
+      <section class="slide dark" aria-label="Slide 39: Nodes in action">
+        <div class="body">
+          <div class="section-title">
+            Nodes in action
+            <div class="section-sub">Visuals, effects and actions</div>
+          </div>
+          <div class="section-num">03</div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">39</div>
+      </section>
+      <section class="slide" aria-label="Slide 40: Organizing SpriteKit nodes"><div class="title">Organizing SpriteKit nodes</div><div class="body"><div><p class="lead">The following examples are grouped using the sections in Apple’s SpriteKit documentation.</p><ul><li>Nodes that draw</li><li>Nodes for environmental effects</li><li>Nodes that modify drawing</li></ul></div></div><div class="footer">STRV × MENDELU</div><div class="pnum">40</div></section>
+      <section class="slide" aria-label="Slide 41: Nodes that draw"><div class="title">Nodes that draw</div><div class="body"><div><ul><li>Draw visible content such as images, shapes, text, particles, video and tiles</li><li>Use these nodes when something should appear in the scene</li><li>Examples include <b>SKSpriteNode</b>, <b>SKLabelNode</b> and <b>SKEmitterNode</b></li></ul></div></div><div class="footer">STRV × MENDELU</div><div class="pnum">41</div></section>
+      <section class="slide" aria-label="Slide 42: Sprite nodes">
+        <div class="title">Sprite nodes</div>
+        <div class="body"><div class="grid"><div><p><b>Images & textures</b></p><ul><li>A sprite can display an image or a solid color</li><li>Creating a sprite from an image creates its texture automatically</li><li>Multiple sprites can share one texture</li><li><b>SK3DNode</b> displays SceneKit content in a SpriteKit scene</li></ul></div><div><p><b>Useful options</b></p><ul><li>Change a sprite’s texture to show a different image</li><li>Apply a color tint, for example when a character takes damage</li><li>Preload textures before a scene when you need them ready</li></ul></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">42</div>
+      </section>
+      <section class="slide" aria-label="Slide 43: Animate a sprite">
+        <div class="title">Animate a sprite</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <pre><code>let atlas = SKTextureAtlas(named: "PlayerWalk")
+let frames = (1...6).map { index in
+    atlas.textureNamed("PlayerWalk\(index)")
+}
+let walk = SKAction.animate(
+    with: frames,
+    timePerFrame: 0.1
+)
+player.run(
+    .repeatForever(walk),
+    withKey: "walk"
+)</code></pre>
+            </div>
+            <div class="card-result sprite-demo">
+              <div class="frame-strip">
+                <img
+                  src="assets/player-walk/PlayerWalk1.png"
+                  alt="Frame 1"
+                /><img
+                  src="assets/player-walk/PlayerWalk2.png"
+                  alt="Frame 2"
+                /><img
+                  src="assets/player-walk/PlayerWalk3.png"
+                  alt="Frame 3"
+                /><img
+                  src="assets/player-walk/PlayerWalk4.png"
+                  alt="Frame 4"
+                /><img
+                  src="assets/player-walk/PlayerWalk5.png"
+                  alt="Frame 5"
+                /><img src="assets/player-walk/PlayerWalk6.png" alt="Frame 6" />
+              </div>
+              <div class="sprite-stage">
+                <img src="assets/player-walk/PlayerWalk1.png" alt="" /><img
+                  src="assets/player-walk/PlayerWalk2.png"
+                  alt=""
+                /><img src="assets/player-walk/PlayerWalk3.png" alt="" /><img
+                  src="assets/player-walk/PlayerWalk4.png"
+                  alt=""
+                /><img src="assets/player-walk/PlayerWalk5.png" alt="" /><img
+                  src="assets/player-walk/PlayerWalk6.png"
+                  alt=""
+                />
+              </div>
+              <b>PlayerWalk atlas · looping preview</b
+              ><small>6 frames · 0.1 seconds per frame</small>
+            </div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">43</div>
+      </section>
+      <section class="slide" aria-label="Slide 44: Tile maps">
+        <div class="title">Tile maps</div>
+        <div class="body"><div class="grid"><div><ul><li><b>SKTileMapNode</b> arranges tile definitions on a grid</li><li>Visual tiles do not automatically create per-tile physics</li><li>The project’s Level builds collision geometry separately</li></ul></div><div><img class="tile-image tile-image-large" src="assets/tiles.png" alt="Tiles used to build a tile map" /></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">44</div>
+      </section>
+      <section class="slide" aria-label="Slide 45: Tile maps">
+        <div class="title">Tile maps</div>
+        <div class="body"><video class="tile-video-full" src="assets/creating-tile-map.mov" autoplay muted loop playsinline preload="metadata" aria-label="Creating a tile map in the scene editor"></video></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">45</div>
+      </section>
+      <section class="slide" aria-label="Slide 46: Text, shapes &amp; HUD">
+        <div class="title">Text, shapes &amp; HUD</div>
+        <div class="body"><div class="grid"><div><ul><li><b>SKLabelNode</b> displays text, such as a score</li><li><b>SKShapeNode</b> draws shapes, such as circles and bars</li><li><b>SKVideoNode</b> plays video inside the scene</li><li><b>SKNode</b> groups HUD elements together</li></ul><p class="muted">Attach HUD nodes to the camera to keep them on screen.</p></div><div class="gameplay-video"><video src="assets/hud.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Game HUD showing joystick and buttons"></video></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">46</div>
+      </section>
+      <section class="slide" aria-label="Slide 47: HUD controls">
+        <div class="title">HUD controls</div>
+        <div class="body"><div class="grid"><div><pre><code>let joystick = Joystick()
+let buttons = ControlButtons()
+
+camera.addChild(joystick)
+camera.addChild(buttons)
+
+joystick.position = bottomLeft
+buttons.position = bottomRight
+
+// JumpButton handles touches:
+player.jump()</code></pre></div><div><ul><li>The joystick and buttons are camera children</li><li>The joystick turns input into movement</li><li>Jump and attack buttons respond to touches</li><li>Positions are in camera coordinates</li></ul></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">47</div>
+      </section>
+      <section class="slide" aria-label="Slide 48: Particle emitters">
+        <div class="title">Particle emitters</div>
+        <div class="body"><div class="grid"><div><ul><li><b>SKEmitterNode</b> creates many small particles over time</li><li>Use particles for sparks, smoke, magic and trails</li><li>Design and preview the effect in Xcode’s particle editor</li><li>Birth rate and lifetime affect performance</li></ul></div><div><div class="particle-media"><video src="assets/particles.mov" autoplay muted loop playsinline preload="metadata" aria-label="Wandering eye leaving a particle trail"></video><img src="assets/particle-editor.png" alt="SpriteKit particle editor" /></div></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">48</div>
+      </section>
+      <section class="slide" aria-label="Slide 49: Particle emitters · example">
+        <div class="title">Particle emitters · example</div>
+        <div class="body"><div class="grid"><div><pre><code>let particles = SKEmitterNode(
+    fileNamed: &quot;EyeParticles.sks&quot;
+)!
+particles.particleBirthRate = 0
+particles.targetNode = scene
+eye.addChild(particles)
+
+// While the eye moves:
+particles.particleBirthRate = 30
+// Stop emitting when it stops.</code></pre></div><div><p><b>How it works</b></p><ul><li>Load an emitter designed in Xcode</li><li>Attach it to the moving eye</li><li>Set a target node so emitted particles stay in the scene</li><li>Start and stop emission with the eye’s movement</li></ul></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">49</div>
+      </section>
+      <section class="slide" aria-label="Slide 50: Nodes for environmental effects"><div class="title">Nodes for environmental effects</div><div class="body"><div><ul><li>Affect the scene with audio, light or forces</li><li>Influence other content or physics bodies rather than drawing their own artwork</li><li>Examples include <b>SKAudioNode</b>, <b>SKLightNode</b> and <b>SKFieldNode</b></li></ul></div></div><div class="footer">STRV × MENDELU</div><div class="pnum">50</div></section>
+      <section class="slide" aria-label="Slide 51: SKAudioNode"><div class="title">SKAudioNode</div><div class="body"><div class="grid"><div><ul><li><b>SKAudioNode</b> plays sound in a scene</li><li>Use positional audio for sounds tied to a location</li><li><b>AVAudioSession</b> configures how the app’s audio behaves on iOS</li><li><code>.ambient</code> mixes with other audio and respects silent mode</li></ul><p class="muted">Add the audio file to the app bundle.</p></div><div><pre><code>import AVFoundation
+
+// Configure once when setting up app audio.
+do {
+    try AVAudioSession.sharedInstance()
+        .setCategory(.ambient)
+} catch {
+    print(&quot;Audio setup failed: \(error)&quot;)
+}
+
+let music = SKAudioNode(fileNamed: &quot;music.mp3&quot;)
+music.isPositional = false
+music.autoplayLooped = true
+scene.addChild(music)</code></pre></div></div></div><div class="footer">STRV × MENDELU</div><div class="pnum">51</div></section>
+      <section class="slide" aria-label="Slide 52: Light nodes">
+        <div class="title">Light nodes</div>
+        <div class="body"><div class="grid"><div><ul><li><b>SKLightNode</b> illuminates matching sprites and tile maps</li><li>Move a light with a character or animate it</li><li>Use it for torches, lamps or a glowing ghost</li><li>A light affects surfaces; it is not visible on its own</li></ul></div><div class="gameplay-video"><video src="assets/light.mov" autoplay muted loop playsinline preload="metadata" aria-label="SpriteKit light effect in the level"></video></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">52</div>
+      </section>
+      <section class="slide" aria-label="Slide 53: Light nodes · example">
+        <div class="title">Light nodes · example</div>
+        <div class="body"><div class="grid"><div><pre><code>let light = SKLightNode()
+light.categoryBitMask = 1
+light.lightColor = .cyan
+light.ambientColor = .darkGray
+light.falloff = 0.7
+
+ghost.addChild(light)
+ground.lightingBitMask = 1</code></pre></div><div><p><b>How it works</b></p><ul><li>The light follows the ghost because it is a child</li><li>Matching masks let the ground receive the light</li><li>Falloff controls how quickly light fades with distance</li><li>Ambient color keeps areas away from the light visible</li></ul></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">53</div>
+      </section>
+      <section class="slide" aria-label="Slide 54: Field nodes">
+        <div class="title">Field nodes</div>
+        <div class="body"><div class="grid"><div><ul><li><b>SKFieldNode</b> applies forces to physics bodies</li><li>Use radial gravity to pull nearby bodies toward a point</li><li>Limit its region and category mask to control its reach</li><li>An eye can attract the player and cause damage on contact</li></ul></div><div class="gameplay-video"><video src="assets/field.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Evil eye field attracts the player"></video></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">54</div>
+      </section>
+      <section class="slide" aria-label="Slide 55: Field nodes · example">
+        <div class="title">Field nodes · example</div>
+        <div class="body"><div class="grid"><div><pre><code>let field = SKFieldNode.radialGravityField()
+field.strength = 5
+field.region = SKRegion(radius: 160)
+field.categoryBitMask = FieldMask.eye
+
+eye.addChild(field)
+player.physicsBody?.fieldBitMask = FieldMask.eye</code></pre></div><div><p><b>How it works</b></p><ul><li>Positive strength attracts toward the field center</li><li>The region limits the effect to nearby bodies</li><li>Matching field masks choose which bodies are affected</li><li>Use a physics contact to damage the player on touch</li></ul></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">55</div>
+      </section>
+      <section class="slide" aria-label="Slide 56: Nodes that modify drawing"><div class="title">Nodes that modify drawing</div><div class="body"><div><ul><li>Change how their child nodes are rendered</li><li>Use them to mask content, apply effects or rotate children in 3D</li><li>Examples include <b>SKCropNode</b>, <b>SKEffectNode</b> and <b>SKTransformNode</b></li></ul></div></div><div class="footer">STRV × MENDELU</div><div class="pnum">56</div></section>
+      <section class="slide" aria-label="Slide 57: Crop nodes">
+        <div class="title">Crop nodes</div>
+        <div class="body"><div class="grid"><div><ul><li><b>SKCropNode</b> draws its children through a mask</li><li>The mask shape determines which parts are visible</li><li>Use it for windows, portals, spotlights or clipped effects</li></ul></div><div class="gameplay-video"><video src="assets/crop.mov" autoplay muted loop playsinline preload="metadata" aria-label="Eye moving through a circular crop"></video></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">57</div>
+      </section>
+      <section class="slide" aria-label="Slide 58: Crop nodes · example">
+        <div class="title">Crop nodes · example</div>
+        <div class="body"><div class="grid"><div><pre><code>let crop = SKCropNode()
+crop.maskNode = SKShapeNode(
+    circleOfRadius: 45
+)
+crop.addChild(eye)
+addChild(crop)</code></pre></div><div><p><b>How it works</b></p><ul><li>The white shape defines the visible window</li><li>Children of the crop node appear only inside the mask</li><li>Move a child through the mask to reveal clipping</li><li>The outline is a separate shape above the crop</li></ul></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">58</div>
+      </section>
+      <section class="slide" aria-label="Slide 59: Effect nodes"><div class="title">Effect nodes</div><div class="body"><div class="grid"><div><ul><li><b>SKEffectNode</b> renders its children into a separate buffer</li><li>Apply a Core Image filter to the rendered children</li><li>Use it for effects such as blur or color adjustments</li><li>Animate filter properties to change the effect over time</li></ul></div><div class="gameplay-video"><video src="assets/blurEffect.mov" autoplay muted loop playsinline preload="metadata" aria-label="Ghost gradually blurring and sharpening"></video></div></div></div><div class="footer">STRV × MENDELU</div><div class="pnum">59</div></section>
+      <section class="slide" aria-label="Slide 60: Effect nodes · example"><div class="title">Effect nodes · example</div><div class="body"><div class="grid"><div><pre><code>let effect = SKEffectNode()
+effect.filter = CIFilter(
+    name: &quot;CIGaussianBlur&quot;,
+    parameters: [kCIInputRadiusKey: 5]
+)
+effect.shouldEnableEffects = true
+effect.addChild(ghost)
+scene.addChild(effect)</code></pre></div><div><p><b>How it works</b></p><ul><li>The ghost is a child of the effect node</li><li>Core Image blurs the rendered children</li><li><code>shouldEnableEffects</code> turns the filter on or off</li></ul></div></div></div><div class="footer">STRV × MENDELU</div><div class="pnum">60</div></section>
+      <section class="slide" aria-label="Slide 61: Shaders">
+        <div class="title">Shaders</div>
+        <div class="body"><div class="grid"><div><ul><li><b>SKShader</b> changes how a node is drawn with a fragment shader</li><li>The shader computes the color of each pixel</li><li>Use it for color changes, distortion or other visual effects</li><li>The ghost smoothly changes between white, red and dark gray</li></ul></div><div class="gameplay-video"><video src="assets/shader.mov" autoplay muted loop playsinline preload="metadata" aria-label="Ghost changing colors with a shader"></video></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">61</div>
+      </section>
+      <section class="slide" aria-label="Slide 62: Shaders · example">
+        <div class="title">Shaders · example</div>
+        <div class="body"><div class="grid"><div><p><b>How it works</b></p><ul><li><code>SKDefaultShading()</code> gives the sprite’s normal color and transparency</li><li><code>u_time</code> changes the tint smoothly over time</li><li>The shader blends the tint with the sprite’s color</li><li>Assign it to the ghost’s <code>shader</code> property</li></ul></div><div><pre><code>let shader = SKShader(source: &quot;&quot;&quot;
+void main() {
+    vec4 color = SKDefaultShading();
+    float t = 0.5 + 0.5 * sin(u_time);
+    vec3 tint = mix(vec3(1.0),
+                    vec3(0.75, 0.02, 0.03), t);
+    color.rgb = mix(color.rgb, tint * color.a, 0.85);
+    gl_FragColor = color;
+}
+&quot;&quot;&quot;)
+ghost.shader = shader</code></pre></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">62</div>
+      </section>
+      <section class="slide" aria-label="Slide 63: Constraints">
+        <div class="title">Constraints</div>
+        <div class="body"><div class="grid"><div><ul><li><b>Position:</b> keep a node within a range on the x or y axis</li><li><b>Distance:</b> keep a node within a range of a point or another node</li><li><b>Orientation:</b> rotate a node to face a point or another node</li><li><b>Rotation:</b> limit a node’s rotation to a range</li></ul><p class="muted">SpriteKit applies constraints after actions and physics, before rendering.</p></div><div class="gameplay-video"><video src="assets/constraints.mp4" autoplay muted loop playsinline preload="metadata" aria-label="SpriteKit constraints in action"></video></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">63</div>
+      </section>
+      <section class="slide" aria-label="Slide 64: Constraints · example">
+        <div class="title">Constraints · example</div>
+        <div class="body"><div class="grid"><div><pre><code>let lookAtPlayer = SKConstraint.orient(
+    to: player,
+    offset: SKRange(constantValue: 0)
+)
+eye.constraints = [lookAtPlayer]</code></pre></div><div><p><b>How it works</b></p><ul><li>The eye rotates to face the player as they move</li><li>The offset adjusts the artwork’s facing direction</li><li>Apply the constraint to the artwork so the field stays fixed</li></ul></div></div></div>
+        <div class="footer">STRV × MENDELU</div><div class="pnum">64</div>
+      </section>
+      <section class="slide" aria-label="Slide 65: Actions compose motion">
+        <div class="title">Actions compose motion</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <pre><code>let pulse = SKAction.sequence([
+    .scale(to: 1.2, duration: 0.2),
+    .scale(to: 1.0, duration: 0.2)
+])
+node.run(.repeatForever(pulse),
+         withKey: &quot;pulse&quot;)</code></pre>
+            </div>
+            <div>
+              <ul>
+                <li><b>sequence</b>: one after another</li>
+                <li><b>group</b>: together</li>
+                <li>Keys let you find or remove actions</li>
+                <li>Coordinate actions and physics when both affect motion</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">65</div>
+      </section>
+      <section
+        class="slide dark"
+        aria-label="Slide 66: Physics &amp; collisions"
+      >
+        <div class="body">
+          <div class="section-title">
+            Physics & collisions
+            <div class="section-sub">Bodies, masks and contact callbacks</div>
+          </div>
+          <div class="section-num">04</div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">66</div>
+      </section>
+      <section class="slide" aria-label="Slide 67: Bodies in a physics world">
+        <div class="title">Bodies in a physics world</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <ul>
+                <li>Gravity acts on dynamic bodies</li>
+                <li>Static bodies provide walls and ground</li>
+                <li>
+                  <b>SKPhysicsBody</b> defines a node’s shape, velocity and other physical properties
+                </li>
+                <li>An impulse changes momentum immediately</li>
+              </ul>
+            </div>
+            <div>
+              <pre><code>player.physicsBody = SKPhysicsBody(
+    rectangleOf: player.size
+)
+player.physicsBody?.applyImpulse(
+    CGVector(dx: 0, dy: 120)
+)</code></pre>
+            </div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">67</div>
+      </section>
+      <section class="slide" aria-label="Slide 68: Collision vs contact">
+        <div class="title">Collision vs contact</div>
+        <div class="body">
+          <table style="font-size: 42px">
+            <tr>
+              <th>Body</th>
+              <th>Category</th>
+              <th>Collision mask</th>
+              <th>Contact mask</th>
+            </tr>
+            <tr>
+              <td>Player</td>
+              <td>00<b>1</b></td>
+              <td><b>1</b><b>1</b>0</td>
+              <td>0<b>1</b>0</td>
+            </tr>
+            <tr>
+              <td>Ground</td>
+              <td>0<b>1</b>0</td>
+              <td>00<b>1</b></td>
+              <td>000</td>
+            </tr>
+            <tr>
+              <td>Zombie</td>
+              <td><b>1</b>00</td>
+              <td>00<b>1</b></td>
+              <td>000</td>
+            </tr>
+          </table>
+          <p class="lead">
+            Player + ground: collision and contact notification.<br />Player +
+            zombie: collision; no contact notification requested.
+          </p>
+          <p class="muted">
+            Bits shown: zombie · ground · player
+          </p>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">68</div>
+      </section>
+      <section class="slide" aria-label="Slide 69: Physics mask constants">
+        <div class="title">Physics mask constants</div>
+        <div class="body">
+          <div class="grid"><div><pre><code>enum CategoryBitMask {
+    static let groundTile: UInt32 = 0b1
+    static let player: UInt32 = 0b100
+    static let zombie: UInt32 = 0b1000
+}
+
+// Combine categories with bitwise OR
+let collision = CategoryBitMask.groundTile |
+    CategoryBitMask.zombie</code></pre></div><div><ul><li><b>Named constants</b> explain what each bit represents</li><li>Define categories in one place and reuse them throughout the game</li><li>Combine categories with <code>|</code> to describe interactions</li><li>Avoid hardcoded values when assigning masks</li></ul></div></div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">69</div>
+      </section>
+      <section class="slide" aria-label="Slide 70: SKPhysicsContactDelegate">
+        <div class="title">SKPhysicsContactDelegate</div>
+        <div class="body">
+          <div class="grid"><div><pre><code>// In the scene setup
+physicsWorld.contactDelegate = self
+
+extension LevelScene: SKPhysicsContactDelegate {
+    func didBegin(_ contact: SKPhysicsContact) {
+        let a = contact.bodyA
+        let b = contact.bodyB
+        // Check their categories and handle the contact.
+    }
+}</code></pre></div><div><ul><li>Set the physics world’s <b>contact delegate</b> to receive notifications</li><li><b>didBegin</b> runs when a requested contact starts; <b>didEnd</b> runs when it ends</li><li>Contact masks decide which interactions generate callbacks</li><li>Check both bodies before applying game logic</li></ul></div></div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">70</div>
+      </section>
+      <section class="slide" aria-label="Slide 71: Physics joints">
+        <div class="title">Physics joints</div>
+        <div class="body"><div class="grid"><div><ul><li><b>SKPhysicsJoint</b> connects two physics bodies</li><li><b>Pin joints</b> let connected bodies rotate around an anchor</li><li>Chain multiple segments together to create a flexible rope</li><li>Attach the player to the rope’s end, then remove the joint to let go</li></ul></div><div class="gameplay-video"><video src="assets/rope.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Player grabbing and swinging on a rope"></video></div></div></div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">71</div>
+      </section>
+      <section class="slide" aria-label="Slide 72: Physics joints · rope example">
+        <div class="title">Physics joints · rope example</div>
+        <div class="body"><div class="grid"><div><pre><code>var previous = anchor.physicsBody!
+
+for segment in ropeSegments {
+    let body = segment.physicsBody!
+    let pin = SKPhysicsJointPin.joint(
+        withBodyA: previous,
+        bodyB: body,
+        anchor: segmentTopInScene
+    )
+    physicsWorld.add(pin)
+    previous = body
+}</code></pre></div><div><p><b>How it works</b></p><ul><li>The first segment connects to a fixed anchor</li><li>Each pin connects a segment to the previous body</li><li>Joint anchors use scene coordinates</li><li>Another pin attaches the player; remove it when they jump</li></ul></div></div></div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">72</div>
+      </section>
+      <section class="slide" aria-label="Slide 73: Debug the invisible">
+        <div class="title">Debug the invisible</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <ul>
+                <li>Turn on <code>view.showsPhysics = true</code></li>
+                <li>Inspect body shapes and unexpected contacts</li>
+                <li>
+                  A contact normal depends on body ordering: identify bodies
+                  before interpreting its direction
+                </li>
+                <li>Consider precise collision detection for fast bodies</li>
+              </ul>
+            </div>
+            <div class="gameplay-video"><video src="assets/debug.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Gameplay with physics debugging"></video></div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">73</div>
+      </section>
+      <section class="slide" aria-label="Slide 74: Combat: overlapping regions">
+        <div class="title">Combat: overlapping regions</div>
+        <div class="body">
+          <div class="grid">
+            <div>
+              <ul>
+                <li>
+                  <b>Hitbox</b> receives a hit; <b>hurtbox</b> represents an
+                  attack area in this project
+                </li>
+                <li>Attack checks run while the hurtbox is attached</li>
+                <li>Damage starts a temporary invulnerability window</li>
+                <li>
+                  The project uses <code>intersects</code> for these checks
+                </li>
+              </ul>
+            </div>
+            <div class="gameplay-video"><video src="assets/debug.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Gameplay with physics debugging"></video></div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">74</div>
+      </section>
+      <section class="slide dark" aria-label="Slide 75: State machines">
+        <div class="body">
+          <div class="section-title">
+            State machines
+            <div class="section-sub">GameplayKit</div>
+          </div>
+          <div class="section-num">05</div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">75</div>
+      </section>
+      <section class="slide" aria-label="Slide 76: Introducing GameplayKit states">
+        <div class="title">Introducing GameplayKit states</div>
+        <div class="body"><p class="lead">A state machine organizes behavior into distinct states.</p><ul><li><b>GKState</b> describes one state, such as idle or walking</li><li><b>GKStateMachine</b> holds the states and manages which one is active</li><li><b>Transitions</b> switch states when something changes, such as player input</li><li>States can run code on entry, on exit and during each update</li><li>Transition rules can prevent invalid changes, such as leaving a dead state</li></ul></div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">76</div>
+      </section>
+      <section class="slide" aria-label="Slide 77: One player, three state machines">
+        <div class="title">One player, three state machines</div>
+        <div class="body"><p class="lead">Each state machine manages a different part of the player.</p><ul><li><b>Behavior:</b> idle, walking, attacking or dead</li><li><b>Movement:</b> grounded or jumping</li><li><b>Damage:</b> vulnerable or hurt</li><li>These states can overlap: the player can jump, attack and be hurt at the same time</li></ul></div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">77</div>
+      </section>
+      <section class="slide" aria-label="Slide 78: Create the state machines">
+        <div class="title">Create the state machines</div>
+        <div class="body"><div class="grid"><div><ul><li><b>Behavior</b> chooses the animation and attack</li><li><b>Movement</b> tracks whether the player can jump</li><li><b>Damage</b> tracks temporary invulnerability</li><li>Each machine starts in an initial state</li></ul></div><div><pre><code>let behavior = GKStateMachine(states: [
+    IdleState(player: self),
+    WalkingState(player: self),
+    AttackingState(player: self),
+    DeadState(player: self)
+])
+behavior.enter(IdleState.self)
+
+let movement = GKStateMachine(states: [
+    GroundedState(player: self),
+    JumpingState(player: self)
+])
+movement.enter(GroundedState.self)
+// Damage starts in VulnerableState.</code></pre></div></div></div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">78</div>
+      </section>
+      <section class="slide" aria-label="Slide 79: Update the current states">
+        <div class="title">Update the current states</div>
+        <div class="body"><div class="grid"><div><ul><li><b>SpriteKit</b> calls the player once per frame</li><li>Convert the frame timestamp into elapsed time</li><li><b>Array extension</b> updates each machine in order</li><li>The interval is capped to limit large jumps in time</li></ul></div><div><pre><code>func update(_ currentTime: TimeInterval) {
+    let dt = previousUpdateTime.map {
+        max(0, min(currentTime - $0, 0.1))
+    } ?? 0
+    previousUpdateTime = currentTime
+
+    stateMachines.update(deltaTime: dt)
+}</code></pre></div></div></div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">79</div>
+      </section>
+      <section class="slide" aria-label="Slide 80: Animations and behavior">
+        <div class="title">Animations and behavior</div>
+        <div class="body"><div class="grid"><div><ul><li><b>didEnter</b> starts the animation once</li><li><b>update</b> checks for a change each frame</li><li>Walking returns to idle when input stops</li><li>Attacking checks the hurtbox until the attack ends</li></ul></div><div><pre><code>final class IdleState: PlayerState {
+    override func didEnter(from previous: GKState?) {
+        player?.playAnimation(key: "idle")
+    }
+
+    override func update(deltaTime: TimeInterval) {
+        guard let player, player.isWalking else { return }
+        stateMachine?.enter(WalkingState.self)
+    }
+}</code></pre></div></div></div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">80</div>
+      </section>
+      <section class="slide" aria-label="Slide 81: Grounded and jumping">
+        <div class="title">Grounded and jumping</div>
+        <div class="body"><div class="grid"><div><ul><li><b>Grounded</b> allows a jump; <b>jumping</b> prevents another jump in the air</li><li>Both states share horizontal movement</li><li>A ground contact returns the player to grounded</li></ul></div><div><pre><code>class MovementState: PlayerState {
+    override func update(deltaTime: TimeInterval) {
+        guard let player, !player.isDead else { return }
+        player.updateDirection()
+        player.updatePosition()
+    }
+}
+final class GroundedState: MovementState {}
+final class JumpingState: MovementState {}
+
+// Jump input / ground contact:
+movementStateMachine.enter(JumpingState.self)
+movementStateMachine.enter(GroundedState.self)</code></pre></div></div></div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">81</div>
+      </section>
+      <section class="slide" aria-label="Slide 82: Damage and invulnerability">
+        <div class="title">Damage and invulnerability</div>
+        <div class="body"><div class="grid"><div><ul><li><b>Hurt</b> starts the blinking effect</li><li>While hurt, additional hits are ignored</li><li><b>update</b> counts down the invulnerability window</li><li><b>willExit</b> stops blinking and restores visibility</li></ul></div><div><pre><code>final class HurtState: PlayerState {
+    private var timeRemaining: TimeInterval = 0
+
+    override func didEnter(from previous: GKState?) {
+        timeRemaining = 1.5
+        // Start the blinking SKAction.
+    }
+    override func update(deltaTime: TimeInterval) {
+        timeRemaining -= deltaTime
+        if timeRemaining &lt;= 0 {
+            stateMachine?.enter(VulnerableState.self)
+        }
+    }
+}</code></pre></div></div></div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">82</div>
+      </section>
+      <section class="slide" aria-label="Slide 83: Death and transitions">
+        <div class="title">Death and transitions</div>
+        <div class="body"><div class="grid"><div><ul><li><b>The final hit</b> enters the dead state</li><li><b>didEnter</b> removes the hurtbox and starts death animation</li><li><b>isValidNextState</b> prevents leaving the dead state</li><li>The death animation finishes the cleanup</li></ul></div><div><pre><code>// After taking damage:
+lifes -= 1
+if lifes &lt;= 0 {
+    stateMachine.enter(DeadState.self)
+}
+
+final class DeadState: PlayerState {
+    override func didEnter(from previous: GKState?) {
+        player?.hurtBox.removeFromParent()
+        player?.playAnimation(key: "death")
+    }
+    override func isValidNextState(_ state: AnyClass) -&gt; Bool {
+        false
+    }
+}</code></pre></div></div></div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">83</div>
+      </section>
+      <section class="slide dark" aria-label="Slide 84: Beyond 2D">
+        <div class="body">
+          <div class="section-title">
+            Beyond 2D
+            <div class="section-sub">RealityKit</div>
+          </div>
+          <div class="section-num">06</div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">84</div>
+      </section>
+      <section class="slide" aria-label="Slide 85: Concepts transfer">
+        <div class="title">Concepts transfer</div>
+        <div class="body">
+          <table>
+            <tr>
+              <th>SpriteKit</th>
+              <th>Shared idea</th>
+              <th>RealityKit</th>
+            </tr>
+            <tr>
+              <td>Scene / node tree</td>
+              <td>Hierarchy and transforms</td>
+              <td>Scene / entity hierarchy</td>
+            </tr>
+            <tr>
+              <td>Sprites & actions</td>
+              <td>Visuals and animation</td>
+              <td>Models and animation</td>
+            </tr>
+            <tr>
+              <td>Physics bodies & contacts</td>
+              <td>Simulation and events</td>
+              <td>Physics, collision and events</td>
+            </tr>
+            <tr>
+              <td>Camera node</td>
+              <td>Viewpoint</td>
+              <td>Camera / viewpoint</td>
+            </tr>
+          </table>
+          <p class="muted">
+            Similar concepts; different APIs, coordinate systems and dimensions.
+          </p>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">85</div>
+      </section>
+      <section
+        class="slide"
+        aria-label="Slide 86: Entities, components, systems"
+      >
+        <div class="title">Entities, components, systems</div>
+        <div class="body">
+          <div class="cards three">
+            <div><b>Entity</b><span>A zombie in the scene</span></div>
+            <div><b>Component</b><span>Health data: 3 hit points</span></div>
+            <div>
+              <b>System</b
+              ><span>Find entities with health and apply pending damage</span>
+            </div>
+          </div>
+          <p class="lead">
+            The same damage system can process a player, zombie or door.
+          </p>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">86</div>
+      </section>
+      <section class="slide dark" aria-label="Slide 87: Your turn">
+        <div class="body">
+          <div class="section-title">
+            Your turn
+            <div class="section-sub">Wrap-up and questions</div>
+          </div>
+          <div class="section-num">07</div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">87</div>
+      </section>
+      <section class="slide" aria-label="Slide 88: Five ideas to keep">
+        <div class="title">Five ideas to keep</div>
+        <div class="body">
+          <ul>
+            <li>Build a <b>scene graph</b> from nodes</li>
+            <li>Understand <b>local transforms</b> and camera space</li>
+            <li>
+              Separate physics <b>collision response</b> from contact
+              notifications
+            </li>
+            <li>Model behavior with clear <b>state transitions</b></li>
+            <li>
+              Carry hierarchy, transforms and physics concepts into
+              <b>RealityKit</b>
+            </li>
+          </ul>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">88</div>
+      </section>
+      <section class="slide" aria-label="Slide 89: Exercise: add a collectible">
+        <div class="title">Exercise: add a collectible</div>
+        <div class="body">
+          <div class="grid exercise-grid">
+            <div>
+              <p class="lead">Together, we’ll build a Flappy Bird game loop.</p>
+              <ol>
+                <li>Inspect player and pipe physics categories</li>
+                <li>Add a non-colliding sensor in the gap</li>
+                <li>Handle the player contact once</li>
+                <li>Update the score and play the point sound</li>
+                <li>Make a game-over screen with a restart option</li>
+                <li>Connect the game loop with a state machine</li>
+              </ol>
+            </div>
+            <div class="portrait-video">
+              <video class="video-screen" src="assets/flappy.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Flappy Bird gameplay"></video>
+            </div>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">89</div>
+      </section>
+      <section class="slide dark" aria-label="Slide 90: Questions?">
+        <div class="body">
+          <div class="closing">
+            QUESTIONS<span>?</span>
+            <p>What will you build next?</p>
+          </div>
+        </div>
+        <div class="footer">STRV × MENDELU</div>
+        <div class="pnum">90</div>
+      </section>
+    </main>
+    <div id="blank"></div>
+    <aside id="notes"></aside>
+    <script>
+      const META = [
+        {
+          title: "SpriteKit",
+          notes:
+            "90 minutes including questions and media. Arrow keys to navigate; P opens presenter notes; F fullscreen; B black screen.",
+          body: '<div class="cover"><div class="eyebrow">STRV × MENDELU · iOS DEVELOPMENT<\/div><h1>SPRITE<span>KIT<\/span><\/h1><p>Building a 2D world, one node at a time.<\/p><\/div>',
+        },
+        {
+          title: "A 2D world",
+          notes: "",
+          body: '<div class="section-title">A 2D world<div class="section-sub">Introduction · 8 minutes<\/div><\/div><div class="section-num">01<\/div>',
+        },
+        { title: "SpriteKit in your app", notes: "SwiftUI SpriteView and UIKit SKView can both present an SKScene. SwiftUI and SpriteKit can coexist in the same app; SpriteKit manages the scene update and rendering cycle.", body: "<div class=\"grid\"><div><p><b>Inside an app<\/b><\/p><ul><li>SwiftUI can display a scene with <code>SpriteView<\/code><\/li><li>UIKit can present a scene in an <code>SKView<\/code><\/li><li>The scene contains the game’s nodes<\/li><\/ul><\/div><div><p><b>Different jobs, together<\/b><\/p><ul><li>SwiftUI describes interface views from state<\/li><li>SpriteKit updates a 2D scene over time: movement, actions and physics<\/li><li>Use SwiftUI for menus and controls around the game<\/li><\/ul><\/div><\/div>" },
+        { title: "Framework connections", notes: "Metal is a low-level GPU API, but not every drawing operation necessarily uses Metal. SpriteKit uses Metal on supported devices; SwiftUI has multiple rendering paths, and some views are not UIKit-backed.", body: "<div class=\"grid\"><div><p><b>SwiftUI &amp; UIKit<\/b><\/p><ul><li>SwiftUI and UIKit work together on iOS<\/li><li>Some SwiftUI views use UIKit; others use different rendering paths<\/li><li>SwiftUI also runs on platforms that use AppKit<\/li><\/ul><\/div><div><p><b>SpriteKit &amp; Metal<\/b><\/p><ul><li><code>SpriteView<\/code> embeds SpriteKit in SwiftUI; <code>SKView<\/code> presents it in UIKit<\/li><li>SpriteKit uses Metal for GPU rendering on supported devices<\/li><li>Metal also supports some SwiftUI rendering paths<\/li><\/ul><\/div><\/div>" },
+        {
+          title: "What SpriteKit gives us",
+          notes:
+            'Source: <a href="https://developer.apple.com/documentation/spritekit">Apple · SpriteKit<\/a>.',
+          body: '<div class="grid"><div><ul><li>A framework for <b>2D scenes<\/b> on Apple platforms<\/li><li>Sprites, animation, actions, effects and physics<\/li><li>Compose a world from small objects<\/li><\/ul><\/div><div><div class="flow"><div>SKView<small>presents<\/small><\/div><b>→<\/b><div>SKScene<small>contains<\/small><\/div><b>→<\/b><div>SKNode<small>builds the world<\/small><\/div><\/div><\/div><\/div>',
+        },
+        {
+          title: "Meet the game",
+          notes:
+            "The brief calls this PresentationFinal, but this checkout contains PresentationProject. Verify behavior in a working build before presenting the recording.",
+          body: '<div class="grid"><div><ul><li>A player moves, jumps and attacks<\/li><li>Enemies inhabit a tile-based level<\/li><li>An exit gives the level a goal<\/li><li>We will use the project as a recurring example<\/li><\/ul><\/div><div><div class="gameplay-video"><video src="assets/intro.mp4" autoplay muted loop playsinline preload="auto" aria-label="SpriteKit gameplay overview"><\/video><\/div><\/div><\/div>',
+        },
+        {
+          title: "Scenes & rendering",
+          notes: "",
+          body: '<div class="section-title">Scenes & rendering<div class="section-sub">15 minutes<\/div><\/div><div class="section-num">02<\/div>',
+        },
+        {
+          title: "The scene graph",
+          notes:
+            "Do not assume this diagram is the exact runtime hierarchy. Media requested: scene editor and hierarchy.",
+          body: '<div class="grid"><div><div class="tree">SKView<br>└── SKScene<br>　　├── Level / tiles<br>　　├── Player<br>　　├── Enemies<br>　　└── Camera<br>　　　　└── HUD<\/div><\/div><div><ul><li>A scene is a <b>tree of nodes<\/b><\/li><li>Children inherit their parent’s transforms<\/li><li>The graph is conceptual; inspect the scene editor for the actual hierarchy<\/li><\/ul><\/div><\/div>',
+        },
+        {
+          title: "Make a node",
+          notes: "Illustrative Swift, not an exact project excerpt.",
+          body: '<div class="grid"><div><pre><code>let zombie = SKSpriteNode(imageNamed: &quot;Zombie&quot;)\nzombie.position = CGPoint(x: 0, y: 0)\nzombie.anchorPoint = CGPoint(x: 0.5, y: 0.5)\nzombie.xScale = 1\nzombie.yScale = 1\nzombie.zRotation = 0\nzombie.zPosition = 10\nscene.addChild(zombie)\n\nlet marker = SKShapeNode(circleOfRadius: 8)\nzombie.addChild(marker)<\/code><\/pre><\/div><div><ul><li>A child’s position is in its <b>parent’s coordinates<\/b><\/li><li>Moving the zombie moves its marker<\/li><li><code>zPosition<\/code> controls drawing order<\/li><\/ul><\/div><\/div>',
+        },
+        {
+          title: "Transforms & coordinates",
+          notes:
+            "Introduce local origin. On the following three slides, keep the sprite node position fixed and change anchorPoint. SpriteKit positions the texture relative to the normalized anchor. Assets copied from PresentationProject.",
+          body: '<div class="grid"><div><p class="lead">The anchor point is the sprite’s local origin.<\/p><ul><li>Position locates that origin in the parent<\/li><li>Scale and rotation act around the origin<\/li><li>Compare the same position with three anchors<\/li><\/ul><p class="muted">Next: watch the picture move while the code stays at (0, 0).<\/p><\/div><div class="anchor-preview"><div class="pixel-world"><img class="zombie" src="assets/transform-demo/zombie.png"/><i><\/i><\/div><\/div><\/div>',
+        },
+        {
+          title: "Anchor point · center",
+          body: '<div class="grid"><div><pre><code>zombie.position = CGPoint(x: 0, y: 0)\nzombie.anchorPoint = CGPoint(\n    x: 0.5, y: 0.5\n)<\/code><\/pre><p class="muted">The origin sits at the center; this is SpriteKit’s default.<\/p><\/div><div class="anchor-preview"><div class="pixel-world"><div class="anchor-node"><\/div><img class="zombie center" src="assets/transform-demo/zombie.png"/><\/div><p class="muted">Canvas center stays fixed · sprite shifts around the red node position<\/p><\/div><\/div>',
+          notes:
+            "The node position is fixed at the scene origin. Only anchorPoint changes. Observe how the sprite artwork moves relative to the red origin marker.",
+        },
+        {
+          title: "Anchor point · bottom left",
+          body: '<div class="grid"><div><pre><code>zombie.position = CGPoint(x: 0, y: 0)\nzombie.anchorPoint = CGPoint(\n    x: 0, y: 0\n)<\/code><\/pre><p class="muted">The origin sits at the sprite’s lower-left corner.<\/p><\/div><div class="anchor-preview"><div class="pixel-world"><div class="anchor-node"><\/div><img class="zombie bl" src="assets/transform-demo/zombie.png"/><\/div><p class="muted">Canvas center stays fixed · sprite shifts around the red node position<\/p><\/div><\/div>',
+          notes:
+            "The node position is fixed at the scene origin. Only anchorPoint changes. Observe how the sprite artwork moves relative to the red origin marker.",
+        },
+        {
+          title: "Anchor point · top right",
+          body: '<div class="grid"><div><pre><code>zombie.position = CGPoint(x: 0, y: 0)\nzombie.anchorPoint = CGPoint(\n    x: 1, y: 1\n)<\/code><\/pre><p class="muted">The origin sits at the sprite’s upper-right corner.<\/p><\/div><div class="anchor-preview"><div class="pixel-world"><div class="anchor-node"><\/div><img class="zombie tr" src="assets/transform-demo/zombie.png"/><\/div><p class="muted">Canvas center stays fixed · sprite shifts around the red node position<\/p><\/div><\/div>',
+          notes:
+            "The node position is fixed at the scene origin. Only anchorPoint changes. Observe how the sprite artwork moves relative to the red origin marker.",
+        },
+        {
+          title: "Rotate around center",
+          body: '<div class="grid"><div><pre><code>zombie.position = CGPoint(x: 0, y: 0)\nzombie.anchorPoint = CGPoint(\n    x: 0.5, y: 0.5\n)\nzombie.zRotation = .pi / 2<\/code><\/pre><p class="muted">Anchor and position stay fixed. Positive rotation is counterclockwise.<\/p><\/div><div class="anchor-preview"><div class="pixel-world rotate-center rotation-step-1"><div class="anchor-node"><\/div><img class="zombie center" src="assets/transform-demo/zombie.png"/><\/div><p class="muted">Red dot = node position · x right · y up<\/p><\/div><\/div>',
+          notes:
+            "The anchor returns to the center, moving the sprite back around the fixed node position. Then zRotation rotates it around its center.",
+        },
+        {
+          title: "Rotate around center",
+          body: '<div class="grid"><div><pre><code>zombie.position = CGPoint(x: 0, y: 0)\nzombie.anchorPoint = CGPoint(\n    x: 0.5, y: 0.5\n)\nzombie.zRotation = .pi<\/code><\/pre><p class="muted">Anchor and position stay fixed. Positive rotation is counterclockwise.<\/p><\/div><div class="anchor-preview"><div class="pixel-world rotate-center rotation-step-2"><div class="anchor-node"><\/div><img class="zombie center" src="assets/transform-demo/zombie.png"/><\/div><p class="muted">Red dot = node position · x right · y up<\/p><\/div><\/div>',
+          notes:
+            "Increase zRotation while the centered anchor and node position stay fixed.",
+        },
+        {
+          title: "Rotate around center",
+          body: '<div class="grid"><div><pre><code>zombie.position = CGPoint(x: 0, y: 0)\nzombie.anchorPoint = CGPoint(\n    x: 0.5, y: 0.5\n)\nzombie.zRotation = .pi + .pi / 2<\/code><\/pre><p class="muted">Anchor and position stay fixed. Positive rotation is counterclockwise.<\/p><\/div><div class="anchor-preview"><div class="pixel-world rotate-center rotation-step-3"><div class="anchor-node"><\/div><img class="zombie center" src="assets/transform-demo/zombie.png"/><\/div><p class="muted">Red dot = node position · x right · y up<\/p><\/div><\/div>',
+          notes:
+            "Increase zRotation while the centered anchor and node position stay fixed.",
+        },
+        {
+          title: "Rotate around center",
+          body: '<div class="grid"><div><pre><code>zombie.position = CGPoint(x: 0, y: 0)\nzombie.anchorPoint = CGPoint(\n    x: 0.5, y: 0.5\n)\nzombie.zRotation = 2 * .pi<\/code><\/pre><p class="muted">Anchor and position stay fixed. Positive rotation is counterclockwise.<\/p><\/div><div class="anchor-preview"><div class="pixel-world rotate-center rotation-step-4"><div class="anchor-node"><\/div><img class="zombie center" src="assets/transform-demo/zombie.png"/><\/div><p class="muted">Red dot = node position · x right · y up<\/p><\/div><\/div>',
+          notes:
+            "Increase zRotation while the centered anchor and node position stay fixed.",
+        },
+        {
+          title: "Rotate around bottom left",
+          body: '<div class="grid"><div><pre><code>zombie.anchorPoint = CGPoint(x: 0, y: 0)\nzombie.position = CGPoint(x: 0, y: 0)\nzombie.zRotation = .pi / 2<\/code><\/pre><p class="muted">The pivot moves to the bottom-left anchor and the rotation changes.<\/p><\/div><div class="anchor-preview"><div class="pixel-world rotate-bl bottom-rotation-step-1"><div class="anchor-node"><\/div><img class="zombie center" src="assets/transform-demo/zombie.png"/><\/div><p class="muted">Red dot = node position · x right · y up<\/p><\/div><\/div>',
+          notes:
+            "The anchor moves to the bottom-left and the rotation changes to .pi / 2. SpriteKit positive zRotation is counterclockwise.",
+        },
+        {
+          title: "Rotate around bottom left",
+          body: '<div class="grid"><div><pre><code>zombie.anchorPoint = CGPoint(x: 0, y: 0)\nzombie.position = CGPoint(x: 0, y: 0)\nzombie.zRotation = .pi<\/code><\/pre><p class="muted">The sprite continues rotating around its bottom-left anchor.<\/p><\/div><div class="anchor-preview"><div class="pixel-world rotate-bl bottom-rotation-step-2"><div class="anchor-node"><\/div><img class="zombie center" src="assets/transform-demo/zombie.png"/><\/div><p class="muted">Red dot = node position · x right · y up<\/p><\/div><\/div>',
+          notes:
+            "Increase zRotation while the bottom-left anchor and node position stay fixed.",
+        },
+        {
+          title: "Rotate around bottom left",
+          body: '<div class="grid"><div><pre><code>zombie.anchorPoint = CGPoint(x: 0, y: 0)\nzombie.position = CGPoint(x: 0, y: 0)\nzombie.zRotation = .pi + .pi / 2<\/code><\/pre><p class="muted">The sprite continues rotating around its bottom-left anchor.<\/p><\/div><div class="anchor-preview"><div class="pixel-world rotate-bl bottom-rotation-step-3"><div class="anchor-node"><\/div><img class="zombie center" src="assets/transform-demo/zombie.png"/><\/div><p class="muted">Red dot = node position · x right · y up<\/p><\/div><\/div>',
+          notes:
+            "Increase zRotation while the bottom-left anchor and node position stay fixed.",
+        },
+        {
+          title: "Rotate around bottom left",
+          body: '<div class="grid"><div><pre><code>zombie.anchorPoint = CGPoint(x: 0, y: 0)\nzombie.position = CGPoint(x: 0, y: 0)\nzombie.zRotation = 2 * .pi<\/code><\/pre><p class="muted">The sprite continues rotating around its bottom-left anchor.<\/p><\/div><div class="anchor-preview"><div class="pixel-world rotate-bl bottom-rotation-step-4"><div class="anchor-node"><\/div><img class="zombie center" src="assets/transform-demo/zombie.png"/><\/div><p class="muted">Red dot = node position · x right · y up<\/p><\/div><\/div>',
+          notes:
+            "Increase zRotation while the bottom-left anchor and node position stay fixed.",
+        },
+        {
+          title: "Move the node",
+          body: '<div class="grid"><div><pre><code>zombie.anchorPoint = CGPoint(x: 0.5, y: 0.5)\nzombie.position = CGPoint(x: 120, y: 80)<\/code><\/pre><p class="muted">The centered anchor follows the node position, moving the zombie with it.<\/p><\/div><div class="anchor-preview"><div class="pixel-world move-node"><div class="anchor-node"><\/div><img class="zombie center" src="assets/transform-demo/zombie.png"/><\/div><p class="muted">Red dot = node position · x right · y up<\/p><\/div><\/div>',
+          notes:
+            "The anchor returns to the center and the position changes to (120, 80). The red node marker moves with the sprite; positive y is upward.",
+        },
+        {
+          title: "Move back across the canvas",
+          body: '<div class="grid"><div><pre><code>zombie.anchorPoint = CGPoint(x: 0.5, y: 0.5)\nzombie.position = CGPoint(x: -120, y: -60)<\/code><\/pre><p class="muted">A negative position moves the centered anchor left and down.<\/p><\/div><div class="anchor-preview"><div class="pixel-world move-negative"><div class="anchor-node"><\/div><img class="zombie center" src="assets/transform-demo/zombie.png"/><\/div><p class="muted">Red dot = node position · x right · y up<\/p><\/div><\/div>',
+          notes:
+            "Shows the direction of negative x and y relative to the canvas center.",
+        },
+        {
+          title: "Scale the sprite",
+          body: '<div class="grid"><div><pre><code>zombie.anchorPoint = CGPoint(x: 0.5, y: 0.5)\nzombie.position = CGPoint(x: 0, y: 0)\nzombie.xScale = 2\nzombie.yScale = 2<\/code><\/pre><p class="muted">Scaling doubles the sprite’s width and height around its centered anchor.<\/p><\/div><div class="anchor-preview"><div class="pixel-world scale-sprite"><div class="anchor-node"><\/div><img class="zombie center" src="assets/transform-demo/zombie.png"/><\/div><\/div><\/div>',
+          notes: "Return the node to the origin, then double both dimensions around its centered anchor.",
+        },
+        {
+          title: "Flip the sprite",
+          body: '<div class="grid"><div><pre><code>zombie.anchorPoint = CGPoint(x: 0.5, y: 0.5)\nzombie.position = CGPoint(x: 0, y: 0)\nzombie.xScale = 2\nzombie.yScale = -2<\/code><\/pre><p class="muted">A negative yScale flips the sprite vertically.<\/p><\/div><div class="anchor-preview"><div class="pixel-world scale-sprite flip-1"><div class="anchor-node"><\/div><img class="zombie center" src="assets/transform-demo/zombie.png"/><\/div><\/div><\/div>',
+          notes: "Change yScale to -2 while xScale remains 2.",
+        },
+        {
+          title: "Flip the sprite",
+          body: '<div class="grid"><div><pre><code>zombie.anchorPoint = CGPoint(x: 0.5, y: 0.5)\nzombie.position = CGPoint(x: 0, y: 0)\nzombie.xScale = -2\nzombie.yScale = -2<\/code><\/pre><p class="muted">A negative xScale also flips the sprite horizontally.<\/p><\/div><div class="anchor-preview"><div class="pixel-world scale-sprite flip-2"><div class="anchor-node"><\/div><img class="zombie center" src="assets/transform-demo/zombie.png"/><\/div><\/div><\/div>',
+          notes: "Keep yScale at -2 and change xScale to -2.",
+        },
+        {
+          title: "Add a child",
+          body: '<div class="grid"><div><pre><code>let parent = SKNode()\nlet player = SKSpriteNode(imageNamed: "PlayerIdle1")\nzombie.position = CGPoint(x: 120, y: 0)\nplayer.position = CGPoint(x: -120, y: 0)\nparent.addChild(zombie)\nparent.addChild(player)\naddChild(parent)<\/code><\/pre><p class="muted">The zombie and player are children of the same parent. Red dots mark their positions.<\/p><\/div><div class="anchor-preview"><div class="pixel-world children-added"><div class="anchor-node parent-marker"><\/div><div class="anchor-node"><\/div><img class="zombie center" src="assets/transform-demo/zombie.png" /><div class="child-node"><img src="PresentationProject/Halloweenland/Assets/Player/PlayerIdle.atlas/PlayerIdle1.png" alt="Player sprite" /><div class="anchor-node"><\/div><\/div><\/div><\/div><\/div>',
+          notes: "The children sit equally far from the parent, using positions in its local coordinates.",
+        },
+        {
+          title: "Move the parent",
+          body: '<div class="grid"><div><pre><code>parent.position = CGPoint(x: -80, y: 80)\n// Both children keep their local positions<\/code><\/pre><p class="muted">Moving the parent moves both children. Their local positions stay the same.<\/p><\/div><div class="anchor-preview"><div class="pixel-world children-moved"><div class="anchor-node parent-marker"><\/div><div class="anchor-node"><\/div><img class="zombie center" src="assets/transform-demo/zombie.png" /><div class="child-node"><img src="PresentationProject/Halloweenland/Assets/Player/PlayerIdle.atlas/PlayerIdle1.png" alt="Player sprite" /><div class="anchor-node"><\/div><\/div><\/div><\/div><\/div>',
+          notes: "The parent moves; both children retain their local positions and move with it.",
+        },
+        {
+          title: "Camera & viewport",
+          notes: "Introduce the camera as a view into the scene. The video shows the camera following the player while controls remain on screen.",
+          body: '<div class="grid"><div><ul><li>A camera determines which part of the scene is visible<\/li><li>Moving the camera changes the view of the world<\/li><li>Camera scale controls how much of the scene is visible<\/li><li>Camera children can keep controls fixed on screen<\/li><\/ul><\/div><div class="gameplay-video"><video src="assets/camera.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Camera following the player in the game"><\/video><\/div><\/div>',
+        },
+        {
+          title: "Follow the player",
+          notes: "This simplified example follows the player directly. Camera.swift additionally keeps the camera within the level bounds. The 0.5 scale shows a smaller area of the scene.",
+          body: '<div class="grid"><div><pre><code>let camera = SKCameraNode()\nscene.addChild(camera)\nscene.camera = camera\n\ncamera.xScale = 0.5\ncamera.yScale = 0.5\n\n// On each update, after the player moves:\ncamera.position = player.position<\/code><\/pre><\/div><div><p class="lead">A camera can follow the player.<\/p><ul><li>Set up the camera once<\/li><li>Use scale to zoom the view<\/li><li>Update its position as the player moves<\/li><\/ul><p class="muted">Smaller scale values show less of the scene.<\/p><\/div><\/div>',
+        },
+        {
+          title: "Controls stay on screen",
+          notes: "Joystick.swift attaches the joystick to scene.cameraObject and positions it at cameraObject.bottomLeftCorner, which uses scene size and safe-area insets. The camera must also be in the scene; its children inherit its transforms.",
+          body: '<div class="grid"><div><pre><code>camera.addChild(joystick)\njoystick.position = CGPoint(\n    x: -scene.size.width / 2 + safeArea.left,\n    y: -scene.size.height / 2 + safeArea.bottom\n)<\/code><\/pre><\/div><div><p class="lead">The joystick is a child of the camera.<\/p><ul><li>Its position is in camera coordinates<\/li><li>It moves with the camera, staying fixed on screen<\/li><li>Safe-area insets keep controls clear of screen edges<\/li><\/ul><p class="muted">The joystick handles input; the camera follows the player in its update.<\/p><\/div><\/div>',
+        },
+        {
+          title: "SpriteKit frame cycle",
+          notes: "Walk clockwise around Apple’s diagram. SpriteKit processes the scene in stages before rendering; override the callbacks needed by your game.",
+          body: '<div class="frame-cycle-layout"><div><p class="lead">SpriteKit updates the scene, then renders a frame.<\/p><ul><li>Callbacks let your game run logic at specific points<\/li><li>Actions, physics and constraints can change nodes between callbacks<\/li><\/ul><\/div><img src="assets/frame-cycle-events.png" alt="Apple diagram of SpriteKit frame-cycle events, from update through actions, physics, constraints and rendering" /><\/div>',
+        },
+        {
+          title: "Frame cycle · update",
+          notes: "SpriteKit calls update before evaluating actions and simulating physics. The helper methods are illustrative.",
+          body: '<div class="grid"><div><pre><code>override func update(_ currentTime: TimeInterval) {\n    readInput()\n    updateGameState()\n    startActionsIfNeeded()\n}<\/code><\/pre><\/div><div><p><b>Use it for<\/b><\/p><p>Read movement input, advance a timer, or start an action when a state changes.<\/p><p><b>Keep in mind<\/b><\/p><p>Start a running action once, not on every frame. Actions and physics run later.<\/p><\/div><\/div>',
+        },
+        {
+          title: "Frame cycle · after actions",
+          notes: "SpriteKit evaluates actions before this callback and physics after it. New actions started here are evaluated on a later update.",
+          body: '<div class="grid"><div><pre><code>override func didEvaluateActions() {\n    // Actions have updated node positions.\n    updateTrailPosition()\n}<\/code><\/pre><\/div><div><p><b>Use it for<\/b><\/p><p>Place a trail at a node’s updated position after its move action runs.<\/p><p><b>Keep in mind<\/b><\/p><p>Physics runs next and may move the node again; use the later callback if you need its physics position.<\/p><\/div><\/div>',
+        },
+        {
+          title: "Frame cycle · after physics",
+          notes: "This is a useful place for a camera that follows a physics-driven player. Contacts may occur during physics simulation.",
+          body: '<div class="grid"><div><pre><code>override func didSimulatePhysics() {\n    // Physics has updated body positions.\n    camera.position = player.position\n}<\/code><\/pre><\/div><div><p><b>Use it for<\/b><\/p><p>Move the camera to the player’s position after physics resolves movement.<\/p><p><b>Keep in mind<\/b><\/p><p>Physics has already run; a new force or body change waits for the next simulation.<\/p><\/div><\/div>',
+        },
+        {
+          title: "Frame cycle · after constraints",
+          notes: "Constraints are applied after physics. For example, a constraint can keep a node facing another node.",
+          body: '<div class="grid"><div><pre><code>override func didApplyConstraints() {\n    // Constraints have adjusted the nodes.\n    updateIndicatorPosition()\n}<\/code><\/pre><\/div><div><p><b>Use it for<\/b><\/p><p>Position an indicator after a constraint has adjusted the target’s position.<\/p><p><b>Keep in mind<\/b><\/p><p>Changing a constraint now won’t apply the new constraint until the next frame.<\/p><\/div><\/div>',
+        },
+        {
+          title: "Frame cycle · before rendering",
+          notes: "This is the last scene update callback before rendering. Node values set here can affect the current frame, but the completed processing phases will not run again.",
+          body: '<div class="grid"><div><pre><code>override func didFinishUpdate() {\n    // Final scene adjustments for this frame.\n    updateHUD()\n}<\/code><\/pre><\/div><div><p><b>Use it for<\/b><\/p><p>Refresh a visible HUD value after the game’s update stages have finished.<\/p><p><b>Keep in mind<\/b><\/p><p>Only update the HUD when its value changes; earlier processing stages won’t run again.<\/p><\/div><\/div>',
+        },
+        {
+          title: "Frame performance",
+          notes: "The 16.7 ms budget at 60 fps includes the whole frame, not just game code.",
+          body: '<div class="performance-layout"><div class="performance-budget"><div class="performance-number">16.7 <span>ms<\/span><\/div><div class="performance-caption">PER FRAME · 60 FPS<\/div><ul><li>Every frame shares a limited time budget<\/li><li>The budget covers game logic, SpriteKit, rendering and other work<\/li><\/ul><\/div><div class="performance-tips"><p><b>Keep each frame light<\/b><\/p><ul><li>Reuse nodes and textures instead of recreating them every frame<\/li><li>Start repeating actions once, rather than restarting them in <code>update(_:)<\/code><\/li><li>Update labels and other UI only when their values change<\/li><li>Avoid expensive searches and work that can be done less often<\/li><\/ul><\/div><\/div>',
+        },
+        {
+          title: "Nodes in action",
+          notes: "",
+          body: '<div class="section-title">Nodes in action<div class="section-sub">15 minutes<\/div><\/div><div class="section-num">03<\/div>',
+        },
+        { title: "Organizing SpriteKit nodes", notes: "The following node groups follow the SpriteKit documentation.", body: "<div><p class=\"lead\">The following examples are grouped using the sections in Apple’s SpriteKit documentation.<\/p><ul><li>Nodes that draw<\/li><li>Nodes for environmental effects<\/li><li>Nodes that modify drawing<\/li><\/ul><\/div>" },
+        { title: "Nodes that draw", notes: "", body: "<div><ul><li>Draw visible content such as images, shapes, text, particles, video and tiles<\/li><li>Use these nodes when something should appear in the scene<\/li><li>Examples include <b>SKSpriteNode<\/b>, <b>SKLabelNode<\/b> and <b>SKEmitterNode<\/b><\/li><\/ul><\/div>" },
+        {
+          title: "Sprite nodes",
+          notes: "SpriteKit creates a texture for an image-named sprite. Textures can be shared, replaced, animated or preloaded; SpriteKit also manages texture data as needed. For a tint, set both color and colorBlendFactor. Based on Apple’s Getting Started with Sprite Nodes.",
+          body: '<div class="grid"><div><p><b>Images & textures<\/b><\/p><ul><li>A sprite can display an image or a solid color<\/li><li>Creating a sprite from an image creates its texture automatically<\/li><li>Multiple sprites can share one texture<\/li><li><b>SK3DNode<\/b> displays SceneKit content in a SpriteKit scene<\/li><\/ul><\/div><div><p><b>Useful options<\/b><\/p><ul><li>Change a sprite’s texture to show a different image<\/li><li>Apply a color tint, for example when a character takes damage<\/li><li>Preload textures before a scene when you need them ready<\/li><\/ul><\/div><\/div>',
+        },
+        {
+          title: "Animate a sprite",
+          body: '<div class="grid"><div><pre><code>let atlas = SKTextureAtlas(named: "PlayerWalk")\nlet frames = (1...6).map { index in\n    atlas.textureNamed("PlayerWalk\\(index)")\n}\nlet walk = SKAction.animate(\n    with: frames,\n    timePerFrame: 0.1\n)\nplayer.run(\n    .repeatForever(walk),\n    withKey: "walk"\n)<\/code><\/pre><\/div><div class="card-result sprite-demo"><div class="frame-strip"><img src="assets/player-walk/PlayerWalk1.png" alt="Frame 1"/><img src="assets/player-walk/PlayerWalk2.png" alt="Frame 2"/><img src="assets/player-walk/PlayerWalk3.png" alt="Frame 3"/><img src="assets/player-walk/PlayerWalk4.png" alt="Frame 4"/><img src="assets/player-walk/PlayerWalk5.png" alt="Frame 5"/><img src="assets/player-walk/PlayerWalk6.png" alt="Frame 6"/><\/div><div class="sprite-stage"><img src="assets/player-walk/PlayerWalk1.png" alt=""/><img src="assets/player-walk/PlayerWalk2.png" alt=""/><img src="assets/player-walk/PlayerWalk3.png" alt=""/><img src="assets/player-walk/PlayerWalk4.png" alt=""/><img src="assets/player-walk/PlayerWalk5.png" alt=""/><img src="assets/player-walk/PlayerWalk6.png" alt=""/><\/div><b>PlayerWalk atlas · looping preview<\/b><small>6 frames · 0.1 seconds per frame<\/small><\/div><\/div>',
+          notes:
+            "The project stores the six frames in a PlayerWalk texture atlas. SKTextureAtlas loads named textures efficiently; the HTML preview shows each frame and the same frames playing in a loop.",
+        },
+        {
+          title: "Tile maps",
+          notes: "The project’s Level builds collision geometry separately from the visual tile map.",
+          body: '<div class="grid"><div><ul><li><b>SKTileMapNode<\/b> arranges tile definitions on a grid<\/li><li>Visual tiles do not automatically create per-tile physics<\/li><li>The project’s Level builds collision geometry separately<\/li><\/ul><\/div><div><img class="tile-image tile-image-large" src="assets/tiles.png" alt="Tiles used to build a tile map" /><\/div><\/div>',
+        },
+        {
+          title: "Tile maps",
+          notes: "Watch the tile map being created in the scene editor.",
+          body: '<video class="tile-video-full" src="assets/creating-tile-map.mov" autoplay muted loop playsinline preload="metadata" aria-label="Creating a tile map in the scene editor"><\/video>',
+        },
+        {
+          title: "Text, shapes & HUD",
+          notes: "Use the video to point out the joystick and control buttons. HUD elements can be camera children so they remain visible as the camera moves.",
+          body: '<div class="grid"><div><ul><li><b>SKLabelNode<\/b> displays text, such as a score<\/li><li><b>SKShapeNode<\/b> draws shapes, such as circles and bars<\/li><li><b>SKVideoNode<\/b> plays video inside the scene<\/li><li><b>SKNode<\/b> groups HUD elements together<\/li><\/ul><p class="muted">Attach HUD nodes to the camera to keep them on screen.<\/p><\/div><div class="gameplay-video"><video src="assets/hud.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Game HUD showing joystick and buttons"><\/video><\/div><\/div>',
+        },
+        {
+          title: "HUD controls",
+          notes: "Simplified from Joystick.swift and ContolButtons.swift: both control groups attach to the camera; the project positions them using camera corners and safe-area insets. JumpButton handles touches by calling the player’s jump method.",
+          body: '<div class="grid"><div><pre><code>let joystick = Joystick()\nlet buttons = ControlButtons()\n\ncamera.addChild(joystick)\ncamera.addChild(buttons)\n\njoystick.position = bottomLeft\nbuttons.position = bottomRight\n\n// JumpButton handles touches:\nplayer.jump()<\/code><\/pre><\/div><div><ul><li>The joystick and buttons are camera children<\/li><li>The joystick turns input into movement<\/li><li>Jump and attack buttons respond to touches<\/li><li>Positions are in camera coordinates<\/li><\/ul><\/div><\/div>',
+        },
+        {
+          title: "Particle emitters",
+          notes: "The example uses the green eye asset and an editable particle file based on Xcode’s Magic template. The video shows the eye leaving a particle trail.",
+          body: '<div class="grid"><div><ul><li><b>SKEmitterNode<\/b> creates many small particles over time<\/li><li>Use particles for sparks, smoke, magic and trails<\/li><li>Design and preview the effect in Xcode’s particle editor<\/li><li>Birth rate and lifetime affect performance<\/li><\/ul><\/div><div><div class="particle-media"><video src="assets/particles.mov" autoplay muted loop playsinline preload="metadata" aria-label="Wandering eye leaving a particle trail"><\/video><img src="assets/particle-editor.png" alt="SpriteKit particle editor" /><\/div><\/div><\/div>',
+        },
+        {
+          title: "Particle emitters · example",
+          notes: "The example simplifies WanderingEye.swift: the eye emits while moving to a random nearby position, then stops the emitter until the next movement. targetNode keeps emitted particles in scene coordinates.",
+          body: '<div class="grid"><div><pre><code>let particles = SKEmitterNode(\n    fileNamed: &quot;EyeParticles.sks&quot;\n)!\nparticles.particleBirthRate = 0\nparticles.targetNode = scene\neye.addChild(particles)\n\n// While the eye moves:\nparticles.particleBirthRate = 30\n// Stop emitting when it stops.<\/code><\/pre><\/div><div><p><b>How it works<\/b><\/p><ul><li>Load an emitter designed in Xcode<\/li><li>Attach it to the moving eye<\/li><li>Set a target node so emitted particles stay in the scene<\/li><li>Start and stop emission with the eye’s movement<\/li><\/ul><\/div><\/div>',
+        },
+        { title: "Nodes for environmental effects", notes: "", body: "<div><ul><li>Affect the scene with audio, light or forces<\/li><li>Influence other content or physics bodies rather than drawing their own artwork<\/li><li>Examples include <b>SKAudioNode<\/b>, <b>SKLightNode<\/b> and <b>SKFieldNode<\/b><\/li><\/ul><\/div>" },
+        { title: "SKAudioNode", notes: "This iOS example configures the app audio session once. Ambient allows other audio to continue and respects silent mode. A scene listener is needed for positional effects; the music example is non-positional. A default audio session already exists.", body: "<div class=\"grid\"><div><ul><li><b>SKAudioNode<\/b> plays sound in a scene<\/li><li>Use positional audio for sounds tied to a location<\/li><li><b>AVAudioSession<\/b> configures how the app’s audio behaves on iOS<\/li><li><code>.ambient<\/code> mixes with other audio and respects silent mode<\/li><\/ul><p class=\"muted\">Add the audio file to the app bundle.<\/p><\/div><div><pre><code>import AVFoundation\n\n// Configure once when setting up app audio.\ndo {\n    try AVAudioSession.sharedInstance()\n        .setCategory(.ambient)\n} catch {\n    print(&quot;Audio setup failed: \\(error)&quot;)\n}\n\nlet music = SKAudioNode(fileNamed: &quot;music.mp3&quot;)\nmusic.isPositional = false\nmusic.autoplayLooped = true\nscene.addChild(music)<\/code><\/pre><\/div><\/div>" },
+        {
+          title: "Light nodes",
+          notes: "The light itself is invisible: point out the change in the illuminated ground as the ghost moves. Lights can affect sprites or tile maps with matching lighting masks.",
+          body: '<div class="grid"><div><ul><li><b>SKLightNode<\/b> illuminates matching sprites and tile maps<\/li><li>Move a light with a character or animate it<\/li><li>Use it for torches, lamps or a glowing ghost<\/li><li>A light affects surfaces; it is not visible on its own<\/li><\/ul><\/div><div class="gameplay-video"><video src="assets/light.mov" autoplay muted loop playsinline preload="metadata" aria-label="SpriteKit light effect in the level"><\/video><\/div><\/div>',
+        },
+        {
+          title: "Light nodes · example",
+          notes: "Simplified from Ghost.swift. The light category and ground lighting mask must overlap. Ambient lighting affects the whole receiving surface and is not reduced by falloff.",
+          body: '<div class="grid"><div><pre><code>let light = SKLightNode()\nlight.categoryBitMask = 1\nlight.lightColor = .cyan\nlight.ambientColor = .darkGray\nlight.falloff = 0.7\n\nghost.addChild(light)\nground.lightingBitMask = 1<\/code><\/pre><\/div><div><p><b>How it works<\/b><\/p><ul><li>The light follows the ghost because it is a child<\/li><li>Matching masks let the ground receive the light<\/li><li>Falloff controls how quickly light fades with distance<\/li><li>Ambient color keeps areas away from the light visible<\/li><\/ul><\/div><\/div>',
+        },
+        { title: "Field nodes", notes: "Video demonstrates the EvilEye field pulling the player. The eye also deals contact damage.", body: '<div class="grid"><div><ul><li><b>SKFieldNode</b> applies forces to physics bodies</li><li>Use radial gravity to pull nearby bodies toward a point</li><li>Limit its region and category mask to control its reach</li><li>An eye can attract the player and cause damage on contact</li></ul></div><div class="gameplay-video"><video src="assets/field.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Evil eye field attracts the player"></video></div></div>' },
+        { title: "Field nodes · example", notes: "Based on EvilEye.swift and Physics.swift: positive radial gravity attracts; field masks restrict which physics bodies respond. Contact masks independently request damage callbacks.", body: '<div class="grid"><div><pre><code>let field = SKFieldNode.radialGravityField()\\nfield.strength = 5\\nfield.region = SKRegion(radius: 160)\\nfield.categoryBitMask = FieldMask.eye\\n\\neye.addChild(field)\\nplayer.physicsBody?.fieldBitMask = FieldMask.eye<\/code><\/pre><\/div><div><p><b>How it works<\/b><\/p><ul><li>Positive strength attracts toward the field center<\/li><li>The region limits the effect to nearby bodies<\/li><li>Matching field masks choose which bodies are affected<\/li><li>Use a physics contact to damage the player on touch<\/li><\/ul><\/div><\/div>' },
+        { title: "Nodes that modify drawing", notes: "", body: "<div><ul><li>Change how their child nodes are rendered<\/li><li>Use them to mask content, apply effects or rotate children in 3D<\/li><li>Examples include <b>SKCropNode<\/b>, <b>SKEffectNode<\/b> and <b>SKTransformNode<\/b><\/li><\/ul><\/div>" },
+        { title: "Crop nodes", notes: "The video shows CroppedEye moving through its circular mask.", body: '<div class="grid"><div><ul><li><b>SKCropNode<\/b> draws its children through a mask<\/li><li>The mask shape determines which parts are visible<\/li><li>Use it for windows, portals, spotlights or clipped effects<\/li><\/ul><\/div><div class="gameplay-video"><video src="assets/crop.mov" autoplay muted loop playsinline preload="metadata" aria-label="Eye moving through a circular crop"><\/video><\/div><\/div>' },
+        { title: "Crop nodes · example", notes: "CroppedEye uses a circular mask and moving eye artwork.", body: "<div class=\"grid\"><div><pre><code>let crop = SKCropNode()\ncrop.maskNode = SKShapeNode(\n    circleOfRadius: 45\n)\ncrop.addChild(eye)\naddChild(crop)<\/code><\/pre><\/div><div><p><b>How it works<\/b><\/p><ul><li>The white shape defines the visible window<\/li><li>Children of the crop node appear only inside the mask<\/li><li>Move a child through the mask to reveal clipping<\/li><li>The outline is a separate shape above the crop<\/li><\/ul><\/div><\/div>" },
+        { title: "Effect nodes", notes: "The BlurryGhost object floats while its blur radius gradually increases and decreases.", body: "<div class=\"grid\"><div><ul><li><b>SKEffectNode<\/b> renders its children into a separate buffer<\/li><li>Apply a Core Image filter to the rendered children<\/li><li>Use it for effects such as blur or color adjustments<\/li><li>Animate filter properties to change the effect over time<\/li><\/ul><\/div><div class=\"gameplay-video\"><video src=\"assets/blurEffect.mov\" autoplay muted loop playsinline preload=\"metadata\" aria-label=\"Ghost gradually blurring and sharpening\"><\/video><\/div><\/div>" },
+        { title: "Effect nodes · example", notes: "Based on BlurryGhost.swift. The example enables a fixed blur; the project animates the filter radius over time.", body: "<div class=\"grid\"><div><pre><code>let effect = SKEffectNode()\neffect.filter = CIFilter(\n    name: &quot;CIGaussianBlur&quot;,\n    parameters: [kCIInputRadiusKey: 5]\n)\neffect.shouldEnableEffects = true\neffect.addChild(ghost)\nscene.addChild(effect)<\/code><\/pre><\/div><div><p><b>How it works<\/b><\/p><ul><li>The ghost is a child of the effect node<\/li><li>Core Image blurs the rendered children<\/li><li><code>shouldEnableEffects<\/code> turns the filter on or off<\/li><\/ul><\/div><\/div>" },
+        { title: "Shaders", notes: "ShimmeringGhost uses a fragment shader to smoothly change the ghost's color. SpriteKit supplies u_time.", body: "<div class=\"grid\"><div><ul><li><b>SKShader<\/b> changes how a node is drawn with a fragment shader<\/li><li>The shader computes the color of each pixel<\/li><li>Use it for color changes, distortion or other visual effects<\/li><li>The ghost smoothly changes between white, red and dark gray<\/li><\/ul><\/div><div class=\"gameplay-video\"><video src=\"assets/shader.mov\" autoplay muted loop playsinline preload=\"metadata\" aria-label=\"Ghost changing colors with a shader\"><\/video><\/div><\/div>" },
+        { title: "Shaders · example", notes: "Simplified from ShimmeringGhost.swift: the project transitions between randomly selected colors; this example alternates white and red.", body: "<div class=\"grid\"><div><p><b>How it works<\/b><\/p><ul><li><code>SKDefaultShading()<\/code> gives the sprite’s normal color and transparency<\/li><li><code>u_time<\/code> changes the tint smoothly over time<\/li><li>The shader blends the tint with the sprite’s color<\/li><li>Assign it to the ghost’s <code>shader<\/code> property<\/li><\/ul><\/div><div><pre><code>let shader = SKShader(source: &quot;&quot;&quot;\nvoid main() {\n    vec4 color = SKDefaultShading();\n    float t = 0.5 + 0.5 * sin(u_time);\n    vec3 tint = mix(vec3(1.0),\n                    vec3(0.75, 0.02, 0.03), t);\n    color.rgb = mix(color.rgb, tint * color.a, 0.85);\n    gl_FragColor = color;\n}\n&quot;&quot;&quot;)\nghost.shader = shader<\/code><\/pre><\/div><\/div>" },
+        { title: "Constraints", notes: "Constraints maintain a relationship between nodes or coordinates. SpriteKit applies them after actions and physics.", body: "<div class=\"grid\"><div><ul><li><b>Position:</b> keep a node within a range on the x or y axis</li><li><b>Distance:</b> keep a node within a range of a point or another node</li><li><b>Orientation:</b> rotate a node to face a point or another node</li><li><b>Rotation:</b> limit a node’s rotation to a range</li></ul><p class=\"muted\">SpriteKit applies constraints after actions and physics, before rendering.</p></div><div class=\"gameplay-video\"><video src=\"assets/constraints.mp4\" autoplay muted loop playsinline preload=\"metadata\" aria-label=\"SpriteKit constraints in action\"></video></div></div>" },
+        { title: "Constraints · example", notes: "Based on EvilEye.swift: the look-at constraint is attached to the eye artwork, leaving the attraction field on its unrotated parent.", body: "<div class=\"grid\"><div><pre><code>let lookAtPlayer = SKConstraint.orient(\n    to: player,\n    offset: SKRange(constantValue: 0)\n)\neye.constraints = [lookAtPlayer]<\/code><\/pre><\/div><div><p><b>How it works<\/b><\/p><ul><li>The eye rotates to face the player as they move<\/li><li>The offset adjusts the artwork’s facing direction<\/li><li>Apply the constraint to the artwork so the field stays fixed<\/li><\/ul><\/div><\/div>" },
+        {
+          title: "Actions compose motion",
+          notes:
+            'Illustrative example; removing the keyed action stops it: node.removeAction(forKey: "pulse").',
+          body: '<div class="grid"><div><pre><code>let pulse = SKAction.sequence([\n    .scale(to: 1.2, duration: 0.2),\n    .scale(to: 1.0, duration: 0.2)\n])\nnode.run(.repeatForever(pulse),\n         withKey: &quot;pulse&quot;)<\/code><\/pre><\/div><div><ul><li><b>sequence<\/b>: one after another<\/li><li><b>group<\/b>: together<\/li><li>Keys let you find or remove actions<\/li><li>Coordinate actions and physics when both affect motion<\/li><\/ul><\/div><\/div>',
+        },
+        {
+          title: "Physics & collisions",
+          notes: "",
+          body: '<div class="section-title">Physics & collisions<div class="section-sub">15 minutes<\/div><\/div><div class="section-num">04<\/div>',
+        },
+        {
+          title: "Bodies in a physics world",
+          notes:
+            "Illustrative impulse; tuning depends on mass and scale. Project Player.jump uses an impulse based on sprite height.",
+          body: '<div class="grid"><div><ul><li>Gravity acts on dynamic bodies<\/li><li>Static bodies provide walls and ground<\/li><li><b>SKPhysicsBody<\/b> defines a node’s shape, velocity and other physical properties<\/li><li>An impulse changes momentum immediately<\/li><\/ul><\/div><div><pre><code>player.physicsBody = SKPhysicsBody(\n    rectangleOf: player.size\n)\nplayer.physicsBody?.applyImpulse(\n    CGVector(dx: 0, dy: 120)\n)<\/code><\/pre><\/div><\/div>',
+        },
+        {
+          title: "Collision vs contact",
+          notes:
+            "Simplified three-category example. Ground and zombie do not request contact notifications. Physical response depends on each body’s collision mask; either contact test mask can request notification.",
+          body: '<table style="font-size:42px"><tr><th>Body<\/th><th>Category<\/th><th>Collision mask<\/th><th>Contact mask<\/th><\/tr><tr><td>Player<\/td><td>00<b>1<\/b><\/td><td><b>1<\/b><b>1<\/b>0<\/td><td>0<b>1<\/b>0<\/td><\/tr><tr><td>Ground<\/td><td>0<b>1<\/b>0<\/td><td>00<b>1<\/b><\/td><td>000<\/td><\/tr><tr><td>Zombie<\/td><td><b>1<\/b>00<\/td><td>00<b>1<\/b><\/td><td>000<\/td><\/tr><\/table><p class="lead">Player + ground: collision and contact notification.<br>Player + zombie: collision; no contact notification requested.<\/p><p class="muted">Bits shown: zombie · ground · player<\/p>',
+        },
+        {
+          title: "Physics mask constants",
+          notes: "Based on Physics.swift. The collision combination is a shortened example; the project defines its complete collision masks in the same file.",
+          body: "<div class=\"grid\"><div><pre><code>enum CategoryBitMask {\n    static let groundTile: UInt32 = 0b1\n    static let player: UInt32 = 0b100\n    static let zombie: UInt32 = 0b1000\n}\n\n// Combine categories with bitwise OR\nlet collision = CategoryBitMask.groundTile |\n    CategoryBitMask.zombie</code></pre></div><div><ul><li><b>Named constants</b> explain what each bit represents</li><li>Define categories in one place and reuse them throughout the game</li><li>Combine categories with <code>|</code> to describe interactions</li><li>Avoid hardcoded values when assigning masks</li></ul></div></div>",
+        },
+        {
+          title: "SKPhysicsContactDelegate",
+          notes: "Set the delegate during scene setup and inspect both bodies; either body can appear first.",
+          body: "<div class=\"grid\"><div><pre><code>// In the scene setup\nphysicsWorld.contactDelegate = self\n\nextension LevelScene: SKPhysicsContactDelegate {\n    func didBegin(_ contact: SKPhysicsContact) {\n        let a = contact.bodyA\n        let b = contact.bodyB\n        // Check their categories and handle the contact.\n    }\n}</code></pre></div><div><ul><li>Set the physics world’s <b>contact delegate</b> to receive notifications</li><li><b>didBegin</b> runs when a requested contact starts; <b>didEnd</b> runs when it ends</li><li>Contact masks decide which interactions generate callbacks</li><li>Check both bodies before applying game logic</li></ul></div></div>",
+        },
+        {
+          title: "Physics joints",
+          notes: "The rope uses pin joints between its segments and attaches the player with another pin joint.",
+          body: "<div class=\"grid\"><div><ul><li><b>SKPhysicsJoint</b> connects two physics bodies</li><li><b>Pin joints</b> let connected bodies rotate around an anchor</li><li>Chain multiple segments together to create a flexible rope</li><li>Attach the player to the rope’s end, then remove the joint to let go</li></ul></div><div class=\"gameplay-video\"><video src=\"assets/rope.mp4\" autoplay muted loop playsinline preload=\"metadata\" aria-label=\"Player grabbing and swinging on a rope\"></video></div></div>",
+        },
+        {
+          title: "Physics joints · rope example",
+          notes: "Simplified from Rope.swift. segmentTopInScene represents each segment’s top converted to scene coordinates; the actual implementation also builds the segment bodies and attaches the tip.",
+          body: "<div class=\"grid\"><div><pre><code>var previous = anchor.physicsBody!\n\nfor segment in ropeSegments {\n    let body = segment.physicsBody!\n    let pin = SKPhysicsJointPin.joint(\n        withBodyA: previous,\n        bodyB: body,\n        anchor: segmentTopInScene\n    )\n    physicsWorld.add(pin)\n    previous = body\n}</code></pre></div><div><p><b>How it works</b></p><ul><li>The first segment connects to a fixed anchor</li><li>Each pin connects a segment to the previous body</li><li>Joint anchors use scene coordinates</li><li>Another pin attaches the player; remove it when they jump</li></ul></div></div>",
+        },
+        {
+          title: "Debug the invisible",
+          notes:
+            'Use usesPreciseCollisionDetection selectively; it costs more. Check the sign convention against the actual body ordering. <a href="https://developer.apple.com/documentation/spritekit/skphysicscontact/contactnormal">Contact normal<\/a>.',
+          body: '<div class="grid"><div><ul><li>Turn on <code>view.showsPhysics = true<\/code><\/li><li>Inspect body shapes and unexpected contacts<\/li><li>A contact normal depends on body ordering: identify bodies before interpreting its direction<\/li><li>Consider precise collision detection for fast bodies<\/li><\/ul><\/div><div class="gameplay-video"><video src="assets/debug.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Gameplay with physics debugging"><\/video><\/div><\/div>',
+        },
+        {
+          title: "Combat: overlapping regions",
+          notes:
+            "PresentationProject Player.swift and Zombie.swift use intersects. Player.hit guards isHurt and resets it after a blinking sequence.",
+          body: '<div class="grid"><div><ul><li><b>Hitbox<\/b> receives a hit; <b>hurtbox<\/b> represents an attack area in this project<\/li><li>Attack checks run while the hurtbox is attached<\/li><li>Damage starts a temporary invulnerability window<\/li><li>The project uses <code>intersects<\/code> for these checks<\/li><\/ul><\/div><div class="gameplay-video"><video src="assets/debug.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Gameplay with physics debugging"><\/video><\/div><\/div>',
+        },
+        {
+          title: "State machines",
+          notes: "",
+          body: '<div class="section-title">State machines<div class="section-sub">GameplayKit · 10 minutes<\/div><\/div><div class="section-num">05<\/div>',
+        },
+        {
+          title: "Introducing GameplayKit states",
+          notes: "A machine has one current state at a time. Entering a state calls didEnter; leaving it calls willExit. isValidNextState can restrict transitions, and update(deltaTime:) forwards time to the current state.",
+          body: "<p class=\"lead\">A state machine organizes behavior into distinct states.</p><ul><li><b>GKState</b> describes one state, such as idle or walking</li><li><b>GKStateMachine</b> holds the states and manages which one is active</li><li><b>Transitions</b> switch states when something changes, such as player input</li><li>States can run code on entry, on exit and during each update</li><li>Transition rules can prevent invalid changes, such as leaving a dead state</li></ul>",
+        },
+        {
+          title: "One player, three state machines",
+          notes: "Player.swift uses independent state machines so behavior, movement and temporary invulnerability can overlap.",
+          body: "<p class=\"lead\">Each state machine manages a different part of the player.</p><ul><li><b>Behavior:</b> idle, walking, attacking or dead</li><li><b>Movement:</b> grounded or jumping</li><li><b>Damage:</b> vulnerable or hurt</li><li>These states can overlap: the player can jump, attack and be hurt at the same time</li></ul>",
+        },
+        {
+          title: "Create the state machines",
+          notes: "The actual machines use player references in states that need access to the sprite. Grounded and vulnerable are initial states.",
+          body: "<div class=\"grid\"><div><ul><li><b>Behavior</b> chooses the animation and attack</li><li><b>Movement</b> tracks whether the player can jump</li><li><b>Damage</b> tracks temporary invulnerability</li><li>Each machine starts in an initial state</li></ul></div><div><pre><code>let behavior = GKStateMachine(states: [\n    IdleState(player: self),\n    WalkingState(player: self),\n    AttackingState(player: self),\n    DeadState(player: self)\n])\nbehavior.enter(IdleState.self)\n\nlet movement = GKStateMachine(states: [\n    GroundedState(player: self),\n    JumpingState(player: self)\n])\nmovement.enter(GroundedState.self)\n// Damage starts in VulnerableState.</code></pre></div></div>",
+        },
+        {
+          title: "Update the current states",
+          notes: "The array extension forwards the update to each state machine in order. SpriteKit supplies an absolute currentTime. The code caps the elapsed interval at 0.1 seconds to avoid a large update after a long gap; this also slows the hurt timer during long frames.",
+          body: "<div class=\"grid\"><div><ul><li><b>SpriteKit</b> calls the player once per frame</li><li>Convert the frame timestamp into elapsed time</li><li><b>Array extension</b> updates each machine in order</li><li>The interval is capped to limit large jumps in time</li></ul></div><div><pre><code>func update(_ currentTime: TimeInterval) {\n    let dt = previousUpdateTime.map {\n        max(0, min(currentTime - $0, 0.1))\n    } ?? 0\n    previousUpdateTime = currentTime\n\n    stateMachines.update(deltaTime: dt)\n}</code></pre></div></div>",
+        },
+        {
+          title: "Animations and behavior",
+          notes: "WalkingState similarly enters IdleState when joystick input stops. AttackingState starts its animation on entry and checks the hurtbox on each update.",
+          body: "<div class=\"grid\"><div><ul><li><b>didEnter</b> starts the animation once</li><li><b>update</b> checks for a change each frame</li><li>Walking returns to idle when input stops</li><li>Attacking checks the hurtbox until the attack ends</li></ul></div><div><pre><code>final class IdleState: PlayerState {\n    override func didEnter(from previous: GKState?) {\n        player?.playAnimation(key: \"idle\")\n    }\n\n    override func update(deltaTime: TimeInterval) {\n        guard let player, player.isWalking else { return }\n        stateMachine?.enter(WalkingState.self)\n    }\n}</code></pre></div></div>",
+        },
+        {
+          title: "Grounded and jumping",
+          notes: "Both movement states inherit MovementState, which applies horizontal movement and direction while alive. Jumping is triggered by input and landing by a tile contact; rope release is omitted from this excerpt.",
+          body: "<div class=\"grid\"><div><ul><li><b>Grounded</b> allows a jump; <b>jumping</b> prevents another jump in the air</li><li>Both states share horizontal movement</li><li>A ground contact returns the player to grounded</li></ul></div><div><pre><code>class MovementState: PlayerState {\n    override func update(deltaTime: TimeInterval) {\n        guard let player, !player.isDead else { return }\n        player.updateDirection()\n        player.updatePosition()\n    }\n}\nfinal class GroundedState: MovementState {}\nfinal class JumpingState: MovementState {}\n\n// Jump input / ground contact:\nmovementStateMachine.enter(JumpingState.self)\nmovementStateMachine.enter(GroundedState.self)</code></pre></div></div>",
+        },
+        {
+          title: "Damage and invulnerability",
+          notes: "The project uses SKActions for the blink. HurtState counts down 1.5 seconds using the capped frame delta, then restores VulnerableState. hit() ignores damage while hurt or dead.",
+          body: "<div class=\"grid\"><div><ul><li><b>Hurt</b> starts the blinking effect</li><li>While hurt, additional hits are ignored</li><li><b>update</b> counts down the invulnerability window</li><li><b>willExit</b> stops blinking and restores visibility</li></ul></div><div><pre><code>final class HurtState: PlayerState {\n    private var timeRemaining: TimeInterval = 0\n\n    override func didEnter(from previous: GKState?) {\n        timeRemaining = 1.5\n        // Start the blinking SKAction.\n    }\n    override func update(deltaTime: TimeInterval) {\n        timeRemaining -= deltaTime\n        if timeRemaining &lt;= 0 {\n            stateMachine?.enter(VulnerableState.self)\n        }\n    }\n}</code></pre></div></div>",
+        },
+        {
+          title: "Death and transitions",
+          notes: "On the final hit Player enters DeadState. Its didEnter removes the hurtbox and starts the death animation; isValidNextState prevents leaving this state. The animation handles physics cleanup and removal.",
+          body: "<div class=\"grid\"><div><ul><li><b>The final hit</b> enters the dead state</li><li><b>didEnter</b> removes the hurtbox and starts death animation</li><li><b>isValidNextState</b> prevents leaving the dead state</li><li>The death animation finishes the cleanup</li></ul></div><div><pre><code>// After taking damage:\nlifes -= 1\nif lifes &lt;= 0 {\n    stateMachine.enter(DeadState.self)\n}\n\nfinal class DeadState: PlayerState {\n    override func didEnter(from previous: GKState?) {\n        player?.hurtBox.removeFromParent()\n        player?.playAnimation(key: \"death\")\n    }\n    override func isValidNextState(_ state: AnyClass) -&gt; Bool {\n        false\n    }\n}</code></pre></div></div>",
+        },
+        {
+          title: "Beyond 2D",
+          notes: "",
+          body: '<div class="section-title">Beyond 2D<div class="section-sub">RealityKit · 9 minutes<\/div><\/div><div class="section-num">06<\/div>',
+        },
+        {
+          title: "Concepts transfer",
+          notes:
+            '<a href="https://developer.apple.com/documentation/realitykit">RealityKit<\/a> and <a href="https://developer.apple.com/documentation/realitykit/ecs-systems">RealityKit systems<\/a>.',
+          body: '<table><tr><th>SpriteKit<\/th><th>Shared idea<\/th><th>RealityKit<\/th><\/tr><tr><td>Scene / node tree<\/td><td>Hierarchy and transforms<\/td><td>Scene / entity hierarchy<\/td><\/tr><tr><td>Sprites & actions<\/td><td>Visuals and animation<\/td><td>Models and animation<\/td><\/tr><tr><td>Physics bodies & contacts<\/td><td>Simulation and events<\/td><td>Physics, collision and events<\/td><\/tr><tr><td>Camera node<\/td><td>Viewpoint<\/td><td>Camera / viewpoint<\/td><\/tr><\/table><p class="muted">Similar concepts; different APIs, coordinate systems and dimensions.<\/p>',
+        },
+        {
+          title: "Entities, components, systems",
+          notes:
+            'Entities contain components; a system queries matching entities and processes them. Example is conceptual. <a href="https://developer.apple.com/documentation/realitykit/ecs-systems">Apple: RealityKit systems<\/a>.',
+          body: '<div class="cards three"><div><b>Entity<\/b><span>A zombie in the scene<\/span><\/div><div><b>Component<\/b><span>Health data: 3 hit points<\/span><\/div><div><b>System<\/b><span>Find entities with health and apply pending damage<\/span><\/div><\/div><p class="lead">The same damage system can process a player, zombie or door.<\/p>',
+        },
+        {
+          title: "Your turn",
+          notes: "",
+          body: '<div class="section-title">Your turn<div class="section-sub">Wrap-up & questions · 7 minutes<\/div><\/div><div class="section-num">07<\/div>',
+        },
+        {
+          title: "Five ideas to keep",
+          notes: "",
+          body: "<ul><li>Build a <b>scene graph<\/b> from nodes<\/li><li>Understand <b>local transforms<\/b> and camera space<\/li><li>Separate physics <b>collision response<\/b> from contact notifications<\/li><li>Model behavior with clear <b>state transitions<\/b><\/li><li>Carry hierarchy, transforms and physics concepts into <b>RealityKit<\/b><\/li><\/ul>",
+        },
+        {
+          title: "Exercise: add a collectible",
+          notes:
+            "Guided Flappy Bird build: configure a gap sensor, detect and score a successful pass, then add a game-over screen with restart. Finish with a game-loop state machine (TBD). Project source represents a near-final result.",
+          body: '<div class="grid exercise-grid"><div><p class="lead">Together, we’ll build a Flappy Bird game loop.<\/p><ol><li>Inspect player and pipe physics categories<\/li><li>Add a non-colliding sensor in the gap<\/li><li>Handle the player contact once<\/li><li>Update the score and play the point sound<\/li><li>Make a game-over screen with a restart option<\/li><li>Connect the game loop with a state machine <span class="muted">(TBD)<\/span><\/li><\/ol><\/div><div class="portrait-video"><video class="video-screen" src="assets/flappy.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Flappy Bird gameplay"><\/video><\/div><\/div>',
+        },
+        {
+          title: "Questions?",
+          notes:
+            "Thank you. Revisit the exercise or demonstrate the project if time remains.",
+          body: '<div class="closing">QUESTIONS<span>?<\/span><p>What will you build next?<\/p><\/div>',
+        }
+      ];
+      function highlightCode(root) {
+        root.querySelectorAll("pre code").forEach((code) => {
+          const text = code.textContent;
+          const tokens =
+            /\/\/[^\n]*|"(?:\\.|[^"\\])*"|\b(?:let|var|func|final|class|override|if|else|true|false|self|return|not)\b|\b\d+(?:\.\d+)?\b|\b[A-Z][A-Za-z0-9_]*\b|(?<=\.)[a-zA-Z_][a-zA-Z0-9_]*/g;
+          const fragment = document.createDocumentFragment();
+          let last = 0;
+          for (const match of text.matchAll(tokens)) {
+            fragment.append(
+              document.createTextNode(text.slice(last, match.index)),
+            );
+            const span = document.createElement("span");
+            const token = match[0];
+            span.className = token.startsWith("//")
+              ? "c-com"
+              : token.startsWith('"')
+                ? "c-str"
+                : /^(let|var|func|final|class|override|if|else|true|false|self|return|not)$/.test(
+                      token,
+                    )
+                  ? "c-kw"
+                  : /^\d/.test(token)
+                    ? "c-num"
+                    : /^[A-Z]/.test(token)
+                      ? "c-type"
+                      : "c-mem";
+            span.textContent = token;
+            fragment.append(span);
+            last = match.index + token.length;
+          }
+          fragment.append(document.createTextNode(text.slice(last)));
+          code.replaceChildren(fragment);
+        });
+      }
+      highlightCode(document);
+      const slides = [...document.querySelectorAll(".slide")],
+        deck = document.querySelector("#deck");
+      let cur = -1;
+      const presenter = new URLSearchParams(location.search).has("presenter");
+      const channel =
+        "BroadcastChannel" in window
+          ? new BroadcastChannel("spritekit-deck")
+          : null;
+      function fit() {
+        deck.style.transform = `translate(-50%,-50%) scale(${Math.min(innerWidth / 1920, innerHeight / 1080)})`;
+      }
+      // Keep one visual alive while the surrounding slide content changes.
+      const sharedPreview = document.createElement("div");
+      sharedPreview.className = "pixel-world shared-transform-preview";
+      sharedPreview.innerHTML = '<div class="anchor-node"></div><div class="anchor-node parent-marker"></div><img class="zombie" src="assets/transform-demo/zombie.png" alt="Zombie sprite"><div class="child-node"><img src="PresentationProject/Halloweenland/Assets/Player/PlayerIdle.atlas/PlayerIdle1.png" alt="Player sprite" /><div class="anchor-node"></div></div>';
+      sharedPreview.hidden = true;
+      deck.append(sharedPreview);
+      const sharedZombie = sharedPreview.querySelector(".zombie");
+      const sharedDot = sharedPreview.querySelector(".anchor-node");
+      const sharedChild = sharedPreview.querySelector(".child-node");
+      const sharedParent = sharedPreview.querySelector(".parent-marker");
+      let transformTimer;
+      const transformStates = [
+        [0.5, 0.5, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [1, 1, 0, 0, 0],
+        [0.5, 0.5, 0, 0, -90],
+        [0.5, 0.5, 0, 0, -180],
+        [0.5, 0.5, 0, 0, -270],
+        [0.5, 0.5, 0, 0, -360],
+        [0, 0, 0, 0, -450],
+        [0, 0, 0, 0, -540],
+        [0, 0, 0, 0, -630],
+        [0, 0, 0, 0, -720],
+        [0.5, 0.5, 120, 80, -720],
+        [0.5, 0.5, -120, -60, -720],
+        [0.5, 0.5, 0, 0, -720, 2, 2],
+        [0.5, 0.5, 0, 0, -720, 2, -2],
+        [0.5, 0.5, 0, 0, -720, -2, -2],
+        [0.5, 0.5, 120, 0, -720],
+        [0.5, 0.5, 40, 80, -720],
+      ];
+      function setTransformState([ax, ay, x, y, angle, scaleX = 1, scaleY = 1]) {
+        sharedZombie.style.left = `calc(50% + ${x - ax * 155}px)`;
+        sharedZombie.style.bottom = `calc(50% + ${y - ay * 190}px)`;
+        sharedZombie.style.transformOrigin = `${ax * 100}% ${(1 - ay) * 100}%`;
+        sharedZombie.style.transform = `rotate(${angle}deg) scale(${scaleX}, ${scaleY})`;
+        sharedDot.style.left = `calc(50% + ${x}px)`;
+        sharedDot.style.bottom = `calc(50% + ${y}px)`;
+        sharedChild.style.left = `calc(50% + ${x - 240}px)`;
+        sharedChild.style.bottom = `calc(50% + ${y}px)`;
+        sharedParent.style.left = `calc(50% + ${x - 120}px)`;
+        sharedParent.style.bottom = `calc(50% + ${y}px)`;
+      }
+      function updateSharedPreview(previous) {
+        clearTimeout(transformTimer);
+        const active = !presenter && cur >= 10 && cur <= 27;
+        sharedPreview.hidden = !active;
+        if (!active) return;
+        sharedChild.style.opacity = cur >= 26 ? "1" : "0";
+        sharedParent.style.opacity = cur >= 26 ? "1" : "0";
+        const placeholder = slides[cur].querySelector(".pixel-world");
+        const rect = placeholder.getBoundingClientRect();
+        const deckRect = deck.getBoundingClientRect();
+        const scale = deckRect.width / 1920;
+        Object.assign(sharedPreview.style, {
+          left: `${(rect.left - deckRect.left) / scale}px`,
+          top: `${(rect.top - deckRect.top) / scale}px`,
+          width: `${rect.width / scale}px`,
+          height: `${rect.height / scale}px`,
+        });
+        const continuous = previous >= 10 && previous <= 27;
+        if (!continuous) {
+          sharedZombie.style.transition = "none";
+          sharedDot.style.transition = "none";
+        }
+        // Center the sprite before applying its rotation.
+        if (continuous && previous === 12 && cur === 13 &&
+            !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          setTransformState([0.5, 0.5, 0, 0, 0]);
+          transformTimer = setTimeout(() => setTransformState(transformStates[3]), 750);
+        } else if (continuous && previous === 22 && cur === 23 &&
+            !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          setTransformState([0.5, 0.5, 0, 0, -720]);
+          transformTimer = setTimeout(() => setTransformState(transformStates[13]), 750);
+        } else {
+          setTransformState(transformStates[cur - 10]);
+        }
+        if (!continuous) {
+          void sharedPreview.offsetWidth;
+          sharedZombie.style.transition = "";
+          sharedDot.style.transition = "";
+        }
+      }
+      function go(n, send = true) {
+        const previous = cur;
+        cur = Math.max(0, Math.min(slides.length - 1, n));
+        slides.forEach((s, i) => {
+          s.classList.toggle("on", i === cur);
+          const arc = s.querySelector(".progress-arc");
+          if (arc) {
+            const pct = (cur + 1) / slides.length;
+            arc.style.strokeDasharray = `${2 * Math.PI * 38 * pct} ${2 * Math.PI * 38}`;
+          }
+        });
+        if (!presenter) {
+          slides.slice(10, 28).forEach((slide) => {
+            slide.querySelector(".pixel-world").style.visibility = "hidden";
+          });
+          updateSharedPreview(previous);
+        }
+        slides.forEach((slide) =>
+          slide.querySelectorAll("video").forEach((video) => video.pause()),
+        );
+        const activeVideo = slides[cur].querySelector("video");
+        if (activeVideo) activeVideo.play().catch(() => {});
+        if (!presenter) history.replaceState(null, "", "#" + (cur + 1));
+        if (presenter) draw();
+        if (send && channel) channel.postMessage({ i: cur });
+      }
+      function draw() {
+        const m = META[cur];
+        document.querySelector("#notes").innerHTML =
+          `<div><button onclick="go(cur-1)">← Previous</button><button onclick="go(cur+1)">Next →</button><span>${cur + 1} / ${META.length}</span></div><h1>${m.title}</h1><h2>Presenter notes</h2><div>${m.notes || "Discuss the slide and invite questions."}</div><p class="hint">90-minute plan: introduction 8 · scenes 15 · nodes 15 · physics 15 · states 10 · RealityKit 9 · building 11 · wrap-up 7 minutes. Use arrow keys to navigate.</p><div class="preview">${m.body}</div>`;
+        highlightCode(document.querySelector("#notes"));
+        const previewVideo = document.querySelector("#notes video");
+        if (previewVideo) previewVideo.play().catch(() => {});
+      }
+      if (channel) channel.onmessage = (e) => go(e.data.i, false);
+      document.addEventListener("keydown", (e) => {
+        if (["ArrowRight", "ArrowDown", "PageDown", " "].includes(e.key)) {
+          e.preventDefault();
+          go(cur + 1);
+        } else if (["ArrowLeft", "ArrowUp", "PageUp"].includes(e.key)) {
+          e.preventDefault();
+          go(cur - 1);
+        } else if (e.key === "Home") go(0);
+        else if (e.key === "End") go(slides.length - 1);
+        else if (e.key.toLowerCase() === "f")
+          document.fullscreenElement
+            ? document.exitFullscreen()
+            : document.documentElement.requestFullscreen();
+        else if (e.key.toLowerCase() === "b")
+          document.body.classList.toggle("blank");
+        else if (e.key.toLowerCase() === "p" && !presenter)
+          window.open(
+            location.pathname + "?presenter#" + (cur + 1),
+            "spritekit-presenter",
+            "width=1200,height=900",
+          );
+      });
+      addEventListener("resize", fit);
+      if (presenter) document.body.classList.add("presenter");
+      fit();
+      go((parseInt(location.hash.slice(1)) || 1) - 1, false);
+    </script>
+  </body>
+</html>

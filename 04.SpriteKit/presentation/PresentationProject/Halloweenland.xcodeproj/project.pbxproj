@@ -1,0 +1,741 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A31E501A11AA400000000011 /* Lighting.swift in Sources */ = {isa = PBXBuildFile; fileRef = A31E501A11AA400000000012 /* Lighting.swift */; };
+		A172B25345267142BB910013 /* Rope.swift in Sources */ = {isa = PBXBuildFile; fileRef = A172B25345267142BB910014 /* Rope.swift */; };
+		A172B25345267142BB910011 /* BlurryGhost.swift in Sources */ = {isa = PBXBuildFile; fileRef = A172B25345267142BB910012 /* BlurryGhost.swift */; };
+		A172B25345267142BB910021 /* ShimmeringGhost.swift in Sources */ = {isa = PBXBuildFile; fileRef = A172B25345267142BB910022 /* ShimmeringGhost.swift */; };
+		A172B25345267142BB910009 /* EvilEye.swift in Sources */ = {isa = PBXBuildFile; fileRef = A172B25345267142BB910010 /* EvilEye.swift */; };
+		A172B25345267142BB910007 /* CroppedEye.swift in Sources */ = {isa = PBXBuildFile; fileRef = A172B25345267142BB910008 /* CroppedEye.swift */; };
+		A172B25345267142BB910003 /* WanderingEye.swift in Sources */ = {isa = PBXBuildFile; fileRef = A172B25345267142BB910004 /* WanderingEye.swift */; };
+		A172B25345267142BB910005 /* EyeParticles.sks in Resources */ = {isa = PBXBuildFile; fileRef = A172B25345267142BB910006 /* EyeParticles.sks */; };
+		A172B25345267142BB910001 /* Ghost.swift in Sources */ = {isa = PBXBuildFile; fileRef = A172B25345267142BB910002 /* Ghost.swift */; };
+		2079C75D291BF7750055A9EB /* WelcomeScreen.sks in Resources */ = {isa = PBXBuildFile; fileRef = 2079C75C291BF7750055A9EB /* WelcomeScreen.sks */; };
+		2079C75F291BF7970055A9EB /* WelcomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2079C75E291BF7970055A9EB /* WelcomeScreen.swift */; };
+		207B9CFA291272D100855DF4 /* PlayerLifes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 207B9CF9291272D100855DF4 /* PlayerLifes.swift */; };
+		207B9D0B29129B5C00855DF4 /* PlayerDeath.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 207B9D0A29129B5C00855DF4 /* PlayerDeath.atlas */; };
+		590A9EA8290850780006CD20 /* CGSize+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A9EA7290850780006CD20 /* CGSize+Extension.swift */; };
+		A31E501A11AA400000000001 /* GKStateMachine+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = A31E501A11AA400000000002 /* GKStateMachine+Extension.swift */; };
+		5922EAD128D8BF3300BE46DC /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922EAD028D8BF3300BE46DC /* Background.swift */; };
+		5922EAD528D8C0FB00BE46DC /* SceneObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922EAD428D8C0FB00BE46DC /* SceneObject.swift */; };
+		5922EAD828D8C2E400BE46DC /* Physics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922EAD728D8C2E400BE46DC /* Physics.swift */; };
+		5922EADA28D8C53300BE46DC /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922EAD928D8C53300BE46DC /* Player.swift */; };
+		5922EADC28D8CD7300BE46DC /* PlayerIdle.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 5922EADB28D8CD7300BE46DC /* PlayerIdle.atlas */; };
+		5922EAE028D8CF8200BE46DC /* SKTextureAtlas+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922EADF28D8CF8200BE46DC /* SKTextureAtlas+Extension.swift */; };
+		592E302528E494F400603ECC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 592E302328E494F400603ECC /* Assets.xcassets */; };
+		592E302728E57B5500603ECC /* Assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592E302628E57B5500603ECC /* Assets.swift */; };
+		59699EB128E1AEA700999BE7 /* SKNode+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59699EB028E1AEA700999BE7 /* SKNode+Extension.swift */; };
+		59699EB528E1B40700999BE7 /* Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59699EB428E1B40700999BE7 /* Camera.swift */; };
+		5990779928D77E3C00659E6E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5990779828D77E3C00659E6E /* AppDelegate.swift */; };
+		5990779F28D77E3C00659E6E /* LevelScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5990779E28D77E3C00659E6E /* LevelScene.swift */; };
+		599077A128D77E3C00659E6E /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599077A028D77E3C00659E6E /* GameViewController.swift */; };
+		599077A428D77E3C00659E6E /* GameViewController.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 599077A228D77E3C00659E6E /* GameViewController.storyboard */; };
+		599077A928D77E3C00659E6E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 599077A728D77E3C00659E6E /* LaunchScreen.storyboard */; };
+		CA1100000000000000000002 /* Level2.sks in Resources */ = {isa = PBXBuildFile; fileRef = CA2200000000000000000002 /* Level2.sks */; };
+		59A9DB3D28E5CF7300492DAA /* Level1.sks in Resources */ = {isa = PBXBuildFile; fileRef = 59A9DB3C28E5CF7300492DAA /* Level1.sks */; };
+		59A9DB3F28E618C500492DAA /* Tiles.sks in Resources */ = {isa = PBXBuildFile; fileRef = 59A9DB3E28E618C500492DAA /* Tiles.sks */; };
+		59A9DB4128E61C6700492DAA /* Level.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A9DB4028E61C6700492DAA /* Level.swift */; };
+		59CC663528E711E10010A82E /* ObjectNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CC663428E711E10010A82E /* ObjectNames.swift */; };
+		59CC663728E717830010A82E /* PlayerAttack.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 59CC663628E717830010A82E /* PlayerAttack.atlas */; };
+		59CC663D28E72B870010A82E /* ContolButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CC663C28E72B870010A82E /* ContolButtons.swift */; };
+		59CC663F28E84BC80010A82E /* Zombie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CC663E28E84BC80010A82E /* Zombie.swift */; };
+		59CC664228E84D470010A82E /* ZombieIdle.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 59CC664128E84D470010A82E /* ZombieIdle.atlas */; };
+		59CC664428E850210010A82E /* ZombieWalk.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 59CC664328E850210010A82E /* ZombieWalk.atlas */; };
+		59CC664B28E86CFD0010A82E /* CGPoint+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CC664A28E86CFD0010A82E /* CGPoint+Extension.swift */; };
+		59CC664E28E8711B0010A82E /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CC664D28E8711B0010A82E /* Direction.swift */; };
+		59CC665028E87C0D0010A82E /* ZombieAttack.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 59CC664F28E87C0D0010A82E /* ZombieAttack.atlas */; };
+		59CC665228E8897E0010A82E /* AnimatedObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CC665128E8897E0010A82E /* AnimatedObject.swift */; };
+		59CC665528E8C7310010A82E /* ZombieDeath.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 59CC665428E8C7310010A82E /* ZombieDeath.atlas */; };
+		59CC665728E98B8B0010A82E /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CC665628E98B8B0010A82E /* Environment.swift */; };
+		59CC665B28E98C3E0010A82E /* HitBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CC665A28E98C3E0010A82E /* HitBox.swift */; };
+		59CC665D28E98C8C0010A82E /* HurtBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CC665C28E98C8C0010A82E /* HurtBox.swift */; };
+		59CC666328E99E870010A82E /* PumpkinEating.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 59CC666228E99E870010A82E /* PumpkinEating.atlas */; };
+		59CC666528E99FDC0010A82E /* ShootingPumpkin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CC666428E99FDC0010A82E /* ShootingPumpkin.swift */; };
+		59CFC5EE28D78A5900F4E6AE /* Layer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59CFC5ED28D78A5900F4E6AE /* Layer.swift */; };
+		59EF42F128E0BA42005CC691 /* Joystick.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59EF42F028E0BA42005CC691 /* Joystick.swift */; };
+		59EF42F328E0D34D005CC691 /* BinaryFloatingPoint+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59EF42F228E0D34D005CC691 /* BinaryFloatingPoint+Extension.swift */; };
+		59EF42F528E0D437005CC691 /* Comparable+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59EF42F428E0D437005CC691 /* Comparable+Extension.swift */; };
+		59EF42F728E0DBBC005CC691 /* PlayerWalk.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 59EF42F628E0DBBB005CC691 /* PlayerWalk.atlas */; };
+		9D26297828F6ACDD00969D80 /* LevelCompleted.sks in Resources */ = {isa = PBXBuildFile; fileRef = 9D26297628F6ACDD00969D80 /* LevelCompleted.sks */; };
+		9D26297C28F6AD0D00969D80 /* alagard.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D26297B28F6AD0D00969D80 /* alagard.ttf */; };
+		9D26298128F6B22F00969D80 /* TouchNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D26298028F6B22F00969D80 /* TouchNode.swift */; };
+		9D26298328F6BE8B00969D80 /* LevelFinishedScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D26298228F6BE8B00969D80 /* LevelFinishedScene.swift */; };
+		9D464E5B28EEEA630056964C /* DoorOpening.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 9D464E5A28EEEA630056964C /* DoorOpening.atlas */; };
+		9D7EED9C28F573B5004F944E /* PlayerObservingObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D7EED9B28F573B5004F944E /* PlayerObservingObject.swift */; };
+		9D7EED9E28F5A3AB004F944E /* PlayerEntering.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 9D7EED9D28F5A3AB004F944E /* PlayerEntering.atlas */; };
+		9DA5A6D728EC770800F76843 /* FountainFlowing.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 9DA5A6D628EC770800F76843 /* FountainFlowing.atlas */; };
+		9DB92CD628EDA2FF00635BAF /* Door.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB92CD528EDA2FF00635BAF /* Door.swift */; };
+		9DD9BA8B28EC5377002AA59F /* Fountain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DD9BA8A28EC5377002AA59F /* Fountain.swift */; };
+		9DDF1AE428F83D3B0013BED8 /* GameOver.sks in Resources */ = {isa = PBXBuildFile; fileRef = 9DDF1AE328F83D3B0013BED8 /* GameOver.sks */; };
+		9DDF1AE628F847B50013BED8 /* FloatingNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DDF1AE528F847B50013BED8 /* FloatingNode.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A31E501A11AA400000000012 /* Lighting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lighting.swift; sourceTree = "<group>"; };
+		A172B25345267142BB910014 /* Rope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rope.swift; sourceTree = "<group>"; };
+		A172B25345267142BB910012 /* BlurryGhost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlurryGhost.swift; sourceTree = "<group>"; };
+		A172B25345267142BB910022 /* ShimmeringGhost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShimmeringGhost.swift; sourceTree = "<group>"; };
+		A172B25345267142BB910010 /* EvilEye.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvilEye.swift; sourceTree = "<group>"; };
+		A172B25345267142BB910008 /* CroppedEye.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CroppedEye.swift; sourceTree = "<group>"; };
+		A172B25345267142BB910004 /* WanderingEye.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WanderingEye.swift; sourceTree = "<group>"; };
+		A172B25345267142BB910006 /* EyeParticles.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = EyeParticles.sks; sourceTree = "<group>"; };
+		A172B25345267142BB910002 /* Ghost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ghost.swift; sourceTree = "<group>"; };
+		2079C75C291BF7750055A9EB /* WelcomeScreen.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = WelcomeScreen.sks; sourceTree = "<group>"; };
+		2079C75E291BF7970055A9EB /* WelcomeScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeScreen.swift; sourceTree = "<group>"; };
+		207B9CF9291272D100855DF4 /* PlayerLifes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerLifes.swift; sourceTree = "<group>"; };
+		207B9D0A29129B5C00855DF4 /* PlayerDeath.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = PlayerDeath.atlas; sourceTree = "<group>"; };
+		590A9EA7290850780006CD20 /* CGSize+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGSize+Extension.swift"; sourceTree = "<group>"; };
+		A31E501A11AA400000000002 /* GKStateMachine+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GKStateMachine+Extension.swift"; sourceTree = "<group>"; };
+		5922EAD028D8BF3300BE46DC /* Background.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Background.swift; sourceTree = "<group>"; };
+		5922EAD428D8C0FB00BE46DC /* SceneObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneObject.swift; sourceTree = "<group>"; };
+		5922EAD728D8C2E400BE46DC /* Physics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Physics.swift; sourceTree = "<group>"; };
+		5922EAD928D8C53300BE46DC /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
+		5922EADB28D8CD7300BE46DC /* PlayerIdle.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = PlayerIdle.atlas; sourceTree = "<group>"; };
+		5922EADF28D8CF8200BE46DC /* SKTextureAtlas+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SKTextureAtlas+Extension.swift"; sourceTree = "<group>"; };
+		592E302328E494F400603ECC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		592E302628E57B5500603ECC /* Assets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assets.swift; sourceTree = "<group>"; };
+		59699EB028E1AEA700999BE7 /* SKNode+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SKNode+Extension.swift"; sourceTree = "<group>"; };
+		59699EB428E1B40700999BE7 /* Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camera.swift; sourceTree = "<group>"; };
+		5990779528D77E3C00659E6E /* Halloweenland.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Halloweenland.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5990779828D77E3C00659E6E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		5990779E28D77E3C00659E6E /* LevelScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelScene.swift; sourceTree = "<group>"; };
+		599077A028D77E3C00659E6E /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
+		599077A328D77E3C00659E6E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/GameViewController.storyboard; sourceTree = "<group>"; };
+		599077A828D77E3C00659E6E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		CA2200000000000000000002 /* Level2.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Level2.sks; sourceTree = "<group>"; };
+		59A9DB3C28E5CF7300492DAA /* Level1.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Level1.sks; sourceTree = "<group>"; };
+		59A9DB3E28E618C500492DAA /* Tiles.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = Tiles.sks; sourceTree = "<group>"; };
+		59A9DB4028E61C6700492DAA /* Level.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Level.swift; sourceTree = "<group>"; };
+		59CC663428E711E10010A82E /* ObjectNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectNames.swift; sourceTree = "<group>"; };
+		59CC663628E717830010A82E /* PlayerAttack.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = PlayerAttack.atlas; sourceTree = "<group>"; };
+		59CC663C28E72B870010A82E /* ContolButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContolButtons.swift; sourceTree = "<group>"; };
+		59CC663E28E84BC80010A82E /* Zombie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Zombie.swift; sourceTree = "<group>"; };
+		59CC664128E84D470010A82E /* ZombieIdle.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = ZombieIdle.atlas; sourceTree = "<group>"; };
+		59CC664328E850210010A82E /* ZombieWalk.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = ZombieWalk.atlas; sourceTree = "<group>"; };
+		59CC664A28E86CFD0010A82E /* CGPoint+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGPoint+Extension.swift"; sourceTree = "<group>"; };
+		59CC664D28E8711B0010A82E /* Direction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Direction.swift; sourceTree = "<group>"; };
+		59CC664F28E87C0D0010A82E /* ZombieAttack.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = ZombieAttack.atlas; sourceTree = "<group>"; };
+		59CC665128E8897E0010A82E /* AnimatedObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedObject.swift; sourceTree = "<group>"; };
+		59CC665428E8C7310010A82E /* ZombieDeath.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = ZombieDeath.atlas; sourceTree = "<group>"; };
+		59CC665628E98B8B0010A82E /* Environment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
+		59CC665A28E98C3E0010A82E /* HitBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HitBox.swift; sourceTree = "<group>"; };
+		59CC665C28E98C8C0010A82E /* HurtBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HurtBox.swift; sourceTree = "<group>"; };
+		59CC666228E99E870010A82E /* PumpkinEating.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = PumpkinEating.atlas; sourceTree = "<group>"; };
+		59CC666428E99FDC0010A82E /* ShootingPumpkin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShootingPumpkin.swift; sourceTree = "<group>"; };
+		59CFC5ED28D78A5900F4E6AE /* Layer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layer.swift; sourceTree = "<group>"; };
+		59EF42F028E0BA42005CC691 /* Joystick.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Joystick.swift; sourceTree = "<group>"; };
+		59EF42F228E0D34D005CC691 /* BinaryFloatingPoint+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BinaryFloatingPoint+Extension.swift"; sourceTree = "<group>"; };
+		59EF42F428E0D437005CC691 /* Comparable+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Comparable+Extension.swift"; sourceTree = "<group>"; };
+		59EF42F628E0DBBB005CC691 /* PlayerWalk.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = PlayerWalk.atlas; sourceTree = "<group>"; };
+		9D26297628F6ACDD00969D80 /* LevelCompleted.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; name = LevelCompleted.sks; path = Halloweenland/Game/Scenes/LevelCompleted.sks; sourceTree = SOURCE_ROOT; };
+		9D26297B28F6AD0D00969D80 /* alagard.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = alagard.ttf; sourceTree = "<group>"; };
+		9D26297D28F6AD2D00969D80 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		9D26298028F6B22F00969D80 /* TouchNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchNode.swift; sourceTree = "<group>"; };
+		9D26298228F6BE8B00969D80 /* LevelFinishedScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelFinishedScene.swift; sourceTree = "<group>"; };
+		9D464E5A28EEEA630056964C /* DoorOpening.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = DoorOpening.atlas; sourceTree = "<group>"; };
+		9D7EED9B28F573B5004F944E /* PlayerObservingObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerObservingObject.swift; sourceTree = "<group>"; };
+		9D7EED9D28F5A3AB004F944E /* PlayerEntering.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = PlayerEntering.atlas; sourceTree = "<group>"; };
+		9DA5A6D628EC770800F76843 /* FountainFlowing.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = FountainFlowing.atlas; sourceTree = "<group>"; };
+		9DB92CD528EDA2FF00635BAF /* Door.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Door.swift; sourceTree = "<group>"; };
+		9DD9BA8A28EC5377002AA59F /* Fountain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fountain.swift; sourceTree = "<group>"; };
+		9DDF1AE328F83D3B0013BED8 /* GameOver.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameOver.sks; sourceTree = "<group>"; };
+		9DDF1AE528F847B50013BED8 /* FloatingNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingNode.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5990779228D77E3C00659E6E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		5922EACF28D8958A00BE46DC /* Game */ = {
+			isa = PBXGroup;
+			children = (
+				59CC664D28E8711B0010A82E /* Direction.swift */,
+				59CC665628E98B8B0010A82E /* Environment.swift */,
+				59CFC5ED28D78A5900F4E6AE /* Layer.swift */,
+				9D26298228F6BE8B00969D80 /* LevelFinishedScene.swift */,
+				5990779E28D77E3C00659E6E /* LevelScene.swift */,
+				59CC663428E711E10010A82E /* ObjectNames.swift */,
+				5922EAD728D8C2E400BE46DC /* Physics.swift */,
+				A31E501A11AA400000000012 /* Lighting.swift */,
+				2079C75E291BF7970055A9EB /* WelcomeScreen.swift */,
+				592E302B28E588A000603ECC /* Levels */,
+				5922EAD628D8C1A400BE46DC /* SceneObjects */,
+				9D26297528F6ACBD00969D80 /* Scenes */,
+			);
+			path = Game;
+			sourceTree = "<group>";
+		};
+		5922EAD628D8C1A400BE46DC /* SceneObjects */ = {
+			isa = PBXGroup;
+			children = (
+				5922EAD028D8BF3300BE46DC /* Background.swift */,
+				59699EB428E1B40700999BE7 /* Camera.swift */,
+				9DB92CD528EDA2FF00635BAF /* Door.swift */,
+				9DDF1AE528F847B50013BED8 /* FloatingNode.swift */,
+				9DD9BA8A28EC5377002AA59F /* Fountain.swift */,
+				A172B25345267142BB910002 /* Ghost.swift */,
+				A172B25345267142BB910012 /* BlurryGhost.swift */,
+				A172B25345267142BB910022 /* ShimmeringGhost.swift */,
+				A172B25345267142BB910014 /* Rope.swift */,
+				A172B25345267142BB910004 /* WanderingEye.swift */,
+				A172B25345267142BB910008 /* CroppedEye.swift */,
+				A172B25345267142BB910010 /* EvilEye.swift */,
+				59CC665A28E98C3E0010A82E /* HitBox.swift */,
+				59CC665C28E98C8C0010A82E /* HurtBox.swift */,
+				59A9DB4028E61C6700492DAA /* Level.swift */,
+				5922EAD928D8C53300BE46DC /* Player.swift */,
+				207B9CF9291272D100855DF4 /* PlayerLifes.swift */,
+				59CC666428E99FDC0010A82E /* ShootingPumpkin.swift */,
+				9D26298028F6B22F00969D80 /* TouchNode.swift */,
+				59CC663E28E84BC80010A82E /* Zombie.swift */,
+				59EF42EF28E0BA38005CC691 /* Controls */,
+				59CC665328E88A0B0010A82E /* Protocols */,
+			);
+			path = SceneObjects;
+			sourceTree = "<group>";
+		};
+		5922EADD28D8CDBB00BE46DC /* Player */ = {
+			isa = PBXGroup;
+			children = (
+				207B9D0A29129B5C00855DF4 /* PlayerDeath.atlas */,
+				59CC663628E717830010A82E /* PlayerAttack.atlas */,
+				59EF42F628E0DBBB005CC691 /* PlayerWalk.atlas */,
+				5922EADB28D8CD7300BE46DC /* PlayerIdle.atlas */,
+			);
+			path = Player;
+			sourceTree = "<group>";
+		};
+		5922EADE28D8CF7400BE46DC /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				59EF42F228E0D34D005CC691 /* BinaryFloatingPoint+Extension.swift */,
+				59EF42F428E0D437005CC691 /* Comparable+Extension.swift */,
+				59699EB028E1AEA700999BE7 /* SKNode+Extension.swift */,
+				5922EADF28D8CF8200BE46DC /* SKTextureAtlas+Extension.swift */,
+				59CC664A28E86CFD0010A82E /* CGPoint+Extension.swift */,
+				590A9EA7290850780006CD20 /* CGSize+Extension.swift */,
+				A31E501A11AA400000000002 /* GKStateMachine+Extension.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		592E302B28E588A000603ECC /* Levels */ = {
+			isa = PBXGroup;
+			children = (
+				59A9DB3C28E5CF7300492DAA /* Level1.sks */,
+				CA2200000000000000000002 /* Level2.sks */,
+			);
+			path = Levels;
+			sourceTree = "<group>";
+		};
+		5990778C28D77E3C00659E6E = {
+			isa = PBXGroup;
+			children = (
+				5990779728D77E3C00659E6E /* Halloweenland */,
+				5990779628D77E3C00659E6E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5990779628D77E3C00659E6E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5990779528D77E3C00659E6E /* Halloweenland.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5990779728D77E3C00659E6E /* Halloweenland */ = {
+			isa = PBXGroup;
+			children = (
+				9D26297D28F6AD2D00969D80 /* Info.plist */,
+				5990779828D77E3C00659E6E /* AppDelegate.swift */,
+				599077AF28D7828600659E6E /* Assets */,
+				5922EADE28D8CF7400BE46DC /* Extensions */,
+				9D26297A28F6ACFF00969D80 /* Fonts */,
+				5922EACF28D8958A00BE46DC /* Game */,
+				59CFC5E428D782AC00F4E6AE /* Screens */,
+			);
+			path = Halloweenland;
+			sourceTree = "<group>";
+		};
+		599077AF28D7828600659E6E /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				59A9DB3E28E618C500492DAA /* Tiles.sks */,
+				A172B25345267142BB910006 /* EyeParticles.sks */,
+				592E302628E57B5500603ECC /* Assets.swift */,
+				592E302328E494F400603ECC /* Assets.xcassets */,
+				9D464E5728EEE8550056964C /* Door */,
+				9DDF5D2728EC3E3E0039409F /* Fountain */,
+				5922EADD28D8CDBB00BE46DC /* Player */,
+				59CC666128E99E6A0010A82E /* Pumpkin */,
+				59CC664028E84D1B0010A82E /* Zombie */,
+			);
+			path = Assets;
+			sourceTree = "<group>";
+		};
+		59CC664028E84D1B0010A82E /* Zombie */ = {
+			isa = PBXGroup;
+			children = (
+				59CC665428E8C7310010A82E /* ZombieDeath.atlas */,
+				59CC664F28E87C0D0010A82E /* ZombieAttack.atlas */,
+				59CC664328E850210010A82E /* ZombieWalk.atlas */,
+				59CC664128E84D470010A82E /* ZombieIdle.atlas */,
+			);
+			path = Zombie;
+			sourceTree = "<group>";
+		};
+		59CC665328E88A0B0010A82E /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				59CC665128E8897E0010A82E /* AnimatedObject.swift */,
+				9D7EED9B28F573B5004F944E /* PlayerObservingObject.swift */,
+				5922EAD428D8C0FB00BE46DC /* SceneObject.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		59CC666128E99E6A0010A82E /* Pumpkin */ = {
+			isa = PBXGroup;
+			children = (
+				59CC666228E99E870010A82E /* PumpkinEating.atlas */,
+			);
+			path = Pumpkin;
+			sourceTree = "<group>";
+		};
+		59CFC5E428D782AC00F4E6AE /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				59CFC5E528D782B100F4E6AE /* Game */,
+				599077A728D77E3C00659E6E /* LaunchScreen.storyboard */,
+			);
+			path = Screens;
+			sourceTree = "<group>";
+		};
+		59CFC5E528D782B100F4E6AE /* Game */ = {
+			isa = PBXGroup;
+			children = (
+				599077A028D77E3C00659E6E /* GameViewController.swift */,
+				599077A228D77E3C00659E6E /* GameViewController.storyboard */,
+			);
+			path = Game;
+			sourceTree = "<group>";
+		};
+		59EF42EF28E0BA38005CC691 /* Controls */ = {
+			isa = PBXGroup;
+			children = (
+				59CC663C28E72B870010A82E /* ContolButtons.swift */,
+				59EF42F028E0BA42005CC691 /* Joystick.swift */,
+			);
+			path = Controls;
+			sourceTree = "<group>";
+		};
+		9D26297528F6ACBD00969D80 /* Scenes */ = {
+			isa = PBXGroup;
+			children = (
+				9DDF1AE328F83D3B0013BED8 /* GameOver.sks */,
+				9D26297628F6ACDD00969D80 /* LevelCompleted.sks */,
+				2079C75C291BF7750055A9EB /* WelcomeScreen.sks */,
+			);
+			path = Scenes;
+			sourceTree = "<group>";
+		};
+		9D26297A28F6ACFF00969D80 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				9D26297B28F6AD0D00969D80 /* alagard.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		9D464E5728EEE8550056964C /* Door */ = {
+			isa = PBXGroup;
+			children = (
+				9D7EED9D28F5A3AB004F944E /* PlayerEntering.atlas */,
+				9D464E5A28EEEA630056964C /* DoorOpening.atlas */,
+			);
+			path = Door;
+			sourceTree = "<group>";
+		};
+		9DDF5D2728EC3E3E0039409F /* Fountain */ = {
+			isa = PBXGroup;
+			children = (
+				9DA5A6D628EC770800F76843 /* FountainFlowing.atlas */,
+			);
+			path = Fountain;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5990779428D77E3C00659E6E /* Halloweenland */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 599077AC28D77E3C00659E6E /* Build configuration list for PBXNativeTarget "Halloweenland" */;
+			buildPhases = (
+				5990779128D77E3C00659E6E /* Sources */,
+				5990779228D77E3C00659E6E /* Frameworks */,
+				5990779328D77E3C00659E6E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Halloweenland;
+			productName = Halloweenland;
+			productReference = 5990779528D77E3C00659E6E /* Halloweenland.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5990778D28D77E3C00659E6E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1400;
+				LastUpgradeCheck = 1400;
+				TargetAttributes = {
+					5990779428D77E3C00659E6E = {
+						CreatedOnToolsVersion = 14.0;
+					};
+				};
+			};
+			buildConfigurationList = 5990779028D77E3C00659E6E /* Build configuration list for PBXProject "Halloweenland" */;
+			compatibilityVersion = "Xcode 12.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 5990778C28D77E3C00659E6E;
+			productRefGroup = 5990779628D77E3C00659E6E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5990779428D77E3C00659E6E /* Halloweenland */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5990779328D77E3C00659E6E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9D7EED9E28F5A3AB004F944E /* PlayerEntering.atlas in Resources */,
+				59CC664428E850210010A82E /* ZombieWalk.atlas in Resources */,
+				9DDF1AE428F83D3B0013BED8 /* GameOver.sks in Resources */,
+				599077A428D77E3C00659E6E /* GameViewController.storyboard in Resources */,
+				59EF42F728E0DBBC005CC691 /* PlayerWalk.atlas in Resources */,
+				9D26297C28F6AD0D00969D80 /* alagard.ttf in Resources */,
+				59CC663728E717830010A82E /* PlayerAttack.atlas in Resources */,
+				59CC665528E8C7310010A82E /* ZombieDeath.atlas in Resources */,
+				599077A928D77E3C00659E6E /* LaunchScreen.storyboard in Resources */,
+				9D464E5B28EEEA630056964C /* DoorOpening.atlas in Resources */,
+				9D26297828F6ACDD00969D80 /* LevelCompleted.sks in Resources */,
+				5922EADC28D8CD7300BE46DC /* PlayerIdle.atlas in Resources */,
+				59CC665028E87C0D0010A82E /* ZombieAttack.atlas in Resources */,
+				2079C75D291BF7750055A9EB /* WelcomeScreen.sks in Resources */,
+				59A9DB3F28E618C500492DAA /* Tiles.sks in Resources */,
+				A172B25345267142BB910005 /* EyeParticles.sks in Resources */,
+				592E302528E494F400603ECC /* Assets.xcassets in Resources */,
+				59CC666328E99E870010A82E /* PumpkinEating.atlas in Resources */,
+				59A9DB3D28E5CF7300492DAA /* Level1.sks in Resources */,
+				CA1100000000000000000002 /* Level2.sks in Resources */,
+				9DA5A6D728EC770800F76843 /* FountainFlowing.atlas in Resources */,
+				59CC664228E84D470010A82E /* ZombieIdle.atlas in Resources */,
+				207B9D0B29129B5C00855DF4 /* PlayerDeath.atlas in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5990779128D77E3C00659E6E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5990779F28D77E3C00659E6E /* LevelScene.swift in Sources */,
+				59CC665728E98B8B0010A82E /* Environment.swift in Sources */,
+				590A9EA8290850780006CD20 /* CGSize+Extension.swift in Sources */,
+				A31E501A11AA400000000001 /* GKStateMachine+Extension.swift in Sources */,
+				599077A128D77E3C00659E6E /* GameViewController.swift in Sources */,
+				59699EB528E1B40700999BE7 /* Camera.swift in Sources */,
+				5922EAD828D8C2E400BE46DC /* Physics.swift in Sources */,
+				A31E501A11AA400000000011 /* Lighting.swift in Sources */,
+				59CFC5EE28D78A5900F4E6AE /* Layer.swift in Sources */,
+				5922EAD528D8C0FB00BE46DC /* SceneObject.swift in Sources */,
+				9D26298128F6B22F00969D80 /* TouchNode.swift in Sources */,
+				59A9DB4128E61C6700492DAA /* Level.swift in Sources */,
+				59CC665228E8897E0010A82E /* AnimatedObject.swift in Sources */,
+				9DB92CD628EDA2FF00635BAF /* Door.swift in Sources */,
+				59CC663528E711E10010A82E /* ObjectNames.swift in Sources */,
+				5922EAD128D8BF3300BE46DC /* Background.swift in Sources */,
+				59CC663F28E84BC80010A82E /* Zombie.swift in Sources */,
+				592E302728E57B5500603ECC /* Assets.swift in Sources */,
+				59CC664B28E86CFD0010A82E /* CGPoint+Extension.swift in Sources */,
+				59EF42F528E0D437005CC691 /* Comparable+Extension.swift in Sources */,
+				59EF42F328E0D34D005CC691 /* BinaryFloatingPoint+Extension.swift in Sources */,
+				9D7EED9C28F573B5004F944E /* PlayerObservingObject.swift in Sources */,
+				5990779928D77E3C00659E6E /* AppDelegate.swift in Sources */,
+				207B9CFA291272D100855DF4 /* PlayerLifes.swift in Sources */,
+				59CC663D28E72B870010A82E /* ContolButtons.swift in Sources */,
+				9D26298328F6BE8B00969D80 /* LevelFinishedScene.swift in Sources */,
+				5922EADA28D8C53300BE46DC /* Player.swift in Sources */,
+				59CC664E28E8711B0010A82E /* Direction.swift in Sources */,
+				59CC666528E99FDC0010A82E /* ShootingPumpkin.swift in Sources */,
+				9DDF1AE628F847B50013BED8 /* FloatingNode.swift in Sources */,
+				9DD9BA8B28EC5377002AA59F /* Fountain.swift in Sources */,
+				A172B25345267142BB910001 /* Ghost.swift in Sources */,
+				A172B25345267142BB910011 /* BlurryGhost.swift in Sources */,
+				A172B25345267142BB910021 /* ShimmeringGhost.swift in Sources */,
+				A172B25345267142BB910013 /* Rope.swift in Sources */,
+				A172B25345267142BB910003 /* WanderingEye.swift in Sources */,
+				A172B25345267142BB910007 /* CroppedEye.swift in Sources */,
+				A172B25345267142BB910009 /* EvilEye.swift in Sources */,
+				59EF42F128E0BA42005CC691 /* Joystick.swift in Sources */,
+				2079C75F291BF7970055A9EB /* WelcomeScreen.swift in Sources */,
+				59699EB128E1AEA700999BE7 /* SKNode+Extension.swift in Sources */,
+				5922EAE028D8CF8200BE46DC /* SKTextureAtlas+Extension.swift in Sources */,
+				59CC665D28E98C8C0010A82E /* HurtBox.swift in Sources */,
+				59CC665B28E98C3E0010A82E /* HitBox.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		599077A228D77E3C00659E6E /* GameViewController.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				599077A328D77E3C00659E6E /* Base */,
+			);
+			name = GameViewController.storyboard;
+			sourceTree = "<group>";
+		};
+		599077A728D77E3C00659E6E /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				599077A828D77E3C00659E6E /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		599077AA28D77E3C00659E6E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		599077AB28D77E3C00659E6E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		599077AD28D77E3C00659E6E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Halloweenland/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
+				INFOPLIST_KEY_UIMainStoryboardFile = GameViewController;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.strv.MendeluSpriteKit2;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		599077AE28D77E3C00659E6E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Halloweenland/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
+				INFOPLIST_KEY_UIMainStoryboardFile = GameViewController;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.strv.MendeluSpriteKit2;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		5990779028D77E3C00659E6E /* Build configuration list for PBXProject "Halloweenland" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				599077AA28D77E3C00659E6E /* Debug */,
+				599077AB28D77E3C00659E6E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		599077AC28D77E3C00659E6E /* Build configuration list for PBXNativeTarget "Halloweenland" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				599077AD28D77E3C00659E6E /* Debug */,
+				599077AE28D77E3C00659E6E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 5990778D28D77E3C00659E6E /* Project object */;
+}
