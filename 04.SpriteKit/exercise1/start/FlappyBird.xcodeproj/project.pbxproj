@@ -13,15 +13,6 @@
 		590415DB2B00BA8100B50C37 /* wing.wav in Resources */ = {isa = PBXBuildFile; fileRef = 590415DA2B00BA8100B50C37 /* wing.wav */; };
 		590415DE2B00BCFC00B50C37 /* Assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590415DD2B00BCFC00B50C37 /* Assets.swift */; };
 		590415E92B00C7D900B50C37 /* bird.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 590415E82B00C7D900B50C37 /* bird.atlas */; };
-		595906D12B1610AE00A4CC2E /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595906D02B1610AE00A4CC2E /* GameScene.swift */; };
-		595906D42B16116100A4CC2E /* BackgroundNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595906D32B16116100A4CC2E /* BackgroundNode.swift */; };
-		595906D62B16138E00A4CC2E /* BaseNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595906D52B16138E00A4CC2E /* BaseNode.swift */; };
-		595906D82B16163A00A4CC2E /* Layer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595906D72B16163A00A4CC2E /* Layer.swift */; };
-		595906DA2B1616CA00A4CC2E /* PlayerNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595906D92B1616CA00A4CC2E /* PlayerNode.swift */; };
-		595906DC2B161A5800A4CC2E /* Physics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595906DB2B161A5800A4CC2E /* Physics.swift */; };
-		595906DE2B16218E00A4CC2E /* TopNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595906DD2B16218E00A4CC2E /* TopNode.swift */; };
-		598A20A72D009B4F00CD709E /* NodeName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598A20A62D009B4C00CD709E /* NodeName.swift */; };
-		598A20A92D009CB600CD709E /* PipeNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598A20A82D009CB600CD709E /* PipeNode.swift */; };
 		59B14C6E2B0381A20086B043 /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B14C6D2B0381A20086B043 /* GameViewController.swift */; };
 		59B14C702B0383FE0086B043 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59B14C6F2B0383FE0086B043 /* AppDelegate.swift */; };
 		59B14C722B0385A30086B043 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 59B14C712B0385A30086B043 /* LaunchScreen.storyboard */; };
@@ -36,15 +27,6 @@
 		590415DA2B00BA8100B50C37 /* wing.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = wing.wav; sourceTree = "<group>"; };
 		590415DD2B00BCFC00B50C37 /* Assets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Assets.swift; sourceTree = "<group>"; };
 		590415E82B00C7D900B50C37 /* bird.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = bird.atlas; sourceTree = "<group>"; };
-		595906D02B1610AE00A4CC2E /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
-		595906D32B16116100A4CC2E /* BackgroundNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundNode.swift; sourceTree = "<group>"; };
-		595906D52B16138E00A4CC2E /* BaseNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseNode.swift; sourceTree = "<group>"; };
-		595906D72B16163A00A4CC2E /* Layer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layer.swift; sourceTree = "<group>"; };
-		595906D92B1616CA00A4CC2E /* PlayerNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerNode.swift; sourceTree = "<group>"; };
-		595906DB2B161A5800A4CC2E /* Physics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Physics.swift; sourceTree = "<group>"; };
-		595906DD2B16218E00A4CC2E /* TopNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopNode.swift; sourceTree = "<group>"; };
-		598A20A62D009B4C00CD709E /* NodeName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeName.swift; sourceTree = "<group>"; };
-		598A20A82D009CB600CD709E /* PipeNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipeNode.swift; sourceTree = "<group>"; };
 		59B14C6D2B0381A20086B043 /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		59B14C6F2B0383FE0086B043 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		59B14C712B0385A30086B043 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -82,7 +64,6 @@
 		590415C12B00B89F00B50C37 /* FlappyBird */ = {
 			isa = PBXGroup;
 			children = (
-				595906CF2B1610A100A4CC2E /* Game */,
 				59CFCF732B028570001450E3 /* Info.plist */,
 				59B14C712B0385A30086B043 /* LaunchScreen.storyboard */,
 				59B14C6F2B0383FE0086B043 /* AppDelegate.swift */,
@@ -112,30 +93,6 @@
 				590415DA2B00BA8100B50C37 /* wing.wav */,
 			);
 			path = Sounds;
-			sourceTree = "<group>";
-		};
-		595906CF2B1610A100A4CC2E /* Game */ = {
-			isa = PBXGroup;
-			children = (
-				598A20A62D009B4C00CD709E /* NodeName.swift */,
-				595906D22B16115300A4CC2E /* Nodes */,
-				595906D02B1610AE00A4CC2E /* GameScene.swift */,
-				595906D72B16163A00A4CC2E /* Layer.swift */,
-				595906DB2B161A5800A4CC2E /* Physics.swift */,
-			);
-			path = Game;
-			sourceTree = "<group>";
-		};
-		595906D22B16115300A4CC2E /* Nodes */ = {
-			isa = PBXGroup;
-			children = (
-				595906D32B16116100A4CC2E /* BackgroundNode.swift */,
-				595906D52B16138E00A4CC2E /* BaseNode.swift */,
-				595906D92B1616CA00A4CC2E /* PlayerNode.swift */,
-				595906DD2B16218E00A4CC2E /* TopNode.swift */,
-				598A20A82D009CB600CD709E /* PipeNode.swift */,
-			);
-			path = Nodes;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -213,18 +170,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				595906DA2B1616CA00A4CC2E /* PlayerNode.swift in Sources */,
-				598A20A92D009CB600CD709E /* PipeNode.swift in Sources */,
 				59B14C702B0383FE0086B043 /* AppDelegate.swift in Sources */,
 				59B14C6E2B0381A20086B043 /* GameViewController.swift in Sources */,
-				595906DE2B16218E00A4CC2E /* TopNode.swift in Sources */,
-				595906D62B16138E00A4CC2E /* BaseNode.swift in Sources */,
-				595906D82B16163A00A4CC2E /* Layer.swift in Sources */,
-				595906D12B1610AE00A4CC2E /* GameScene.swift in Sources */,
-				598A20A72D009B4F00CD709E /* NodeName.swift in Sources */,
 				590415DE2B00BCFC00B50C37 /* Assets.swift in Sources */,
-				595906D42B16116100A4CC2E /* BackgroundNode.swift in Sources */,
-				595906DC2B161A5800A4CC2E /* Physics.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

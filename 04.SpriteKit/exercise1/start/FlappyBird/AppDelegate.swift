@@ -1,28 +1,21 @@
-//
-//  AppDelegate.swift
-//  FlappyBird
-//
-//  Created by Róbert Oravec on 14.11.2023.
-//
-
 import UIKit
 
 @main
-final class AppDelegate: UIResponder {
-    // MARK: Properties
-    var window: UIWindow?
-}
+final class AppDelegate: UIResponder, UIApplicationDelegate {}
 
-// MARK: UIApplicationDelegate
-extension AppDelegate: UIApplicationDelegate {
-    func application(
-        _ application: UIApplication,
-        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-    ) -> Bool {
-        window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = GameViewController()
-        window?.makeKeyAndVisible()
-        
-        return true
+final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+    var window: UIWindow?
+
+    func scene(
+        _ scene: UIScene,
+        willConnectTo session: UISceneSession,
+        options connectionOptions: UIScene.ConnectionOptions
+    ) {
+        guard let windowScene = scene as? UIWindowScene else { return }
+
+        let window = UIWindow(windowScene: windowScene)
+        window.rootViewController = GameViewController()
+        window.makeKeyAndVisible()
+        self.window = window
     }
 }

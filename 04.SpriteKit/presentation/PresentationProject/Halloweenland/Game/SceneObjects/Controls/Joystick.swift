@@ -85,7 +85,7 @@ extension Joystick: SceneObject {
         anchorPoint = .zero
         zPosition = Layer.controls
 
-//        scene.cameraObject.addChild(self)
+        scene.cameraObject.addChild(self)
 
         isUserInteractionEnabled = true
 

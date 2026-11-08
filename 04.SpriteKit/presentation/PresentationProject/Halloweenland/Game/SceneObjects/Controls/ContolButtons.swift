@@ -63,7 +63,6 @@ extension ControlButtons: SceneObject {
             x: center.x,
             y: center.y - buttonSize
         )
-        jumpButton.alpha = 0
 
         addChild(jumpButton)
 
@@ -75,7 +74,6 @@ extension ControlButtons: SceneObject {
             x: center.x + buttonSize,
             y: center.y
         )
-        attackButton.alpha = 0
 
         addChild(attackButton)
     }
